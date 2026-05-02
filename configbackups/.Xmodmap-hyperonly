@@ -1,0 +1,6 @@
+clear		mod3
+add 		mod3 = Hyper_L
+keycode 	135 = Hyper_L
+
+
+

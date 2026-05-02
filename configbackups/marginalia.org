@@ -1,0 +1,7 @@
+
+* s US Config
+:PROPERTIES:
+:org-remark-file: main-config.org
+:END:
+
+** Org
