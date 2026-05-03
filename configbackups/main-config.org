@@ -3817,17 +3817,36 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
   (message "Elfeed loaded")
 
   (use-package elfeed-tube
-  :after elfeed
-  :config
-  (elfeed-tube-setup)
-  (setq elfeed-tube-invidious-url "https://invidious.io")
-  (add-hook 'elfeed-new-entry-hook #'elfeed-tube-fetch))
+    :after elfeed
+    :config
+    (elfeed-tube-setup)
+    (setq elfeed-tube-mpv-options
+        	'("--cache=yes"
+        	  "--force-window=yes"
+        	  "--fullscreen=yes"
+        	  "--screen=2"))
+    (setq elfeed-tube-invidious-url "https://invidious.io")
+    (add-hook 'elfeed-new-entry-hook #'elfeed-tube-fetch))
+
+  (defun my/elfeed-next-and-load-mpv ()
+    (interactive)
+    (elfeed-show-next)
+    (run-with-timer 1.5 nil
+                    (lambda ()
+                      (if (and (fboundp 'mpv-live-p) (mpv-live-p))
+                          (let* ((entry elfeed-show-entry)
+                                 (video-id (elfeed-tube--entry-video-id entry))
+                                 (url (concat "https://youtube.com/watch?v=" video-id)))
+                            (mpv--enqueue `("loadfile" ,url "replace") #'ignore))
+                        (elfeed-tube-mpv (point))))))
+
+  (define-key elfeed-show-mode-map (kbd "n") #'my/elfeed-next-and-load-mpv)
 
 
 #+END_SRC
 
 #+RESULTS:
-: t
+: my/elfeed-next-and-load-mpv
 
 * Load Music
 #+BEGIN_SRC emacs-lisp
