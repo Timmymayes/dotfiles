@@ -17,6 +17,7 @@ On the rare occasion utf-8 encoding is lost this is a note for myself on how to 
 
   #+BEGIN_SRC emacs-lisp
     (set-language-environment "UTF-8")
+
   #+END_SRC
 
   
@@ -1903,8 +1904,9 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
   ;;auto tangle my emacs config file
   (defun my/org-babel-tangle-config()
     (when (string-equal (buffer-file-name)
-                        (expand-file-name "~/Orgfiles/configbackups/main-config.org")); might need to condituionally use this:
-                                          ;(expand-file-name "c:/Users/Tyler/emacsone/OrgFiles/emacsconf.org"))
+                        (expand-file-name "~/dotfiles/configbackups/main-config.org"))
+  					; might need to condituionally use this:
+                                          ;(expand-file-name"c:/Users/Tyler/emacsone/OrgFiles/emacsconf.org"))
       ;; dynamic scoping
       (let ((org-confirm-babel-evaluate nil))
         (org-babel-tangle))))
@@ -3391,7 +3393,7 @@ Move the cursor
     (delete-other-windows)
     ;; Left pane — full height org config
     (let ((config-window (selected-window)))
-      (find-file "~/Orgfiles/configbackups/main-config.org")
+      (find-file "~/dotfiles/configbackups/main-config.org")
       ;; Split vertically to create right column
       (split-window-right)
       (other-window 1)

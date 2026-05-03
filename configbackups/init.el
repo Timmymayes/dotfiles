@@ -1432,7 +1432,7 @@ n;;tangle test
 ;;auto tangle my emacs config file
 (defun my/org-babel-tangle-config()
   (when (string-equal (buffer-file-name)
-                      (expand-file-name "~/Orgfiles/configbackups/main-config.org")); might need to condituionally use this:
+                      (expand-file-name "~/dotfiles/configbackups/main-config.org")); might need to condituionally use this:
                                         ;(expand-file-name "c:/Users/Tyler/emacsone/OrgFiles/emacsconf.org"))
     ;; dynamic scoping
     (let ((org-onfirm-babel-evaluate nil))
