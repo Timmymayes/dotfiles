@@ -3789,7 +3789,7 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 
   (defun my/elfeed-filter-youtube ()
     (interactive)
-    (elfeed-search-set-filter "@1-month-ago +youtube"))
+    (elfeed-search-set-filter "@1-month-ago +unread +youtube"))
 
   (defun my/elfeed-filter-reddit-homelab ()
     (interactive)
@@ -3828,25 +3828,30 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
     (setq elfeed-tube-invidious-url "https://invidious.io")
     (add-hook 'elfeed-new-entry-hook #'elfeed-tube-fetch))
 
-  (defun my/elfeed-next-and-load-mpv ()
-    (interactive)
-    (elfeed-show-next)
-    (run-with-timer 1.5 nil
-                    (lambda ()
-                      (if (and (fboundp 'mpv-live-p) (mpv-live-p))
-                          (let* ((entry elfeed-show-entry)
-                                 (video-id (elfeed-tube--entry-video-id entry))
-                                 (url (concat "https://youtube.com/watch?v=" video-id)))
-                            (mpv--enqueue `("loadfile" ,url "replace") #'ignore))
-                        (elfeed-tube-mpv (point))))))
+  ;; RET - play now, replace or start
+(define-key elfeed-show-mode-map (kbd "<return>")
+  (lambda () (interactive)
+    (if (and (fboundp 'mpv-live-p) (mpv-live-p))
+        (let* ((video-id (elfeed-tube--entry-video-id elfeed-show-entry))
+               (url (concat "https://youtube.com/watch?v=" video-id)))
+          (mpv--enqueue `("loadfile" ,url "replace") #'ignore))
+      (elfeed-tube-mpv (point)))))
 
-  (define-key elfeed-show-mode-map (kbd "n") #'my/elfeed-next-and-load-mpv)
+;; n - just navigate, no mpv
+(define-key elfeed-show-mode-map (kbd "n") #'elfeed-show-next)
 
+;; e - enqueue without navigating
+(define-key elfeed-show-mode-map (kbd "e")
+  (lambda () (interactive)
+    (let* ((video-id (elfeed-tube--entry-video-id elfeed-show-entry))
+           (url (concat "https://youtube.com/watch?v=" video-id)))
+      (mpv--enqueue `("loadfile" ,url "append") #'ignore)
+      (message "Enqueued: %s" (elfeed-entry-title elfeed-show-entry)))))
 
 #+END_SRC
 
 #+RESULTS:
-: my/elfeed-next-and-load-mpv
+: #[nil ((let* ((video-id (elfeed-tube--entry-video-id elfeed-show-entry)) (url (concat "https://youtube.com/watch?v=" video-id))) (mpv--enqueue `("loadfile" ,url "append") #'ignore) (message "Enqueued: %s" (elfeed-entry-title elfeed-show-entry)))) nil nil nil nil]
 
 * Load Music
 #+BEGIN_SRC emacs-lisp
