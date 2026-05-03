@@ -3783,6 +3783,25 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 
   ;; sparse map for elfeed
 
+  (defun my/elfeed-filter-all ()
+    (interactive)
+    (elfeed-search-set-filter "@1-week-ago +unread"))
+
+  (defun my/elfeed-filter-youtube ()
+    (interactive)
+    (elfeed-search-set-filter "@1-month-ago +youtube"))
+
+  (defun my/elfeed-filter-reddit-homelab ()
+    (interactive)
+    (elfeed-search-set-filter "@1-week-ago +unread +reddit homelab"))
+
+  (defun my/elfeed-filter-reddit-emacs ()
+    (interactive)
+    (elfeed-search-set-filter "@1-week-ago +unread +reddit emacs"))
+
+
+
+
   (defvar my/elfeed-map (make-sparse-keymap)
     "Keymap for elfeed commands.")
 
@@ -3791,6 +3810,10 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
   (define-key my/elfeed-map (kbd "f") #'elfeed)
   (define-key my/elfeed-map (kbd "u") #'elfeed-update)
   (define-key my/elfeed-map (kbd "o") #'my/mpv-play-thing-at-point)
+  (define-key my/elfeed-map (kbd "y") #'my/elfeed-filter-youtube)
+  (define-key my/elfeed-map (kbd "a") #'my/elfeed-filter-all)
+  (define-key my/elfeed-map (kbd "r h") #'my/elfeed-filter-reddit-homelab)
+  (define-key my/elfeed-map (kbd "r e") #'my/elfeed-filter-reddit-emacs)
   (message "Elfeed loaded")
 
 
