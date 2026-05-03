@@ -3816,6 +3816,12 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
   (define-key my/elfeed-map (kbd "r e") #'my/elfeed-filter-reddit-emacs)
   (message "Elfeed loaded")
 
+  (use-package elfeed-tube
+  :after elfeed
+  :config
+  (elfeed-tube-setup)
+  (setq elfeed-tube-invidious-url "https://invidious.io"))
+
 
 #+END_SRC
 
