@@ -1783,38 +1783,25 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 #+RESULTS:
 : t
 
-*** bullets and dashes
-#+begin_src emacs-lisp
-  (use-package org-bullets
-    :after org
-    :hook (org-mode . org-bullets-mode)
-    :custom
-    (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
+*** Org Modern
+#+BEGIN_SRC emacs-lisp
+  (use-package org-modern
+    :hook (org-mode . org-modern-mode)
+    :config
+    (global-org-modern-mode)
+    (setq org-modern-star '("◉" "○" "●" "○" "●" "○" "●")
+          org-modern-table nil     ;; keep valign handling this
+          org-modern-list '((?- . "•") (?+ . "◦") (?* . "▸"))
+          org-modern-checkbox nil  ;; keep default checkboxes unless you want to style them
+          org-modern-tag t
+          org-modern-priority t
+          org-modern-todo t
+          org-modern-timestamp t))
 
-
-                                          ;replace dashes with dots
-
-  (font-lock-add-keywords 'org-mode
-                          '(("^ *\\([-]\\) "
-                             (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
-
-  (global-prettify-symbols-mode t)
-
-                                          ; (defun my/org-buffer-setup ()
-  ;; (push '("[ ]" . "☐" ) prettify-symbols-alist)
-  ;; (push '("[X]" . "☑" ) prettify-symbols-alist)
-  ;; (push '("[-]" . "❍" ) prettify-symbols-alist)
-  ;; )
-
-                                          ;  (add-hook 'org-mode-hook #'my/org-buffer-setup)
-  ;; Override some modes which derive from the above
+  ;; still need to suppress line numbers in org
   (dolist (mode '(org-mode-hook))
     (add-hook mode (lambda () (display-line-numbers-mode 0))))
-
-
-
-
-#+end_src
+#+END_SRC
 
 #+RESULTS:
 
