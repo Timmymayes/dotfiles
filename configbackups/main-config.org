@@ -3820,13 +3820,14 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
   :after elfeed
   :config
   (elfeed-tube-setup)
-  (setq elfeed-tube-invidious-url "https://invidious.io"))
+  (setq elfeed-tube-invidious-url "https://invidious.io")
+  (add-hook 'elfeed-new-entry-hook #'elfeed-tube-fetch))
 
 
 #+END_SRC
 
 #+RESULTS:
-: Elfeed loaded
+: t
 
 * Load Music
 #+BEGIN_SRC emacs-lisp
