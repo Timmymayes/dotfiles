@@ -12,7 +12,7 @@ This is my first run through configuring emacs so there is probably a lot of ine
 Initial setup for the core of Emacs. Mostly low level system type elements and package usage. 
 ** DEBUG on error
 #+BEGIN_SRC emacs-lisp
-(setq debug-on-error t)
+;(setq debug-on-error t)
 #+END_SRC
 
 ** UTF-8 buffer revert comand
