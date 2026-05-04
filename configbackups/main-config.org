@@ -155,7 +155,7 @@ Basic setup for cleaning up the ui.
   (use-package hydra)
 
   ;; using eshell to run bash script on startup setting up hyper and F keys
-  #+end_src
+#+end_src
 
 #+RESULTS:
 
@@ -1502,6 +1502,13 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 #+begin_src emacs-lisp
   ;; start norang helpers
 
+  (defun my/project-prefix ()
+    "create a prefix of pipes, slahses and dashes to visualies projects an their subprojects"
+    (let ((level (org-current-level)))
+      (cond
+       ((> level 2) (concat "|" (make-string (* (- level 2) 2) ?-) "\\ "))
+       (t ""))))
+
   (defun bh/skip-non-archivable-tasks ()
     "Skip trees that are not available for archiving"
     (save-restriction
@@ -1557,7 +1564,7 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 
   (defun bh/is-project-subtree-p ()
     "Any task with a todo keyword that is in a project subtree.
-             Callers of this function already widen the buffer view."
+               Callers of this function already widen the buffer view."
     (let ((task (save-excursion (org-back-to-heading 'invisible-ok)
                                 (point))))
       (save-excursion
@@ -1594,7 +1601,7 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 
   (defun bh/list-sublevels-for-projects-indented ()
     "Set org-tags-match-list-sublevels so when restricted to a subtree we list all subtasks.
-               This is normally used  skipping functions where this variable is already local to the agenda."
+                 This is normally used  skipping functions where this variable is already local to the agenda."
     (if (marker-buffer org-agenda-restrict-begin)
         (setq org-tags-match-list-sublevels 'indented)
       (setq org-tags-match-list-sublevels nil))
@@ -1602,7 +1609,7 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 
   (defun bh/list-sublevels-for-projects ()
     "Set org-tags-match-list-sublevels so when restricted to a subtree we list all subtasks.
-               This is normally used by skipping functions where this variable is already local to the agenda."
+                 This is normally used by skipping functions where this variable is already local to the agenda."
     (if (marker-buffer org-agenda-restrict-begin)
         (setq org-tags-match-list-sublevels t)
       (setq org-tags-match-list-sublevels nil))
@@ -1672,7 +1679,7 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 
   (defun bh/skip-non-tasks ()
     "Show non-project tasks.
-             Skip project and sub-project tasks, habits, and project related tasks."
+               Skip project and sub-project tasks, habits, and project related tasks."
     (save-restriction
       (widen)
       (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
@@ -1715,8 +1722,8 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 
   (defun bh/skip-project-tasks-maybe ()
     "Show tasks related to the current restriction.
-             When restricted to a project, skip project and sub project tasks, habits, NEXT tasks, and loose tasks.
-             When not restricted, skip project and sub-project tasks, habits, and project related tasks."
+               When restricted to a project, skip project and sub project tasks, habits, NEXT tasks, and loose tasks.
+               When not restricted, skip project and sub-project tasks, habits, and project related tasks."
     (save-restriction
       (widen)
       (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
@@ -1739,7 +1746,7 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 
   (defun bh/skip-project-tasks ()
     "Show non-project tasks.
-             Skip project and sub-project tasks, habits, and project related tasks."
+               Skip project and sub-project tasks, habits, and project related tasks."
     (save-restriction
       (widen)
       (let* ((subtree-end (save-excursion (org-end-of-subtree t))))
@@ -1755,7 +1762,7 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 
   (defun bh/skip-non-project-tasks ()
     "Show project tasks.
-             Skip project and sub-project tasks, habits, and loose non-project tasks."
+               Skip project and sub-project tasks, habits, and loose non-project tasks."
     (save-restriction
       (widen)
       (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
@@ -1809,7 +1816,7 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 #+end_src
 
 #+RESULTS:
-| (closure (org-agenda-skip-regexp org-table1-hline-regexp org-table-tab-recognizes-table.el org-table-dataline-regexp org-table-any-border-regexp org-agenda-restriction-lock-overlay org-agenda-overriding-restriction org-agenda-diary-file org-complex-heading-regexp t) nil (setq imenu-create-index-function 'org-imenu-get-tree)) | org-transclusion-mode | org-mode-visual-fill | (lambda nil (add-hook 'after-save-hook #'my/org-babel-tangle-config)) | (lambda nil (display-line-numbers-mode 0)) | my/org-buffer-setup | org-bullets-mode | valign-mode | org-mode-setup | (closure (org--rds reftex-docstruct-symbol org-element-greater-elements visual-fill-column-width org-clock-history org-agenda-current-date org-with-time org-defdecode org-def org-read-date-inactive org-ans2 org-ans1 org-columns-current-fmt-compiled org-clock-current-task org-clock-effort org-agenda-skip-function org-agenda-skip-comment-trees org-agenda-archives-mode org-end-time-was-given org-time-was-given org-log-note-extra org-log-note-purpose org-log-post-message org-last-inserted-timestamp org-last-changed-timestamp org-entry-property-inherited-from org-blocked-by-checkboxes org-state org-agenda-headline-snapshot-before-repeat org-agenda-buffer-name org-agenda-start-on-weekday org-agenda-buffer-tmp-name org-priority-regexp org-mode-abbrev-table org-mode-syntax-table buffer-face-mode-face org-tbl-menu org-org-menu org-struct-menu org-entities org-last-state org-id-track-globally org-clock-start-time texmathp-why remember-data-file org-agenda-tags-todo-honor-ignore-options iswitchb-temp-buflist calc-embedded--mode calc-embedded-open-formula calc-embedded-close-formula align-mode-rules-list org-emphasis-alist org-emphasis-regexp-components org-export-registered-backends org-modules crm-separator org-babel-load-languages org-id-overriding-file-name org-indent-indentation-per-level org-element--timestamp-regexp org-element-paragraph-separate org-inlinetask-min-level t) nil (add-hook 'change-major-mode-hook 'org-show-all 'append 'local)) | (closure (org-src-window-setup *this* org-babel-confirm-evaluate-answer-no org-babel-tangle-uncomment-comments org-src-preserve-indentation org-src-lang-modes org-edit-src-content-indentation org-babel-library-of-babel t) nil (add-hook 'change-major-mode-hook #'org-babel-show-result-all 'append 'local)) | org-babel-result-hide-spec | org-babel-hide-all-hashes |
+| #[0 \301\211\207 [imenu-create-index-function org-imenu-get-tree] 2] | org-transclusion-mode | org-mode-visual-fill | #[nil ((add-hook 'after-save-hook #'my/org-babel-tangle-config)) nil] | #[nil ((display-line-numbers-mode 0)) nil] | org-modern-mode | valign-mode | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-fold-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes | org-mode-setup | nano-modeline-org-mode |
 *** Font Configuration
 #+begin_src emacs-lisp
   (dolist (face '((org-level-1 . 1.2)
