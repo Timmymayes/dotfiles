@@ -618,9 +618,22 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
         (re-search-forward ":PROPERTIES:" nil t)
         (org-hide-drawer-toggle )))
 
+    (with-eval-after-load 'org-habit
+      (set-face-attribute 'org-habit-clear-face nil :background "#5A6680")
+      (set-face-attribute 'org-habit-clear-future-face nil :background "#4C566A")
+      (set-face-attribute 'org-habit-ready-face nil :background "#A3BE8C")
+      (set-face-attribute 'org-habit-ready-future-face nil :background "#7A9E6A")
+      (set-face-attribute 'org-habit-alert-face nil :background "#F5C518")
+      (set-face-attribute 'org-habit-alert-future-face nil :background "#E0A800")
+      (set-face-attribute 'org-habit-overdue-face nil :background "#BF616A")
+      (set-face-attribute 'org-habit-overdue-future-face nil :background "#8C3A40"))
 
 
-
+    (with-eval-after-load 'org
+      (set-face-attribute 'org-upcoming-distant-deadline nil :foreground "#C4A000" :weight 'normal)
+      (set-face-attribute 'org-upcoming-deadline nil :foreground "#F5C518" :weight 'bold)
+      (set-face-attribute 'org-imminent-deadline nil :foreground "#E0A800" :weight 'bold)
+      (set-face-attribute 'org-warning nil :foreground "#BF616A" :weight 'bold) )
 
     (setq org-image-actual-width nil)
     (setq org-agenda-start-with-log-mode t)
@@ -664,7 +677,7 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
     (setq org-global-properties
           '(("Effort_All" . "0 0:10 0:15 0:30 0:45 1:00 1:15 1:30 1:45  2:00 2:30  3:00 3:30 4:00")))
 
-  					; org capture
+      					; org capture
 
     (setq org-capture-templates
           '(
@@ -719,19 +732,19 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
              :prepend t ; prepend properties
              :created t ;
              )
-    	  ("s" "System")
-  	  ("sl" "System Log" entry
-  	   (file+headline "~/Orgfiles/config.org" "Logs")
-  	   "** Changes\n*** %^{Title}\n[%<%Y-%m-%d %a %H:%M>]\n:CONTEXT:\n- File/Location: %^{File or Location}\n- Reason: %^{Reason}\n:END:\n\n%?\n"
-  	   :empty-lines 1)
-  	  ("sf" "System Fix" entry
-  	   (file+headline "~/Orgfiles/config.org" "Logs")
-  	   "** Fixes\n*** %^{Title}\n[%<%Y-%m-%d %a %H:%M>]\n:CONTEXT:\n- File/Location: %^{File or Location}\n- Problem: %^{Problem}\n- Solution: %^{Solution}\n:END:\n\n%?\n"
-  	   :empty-lines 1)
-  	  ("si" "System Install" entry
-  	   (file+headline "~/Orgfiles/config.org" "Logs")
-  	   "** Installs\n*** %^{Title}\n[%<%Y-%m-%d %a %H:%M>]\n:CONTEXT:\n- Package/Tool: %^{Package or Tool}\n- Version: %^{Version}\n- Installed via: %^{apt/pip/cargo/etc}\n- Reason: %^{Reason}\n:END:\n\n%?\n"
-  	   :empty-lines 1)
+        	  ("s" "System")
+      	  ("sl" "System Log" entry
+      	   (file+headline "~/Orgfiles/config.org" "Logs")
+      	   "** Changes\n*** %^{Title}\n[%<%Y-%m-%d %a %H:%M>]\n:CONTEXT:\n- File/Location: %^{File or Location}\n- Reason: %^{Reason}\n:END:\n\n%?\n"
+      	   :empty-lines 1)
+      	  ("sf" "System Fix" entry
+      	   (file+headline "~/Orgfiles/config.org" "Logs")
+      	   "** Fixes\n*** %^{Title}\n[%<%Y-%m-%d %a %H:%M>]\n:CONTEXT:\n- File/Location: %^{File or Location}\n- Problem: %^{Problem}\n- Solution: %^{Solution}\n:END:\n\n%?\n"
+      	   :empty-lines 1)
+      	  ("si" "System Install" entry
+      	   (file+headline "~/Orgfiles/config.org" "Logs")
+      	   "** Installs\n*** %^{Title}\n[%<%Y-%m-%d %a %H:%M>]\n:CONTEXT:\n- Package/Tool: %^{Package or Tool}\n- Version: %^{Version}\n- Installed via: %^{apt/pip/cargo/etc}\n- Reason: %^{Reason}\n:END:\n\n%?\n"
+      	   :empty-lines 1)
             ("l" "Lexicon" )
             (
              "ln" ; key
