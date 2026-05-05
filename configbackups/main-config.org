@@ -8,6 +8,11 @@ This config is my personal config and is evolving over time. You can find the up
 
 This is my first run through configuring emacs so there is probably a lot of inefficiency in the layout and possibly some redundancy that needs cleaning up. That being said, this is a living document that will probably be evolving for some time before it gets a pure reboot. 
 
+** Make this natiavly installable
+
+*** Issue list
+- Roboto mono doesn't install
+
 * Initialization
 Initial setup for the core of Emacs. Mostly low level system type elements and package usage. 
 ** DEBUG on error
@@ -195,8 +200,6 @@ Read more about this here: [[https://github.com/rougier/nano-modeline][nano-mode
 
   (with-eval-after-load 'org
     (set-face-attribute 'org-block nil :background "#363D4A" :extend t)) 
-
-  (require 'nano-vertico)
 
 
 
@@ -450,7 +453,7 @@ Turn on Yas global mode
   		  :key (auth-source-pick-first-password :host "api.anthropic.com"))))
       ;; Set it as the default backend
       (setq gptel-backend claude
-  	  gptel-model 'claude-4-6)))
+  	  gptel-model 'claude-sonnet-4-6)))
 
 
 #+END_SRC
