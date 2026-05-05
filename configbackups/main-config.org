@@ -1,6 +1,7 @@
 #+STARTUP: content
 #+PROPERTY: header-args:emacs-lisp :tangle ~/Projects/init.el
 
+
 * Config Overview
 This config is my personal config and is evolving over time. You can find the updated version here: [[https://github.com/Timmymayes/emacsone/blob/main/OrgFiles/emacsconf.org][Emacsone]].
 
