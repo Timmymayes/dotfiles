@@ -18,7 +18,7 @@ This is my first run through configuring emacs so there is probably a lot of ine
 Initial setup for the core of Emacs. Mostly low level system type elements and package usage. 
 ** DEBUG on error
 #+BEGIN_SRC emacs-lisp
-;(setq debug-on-error t)
+  					;(setq debug-on-error t)
 #+END_SRC
 
 ** UTF-8 buffer revert comand
@@ -1882,7 +1882,7 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
           org-modern-todo t
           org-modern-timestamp t)
     (setq org-modern-todo-faces
-  	'(("TODO"      . (:background "#81A1C1" :foreground "white"))
+  	'(("TODO"      . (:background "#BF616A" :foreground "white"))
   	  ("NEXT"      . (:background "#81A1C1" :foreground "white"))
   	  ("DONE"      . (:background "#A3BE8C" :foreground "white"))
   	  ("WAITING"   . (:background "#D08770" :foreground "white"))
