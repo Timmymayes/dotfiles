@@ -286,32 +286,32 @@ Packages that make emacs a little easiler to use. Finding out more about command
     :ensure nil
     :after vertico
     :config
-    (setq vertico-multiform-commands
-          '((org-roam-search buffer)
-            (consult-outline buffer ,(lambda (_) (text-scale-set -1)))
-            (t posframe)))
+    ;; (setq vertico-multiform-commands
+    ;;       '((org-roam-search buffer)
+    ;;         (consult-outline buffer ,(lambda (_) (text-scale-set -1)))
+    ;;         (t posframe)))
 
 
-    (defun my/adjust-posframe-for-monitor (frame)
-      (with-selected-frame frame
-        (setq vertico-posframe-poshandler
-    	    (if (> (frame-pixel-width) 2000)
-    		(lambda (info)
-    		  (let ((pos (posframe-poshandler-frame-center info)))
-    		    (cons (- (car pos) 700)
-    			  (cdr pos))))
-    	      #'posframe-poshandler-frame-center))))
+    ;; (defun my/adjust-posframe-for-monitor (frame)
+    ;;   (with-selected-frame frame
+    ;;     (setq vertico-posframe-poshandler
+    ;; 	    (if (> (frame-pixel-width) 2000)
+    ;; 		(lambda (info)
+    ;; 		  (let ((pos (posframe-poshandler-frame-center info)))
+    ;; 		    (cons (- (car pos) 700)
+    ;; 			  (cdr pos))))
+    ;; 	      #'posframe-poshandler-frame-center))))
 
 
 
-    (add-function :after after-focus-change-function
-    		(lambda ()
-    		  (when (frame-focus-state)
-    		    (my/adjust-posframe-for-monitor (selected-frame)))))
+    ;; (add-function :after after-focus-change-function
+    ;; 		(lambda ()
+    ;; 		  (when (frame-focus-state)
+    ;; 		    (my/adjust-posframe-for-monitor (selected-frame)))))
 
-    (my/adjust-posframe-for-monitor (selected-frame))
-    (add-hook 'move-frame-functions #'my/adjust-posframe-for-monitor)
-    (add-hook 'after-make-frame-functions #'my/adjust-posframe-for-monitor)
+    ;; (my/adjust-posframe-for-monitor (selected-frame))
+    ;; (add-hook 'move-frame-functions #'my/adjust-posframe-for-monitor)
+    ;; (add-hook 'after-make-frame-functions #'my/adjust-posframe-for-monitor)
     
     (vertico-multiform-mode 1))
 
@@ -1880,7 +1880,17 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
           org-modern-tag t
           org-modern-priority t
           org-modern-todo t
-          org-modern-timestamp t))
+          org-modern-timestamp t)
+    (setq org-modern-todo-faces
+  	'(("TODO"      . (:background "#81A1C1" :foreground "white"))
+  	  ("NEXT"      . (:background "#81A1C1" :foreground "white"))
+  	  ("DONE"      . (:background "#A3BE8C" :foreground "white"))
+  	  ("WAITING"   . (:background "#D08770" :foreground "white"))
+  	  ("HOLD"      . (:background "#B48EAD" :foreground "white"))
+  	  ("CANCELLED" . (:background "#A3BE8C" :foreground "white"))
+  	  ("MEETING"   . (:background "#A3BE8C" :foreground "white"))
+  	  ("PHONE"     . (:background "#A3BE8C" :foreground "white"))))
+    )
 
   ;; still need to suppress line numbers in org
   (dolist (mode '(org-mode-hook))
