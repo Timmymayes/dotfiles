@@ -352,6 +352,7 @@ Packages that make emacs a little easiler to use. Finding out more about command
     :ensure t
     :bind
     (("C-M-." . consult-ripgrep)
+     ("C-c j" . consult-imenu)
      ("M-y" . consult-yank-pop)
      ("C-H-b" . consult-buffer)
      ("H-l" . consult-line)))
@@ -454,13 +455,54 @@ Turn on Yas global mode
   		  :key (auth-source-pick-first-password :host "api.anthropic.com"))))
       ;; Set it as the default backend
       (setq gptel-backend claude
-  	  gptel-model 'claude-sonnet-4-6)))
+  	  gptel-model 'claude-sonnet-4-6))
+
+    (setq gptel-log-level 'info)
+    ;; Core keymap
+    (defvar my/gptel-map (make-sparse-keymap)
+      "Keymap for gptel commands under C-c g")
+    (global-set-key (kbd "C-c g") my/gptel-map)
+
+    ;; Core commands
+    (define-key my/gptel-map (kbd "RET") #'gptel)
+    (define-key my/gptel-map (kbd "s")   #'gptel-send)
+    (define-key my/gptel-map (kbd "m")   #'gptel-menu)
+    (define-key my/gptel-map (kbd "a")   #'gptel-add)
+    (define-key my/gptel-map (kbd "f")   #'gptel-add-file)
+
+    ;; Model switching (1=cheap → 3=expensive)
+    (define-key my/gptel-map (kbd "1")   #'my/gptel-use-haiku)
+    (define-key my/gptel-map (kbd "2")   #'my/gptel-use-sonnet)
+    (define-key my/gptel-map (kbd "3")   #'my/gptel-use-opus)
+
+    ;; Directives
+    (define-key my/gptel-map (kbd "d d") #'my/gptel-directive-default)
+    (define-key my/gptel-map (kbd "d m") #'my/gptel-directive-mentor)
+    (define-key my/gptel-map (kbd "d f") #'my/gptel-directive-fix)
+    (define-key my/gptel-map (kbd "d r") #'my/gptel-directive-review)
+
+    ;; Memory injection
+    (define-key my/gptel-map (kbd "c c") #'my/gptel-inject-core)
+    (define-key my/gptel-map (kbd "c e") #'my/gptel-inject-emacs)
+    (define-key my/gptel-map (kbd "c g") #'my/gptel-inject-gamedev)
+    (define-key my/gptel-map (kbd "c d") #'my/gptel-inject-devops)
+
+    ;; Rewrite
+    (define-key my/gptel-map (kbd "r r") #'gptel-rewrite)
+    (define-key my/gptel-map (kbd "r s") #'my/gptel-rewrite-spelling))
+
+
+
 
 
 #+END_SRC
 
 #+RESULTS:
 : t
+** Misc bindings for now
+#+BEGIN_SRC emacs-lisp
+
+#+END_SRC
 ** Section Loaded Message
 #+BEGIN_SRC emacs-lisp
   (message "LLM Setup finished Loading")
@@ -2323,7 +2365,62 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
    holiday-islamic-holidays nil
    holiday-bahai-holidays nil
    holiday-oriental-holidays nil)
+  (with-eval-after-load 'calfw
+    ;; Title and headers
+    (set-face-attribute 'calfw-title-face nil
+                        :foreground "#88C0D0" :weight 'bold)
+    (set-face-attribute 'calfw-header-face nil
+                        :foreground "#3B4252" :background "#81A1C1" :weight 'bold)
 
+    ;; Grid
+    (set-face-attribute 'calfw-grid-face nil
+                        :foreground "#81A1C1")
+
+    ;; Weekday headers
+    (set-face-attribute 'calfw-sunday-face nil
+                        :foreground "#B48E88" :background "#81A1C1" :weight 'bold)
+    (set-face-attribute 'calfw-saturday-face nil
+                        :foreground "#B48EAD" :background "#81A1C1" :weight 'bold)
+
+    ;; Day cells
+    (set-face-attribute 'calfw-day-title-face nil
+                        :background "#3B4252")
+    (set-face-attribute 'calfw-default-day-face nil
+                        :background "#2E3440" :weight 'bold)
+
+    ;; Today
+    (set-face-attribute 'calfw-today-title-face nil
+                        :background "#3B4252" :weight 'bold)
+    (set-face-attribute 'calfw-today-face nil
+                        :foreground "#88C0D0" :weight 'bold)
+
+    ;; Content and periods
+    (set-face-attribute 'calfw-default-content-face nil
+                        :foreground "#D8DEE9")
+    (set-face-attribute 'calfw-periods-face nil
+                        :foreground "#A3BE8C")
+
+    ;; Holidays and annotations
+    (set-face-attribute 'calfw-holiday-face nil
+                        :foreground "#D08770" :weight 'bold)
+    (set-face-attribute 'calfw-annotation-face nil
+                        :foreground "#EBCB8B")
+
+    ;; Disabled/out of range days
+    (set-face-attribute 'calfw-disable-face nil
+                        :foreground "#4C566A")
+
+    ;; Hidden calendars
+    (set-face-attribute 'calfw-calendar-hidden-face nil
+                        :foreground "#4C566A" :strike-through t)
+
+    ;; Toolbar
+    (set-face-attribute 'calfw-toolbar-face nil
+                        :foreground "#3B4252" :background "#3B4252")
+    (set-face-attribute 'calfw-toolbar-button-off-face nil
+                        :foreground "#616E88" :background "#3B4252")
+    (set-face-attribute 'calfw-toolbar-button-on-face nil
+                        :foreground "#88C0D0" :background "#3B4252" :weight 'bold))
 
 
 
