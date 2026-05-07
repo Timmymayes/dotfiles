@@ -1,4 +1,4 @@
-#+STARTUP: content
+﻿#+STARTUP: content
 #+PROPERTY: header-args:emacs-lisp :tangle ~/Projects/init.el
 
 
@@ -2343,89 +2343,96 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 
 * calfw-org
 #+BEGIN_SRC emacs-lisp
-  (require 'calfw)
-  (with-eval-after-load 'calfw
-    (require 'calfw-org)
-    (require 'calfw-cal)
-    (require 'calfw-gcal)
+
+  (require 'cl-lib)
+  (defalias 'loop 'cl-loop)
+  (defalias 'return 'cl-return)
 
 
-    (defun my/open-calendar ()
-      (interactive)
-      (calfw-open-calendar-buffer
-       :contents-sources
-       (list
-        (calfw-org-create-file-source "SEAS" "~/Orgfiles/SEAS.org" "#a0a0a0")  ; Work orgmode source
-        (calfw-org-create-file-source "PERSONAL" "~/Orgfiles/tasks.org" "Orange") ; Personal orgmode
-        ))))
-
-  ;; Remove holidays
-  (setq 
-   holiday-hebrew-holidays nil
-   holiday-islamic-holidays nil
-   holiday-bahai-holidays nil
-   holiday-oriental-holidays nil)
-  (with-eval-after-load 'calfw
-    ;; Title and headers
-    (set-face-attribute 'calfw-title-face nil
-                        :foreground "#88C0D0" :weight 'bold)
-    (set-face-attribute 'calfw-header-face nil
-                        :foreground "#3B4252" :background "#81A1C1" :weight 'bold)
-
-    ;; Grid
-    (set-face-attribute 'calfw-grid-face nil
-                        :foreground "#81A1C1")
-
-    ;; Weekday headers
-    (set-face-attribute 'calfw-sunday-face nil
-                        :foreground "#B48E88" :background "#81A1C1" :weight 'bold)
-    (set-face-attribute 'calfw-saturday-face nil
-                        :foreground "#B48EAD" :background "#81A1C1" :weight 'bold)
-
-    ;; Day cells
-    (set-face-attribute 'calfw-day-title-face nil
-                        :background "#3B4252")
-    (set-face-attribute 'calfw-default-day-face nil
-                        :background "#2E3440" :weight 'bold)
-
-    ;; Today
-    (set-face-attribute 'calfw-today-title-face nil
-                        :background "#3B4252" :weight 'bold)
-    (set-face-attribute 'calfw-today-face nil
-                        :foreground "#88C0D0" :weight 'bold)
-
-    ;; Content and periods
-    (set-face-attribute 'calfw-default-content-face nil
-                        :foreground "#D8DEE9")
-    (set-face-attribute 'calfw-periods-face nil
-                        :foreground "#A3BE8C")
-
-    ;; Holidays and annotations
-    (set-face-attribute 'calfw-holiday-face nil
-                        :foreground "#D08770" :weight 'bold)
-    (set-face-attribute 'calfw-annotation-face nil
-                        :foreground "#EBCB8B")
-
-    ;; Disabled/out of range days
-    (set-face-attribute 'calfw-disable-face nil
-                        :foreground "#4C566A")
-
-    ;; Hidden calendars
-    (set-face-attribute 'calfw-calendar-hidden-face nil
-                        :foreground "#4C566A" :strike-through t)
-
-    ;; Toolbar
-    (set-face-attribute 'calfw-toolbar-face nil
-                        :foreground "#3B4252" :background "#3B4252")
-    (set-face-attribute 'calfw-toolbar-button-off-face nil
-                        :foreground "#616E88" :background "#3B4252")
-    (set-face-attribute 'calfw-toolbar-button-on-face nil
-                        :foreground "#88C0D0" :background "#3B4252" :weight 'bold))
+    (require 'calfw)
+      (with-eval-after-load 'calfw
+        (require 'calfw-org)
+        (require 'calfw-cal)
+        (require 'calfw-gcal)
 
 
+        (defun my/open-calendar ()
+          (interactive)
+          (calfw-open-calendar-buffer
+           :contents-sources
+           (list
+            (calfw-org-create-file-source "SEAS" "~/Orgfiles/SEAS.org" "#a0a0a0")  ; Work orgmode source
+            (calfw-org-create-file-source "PERSONAL" "~/Orgfiles/tasks.org" "Orange") ; Personal orgmode
+            ))))
 
-  (global-set-key (kbd "<f17>") 'my/open-calendar)
-  (message "calfw loaded")
+      ;; Remove holidays
+      (setq 
+       holiday-hebrew-holidays nil
+       holiday-islamic-holidays nil
+       holiday-bahai-holidays nil
+       holiday-oriental-holidays nil)
+      (with-eval-after-load 'calfw
+        (ignore-errors
+        ;; Title and headers
+        (set-face-attribute 'calfw-title-face nil
+                            :foreground "#88C0D0" :weight 'bold)
+        (set-face-attribute 'calfw-header-face nil
+                            :foreground "#3B4252" :background "#81A1C1" :weight 'bold)
+
+        ;; Grid
+        (set-face-attribute 'calfw-grid-face nil
+                            :foreground "#81A1C1")
+
+        ;; Weekday headers
+        (set-face-attribute 'calfw-sunday-face nil
+                            :foreground "#B48E88" :background "#81A1C1" :weight 'bold)
+        (set-face-attribute 'calfw-saturday-face nil
+                            :foreground "#B48EAD" :background "#81A1C1" :weight 'bold)
+
+        ;; Day cells
+        (set-face-attribute 'calfw-day-title-face nil
+                            :background "#3B4252")
+        (set-face-attribute 'calfw-default-day-face nil
+                            :background "#2E3440" :weight 'bold)
+
+        ;; Today
+        (set-face-attribute 'calfw-today-title-face nil
+                            :background "#3B4252" :weight 'bold)
+        (set-face-attribute 'calfw-today-face nil
+                            :foreground "#88C0D0" :weight 'bold)
+
+        ;; Content and periods
+        (set-face-attribute 'calfw-default-content-face nil
+                            :foreground "#D8DEE9")
+        (set-face-attribute 'calfw-periods-face nil
+                            :foreground "#A3BE8C")
+
+        ;; Holidays and annotations
+        (set-face-attribute 'calfw-holiday-face nil
+                            :foreground "#D08770" :weight 'bold)
+        (set-face-attribute 'calfw-annotation-face nil
+                            :foreground "#EBCB8B")
+
+        ;; Disabled/out of range days
+        (set-face-attribute 'calfw-disable-face nil
+                            :foreground "#4C566A")
+
+        ;; Hidden calendars
+        (set-face-attribute 'calfw-calendar-hidden-face nil
+                            :foreground "#4C566A" :strike-through t)
+
+        ;; Toolbar
+        (set-face-attribute 'calfw-toolbar-face nil
+                            :foreground "#3B4252" :background "#3B4252")
+        (set-face-attribute 'calfw-toolbar-button-off-face nil
+                            :foreground "#616E88" :background "#3B4252")
+        (set-face-attribute 'calfw-toolbar-button-on-face nil
+                            :foreground "#88C0D0" :background "#3B4252" :weight 'bold)))
+
+
+
+      (global-set-key (kbd "<f17>") 'my/open-calendar)
+      (message "calfw loaded")
 #+END_SRC
 
 #+RESULTS:
@@ -2615,7 +2622,7 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 
 ** Forge
 #+begin_src emacs-lisp
-  (use-package forge)
+;;  (use-package forge)
 #+end_src
 
 ** Git from Clipboard
