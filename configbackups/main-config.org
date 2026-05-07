@@ -638,7 +638,9 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
            ("C-c C-x l" . my/toggle-logbook)
            ("C-c M-a" . org-attach-screenshot)
            ("C-t". org-toggle-checkbox))
-    :config    
+    :config
+
+    (run-at-time "00:01" 60 #'org-agenda-redo-all)
     (setq org-agenda-files
           (quote ("~/Orgfiles"
                   "~/Orgfiles/Productivity/Goals"
