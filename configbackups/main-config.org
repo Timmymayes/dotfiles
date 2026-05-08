@@ -4045,6 +4045,8 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
        ("SomaFM - Sonic Universe"  . "https://somafm.com/sonicuniverse.pls")
        ("SomaFM - Metal"           . "https://somafm.com/metal.pls")
        ("SomaFM - Vaporwaves"      . "https://somafm.com/vaporwaves.pls")
+       ("SomaFM - Tiki Time" . "https://somafm.com/tikitime130.pls")
+       ("Jazz24" . "https://knkx-live-a.edge.audiocdn.com/6285_256k/playlist.m3u8")
        ("Retrowave Sax"            . "https://www.youtube.com/watch?v=001hXHNo-3w")
        ("I'm A Dude - 10 Hours"    . "https://www.youtube.com/watch?v=e2C1GVITrVI")
        ("Epic Sax Man - 10 hours"  . "https://www.youtube.com/watch?v=ez8m4PXksQs")
@@ -4062,6 +4064,7 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 #+END_SRC
 
 #+RESULTS:
+: music section loaded
 
 * Xah Lee Implementations
 Tried out Xah-fly-keys and didn't love his command mode but he has some really good helper rowing those below
