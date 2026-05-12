@@ -4190,12 +4190,18 @@ Tried out Xah-fly-keys and didn't love his command mode but he has some really g
 ** Load Hyper
 #+BEGIN_SRC emacs-lisp
 
-  (defun my/enable-hyper-key()
-    "Command to run hyper.sh when keyboard unplugs"
-    (interactive)
-    (shell-command "~/hyper.sh"))
+    ;; (defun my/enable-hyper-key()
+    ;;   "Command to run hyper.sh when keyboard unplugs"
+    ;;   (interactive)
+    ;;   (shell-command "~/hyper.sh"))
 
-  (global-set-key (kbd "s-<f10>") 'my/enable-hyper-key)
+  (defun my/enable-hyper-key ()
+    "Apply xmodmap config when keyboard replugs"
+    (interactive)
+    (let ((display (or (getenv "DISPLAY") ":0")))
+      (shell-command (format "DISPLAY=%s xmodmap ~/dotfiles/configbackups/.Xmodmap" display))))
+    
+    (global-set-key (kbd "s-<f10>") 'my/enable-hyper-key)
 
 #+END_SRC
 #+RESULTS:

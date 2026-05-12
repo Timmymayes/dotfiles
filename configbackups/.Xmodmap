@@ -7,11 +7,15 @@ keycode 196 = F18 F18 F18 F18 F18 F18
 keycode 197 = F19 F19 F19 F19 F19 F19
 keycode 198 = F20 F20 F20 F20 F20 F20
 keycode 199 = F21 F21 F21 F21 F21 F21
-keycode 200 = F22 F22 F22 F22 F22 F22
+keycode 200 = F22 F22 F22 F22 F22 F23
 keycode 201 = F23 F23 F23 F23 F23 F23
 keycode 202 = F24 F24 F24 F24 F24 F24
 
-clear		mod3
-remove		mod4 = Hyper_L
-add 		mod3 = Hyper_L
-keycode 	135 = Hyper_L
+clear lock
+clear mod3
+clear mod4
+keycode 133 = Super_L
+keycode 134 = Super_R
+keycode 135 = Hyper_L
+add mod4 = Super_L Super_R
+add mod3 = Hyper_L
