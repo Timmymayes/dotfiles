@@ -94,7 +94,7 @@ Require package and setup all package archives. Note changes to mode repositorie
   ;; clean up org package issues
   (assq-delete-all 'org package--builtins)
   (assq-delete-all 'org package--builtin-versions)
-  (package-refresh-contents)
+;  (package-refresh-contents)
   (message "Package contents loaded and refreshed")
 #+END_SRC
 
@@ -639,8 +639,14 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
            ("C-c M-a" . org-attach-screenshot)
            ("C-t". org-toggle-checkbox))
     :config
+    (run-at-time "00:01" 60
+  	       (lambda ()
+  		 (when (seq-some (lambda (buf)
+  				   (string-prefix-p "*Org Agenda" (buffer-name buf)))
+  				 (buffer-list))
+  		   (org-agenda-redo-all))))
 
-    (run-at-time "00:01" 60 #'org-agenda-redo-all)
+   
     (setq org-agenda-files
           (quote ("~/Orgfiles"
                   "~/Orgfiles/Productivity/Goals"
@@ -725,7 +731,7 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
     (setq org-global-properties
           '(("Effort_All" . "0 0:10 0:15 0:30 0:45 1:00 1:15 1:30 1:45  2:00 2:30  3:00 3:30 4:00")))
 
-      					; org capture
+        					; org capture
 
     (setq org-capture-templates
           '(
@@ -780,19 +786,19 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
              :prepend t ; prepend properties
              :created t ;
              )
-        	  ("s" "System")
-      	  ("sl" "System Log" entry
-      	   (file+headline "~/Orgfiles/config.org" "Logs")
-      	   "** Changes\n*** %^{Title}\n[%<%Y-%m-%d %a %H:%M>]\n:CONTEXT:\n- File/Location: %^{File or Location}\n- Reason: %^{Reason}\n:END:\n\n%?\n"
-      	   :empty-lines 1)
-      	  ("sf" "System Fix" entry
-      	   (file+headline "~/Orgfiles/config.org" "Logs")
-      	   "** Fixes\n*** %^{Title}\n[%<%Y-%m-%d %a %H:%M>]\n:CONTEXT:\n- File/Location: %^{File or Location}\n- Problem: %^{Problem}\n- Solution: %^{Solution}\n:END:\n\n%?\n"
-      	   :empty-lines 1)
-      	  ("si" "System Install" entry
-      	   (file+headline "~/Orgfiles/config.org" "Logs")
-      	   "** Installs\n*** %^{Title}\n[%<%Y-%m-%d %a %H:%M>]\n:CONTEXT:\n- Package/Tool: %^{Package or Tool}\n- Version: %^{Version}\n- Installed via: %^{apt/pip/cargo/etc}\n- Reason: %^{Reason}\n:END:\n\n%?\n"
-      	   :empty-lines 1)
+            ("s" "System")
+        	  ("sl" "System Log" entry
+        	   (file+headline "~/Orgfiles/config.org" "Logs")
+        	   "** Changes\n*** %^{Title}\n[%<%Y-%m-%d %a %H:%M>]\n:CONTEXT:\n- File/Location: %^{File or Location}\n- Reason: %^{Reason}\n:END:\n\n%?\n"
+        	   :empty-lines 1)
+        	  ("sf" "System Fix" entry
+        	   (file+headline "~/Orgfiles/config.org" "Logs")
+        	   "** Fixes\n*** %^{Title}\n[%<%Y-%m-%d %a %H:%M>]\n:CONTEXT:\n- File/Location: %^{File or Location}\n- Problem: %^{Problem}\n- Solution: %^{Solution}\n:END:\n\n%?\n"
+        	   :empty-lines 1)
+        	  ("si" "System Install" entry
+        	   (file+headline "~/Orgfiles/config.org" "Logs")
+        	   "** Installs\n*** %^{Title}\n[%<%Y-%m-%d %a %H:%M>]\n:CONTEXT:\n- Package/Tool: %^{Package or Tool}\n- Version: %^{Version}\n- Installed via: %^{apt/pip/cargo/etc}\n- Reason: %^{Reason}\n:END:\n\n%?\n"
+        	   :empty-lines 1)
             ("l" "Lexicon" )
             (
              "ln" ; key
@@ -3573,10 +3579,12 @@ Move the cursor
 ** Load config workspace
 #+BEGIN_SRC emacs-lisp
   (defun my/open-config-workspace ()
-    "Open a 3-pane config editing workspace:
+    "
+  Open a 3-pane config editing workspace:
   Left  : literate org config (full height)
   Right top    : *scratch*
-  Right bottom : *Messages* and *Warnings* side by side"
+  Right bottom : *Messages* and *Warnings* side by side
+  "
     (interactive)
     (delete-other-windows)
     ;; Left pane — full height org config
@@ -3785,14 +3793,15 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 ** Hide Dot Files
 - hotkey: . (dot)
 #+BEGIN_SRC emacs-lisp
-  (defun my-dired-mode-hook ()
-    "My `dired' mode hook."
-    ;; To hide dot-files by default
-    (dired-hide-dotfiles-mode))
+    (defun my-dired-mode-hook ()
+      "My `dired' mode hook."
+      ;; To hide dot-files by default
+      (dired-hide-dotfiles-mode))
 
-  ;; To toggle hiding
-  (define-key dired-mode-map "." #'dired-hide-dotfiles-mode)
-  ;;  (add-hook 'dired-mode-hook #'my-dired-mode-hook)
+    ;; To toggle hiding
+  (with-eval-after-load 'dired
+    (define-key dired-mode-map "." #'dired-hide-dotfiles-mode) )
+    ;;  (add-hook 'dired-mode-hook #'my-dired-mode-hook)
 
 #+END_SRC
 
