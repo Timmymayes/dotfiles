@@ -640,13 +640,13 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
            ("C-t". org-toggle-checkbox))
     :config
     (run-at-time "00:01" 60
-  	       (lambda ()
-  		 (when (seq-some (lambda (buf)
-  				   (string-prefix-p "*Org Agenda" (buffer-name buf)))
-  				 (buffer-list))
-  		   (org-agenda-redo-all))))
+    	       (lambda ()
+    		 (when (seq-some (lambda (buf)
+    				   (string-prefix-p "*Org Agenda" (buffer-name buf)))
+    				 (buffer-list))
+    		   (org-agenda-redo-all))))
 
-   
+    
     (setq org-agenda-files
           (quote ("~/Orgfiles"
                   "~/Orgfiles/Productivity/Goals"
@@ -672,6 +672,9 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
         (re-search-forward ":PROPERTIES:" nil t)
         (org-hide-drawer-toggle )))
 
+    (with-eval-after-load 'org
+      (define-key org-mode-map (kbd "M-RET") #'my/insert-meeting-todo))
+    
     (with-eval-after-load 'org-habit
       (set-face-attribute 'org-habit-clear-face nil :background "#5A6680")
       (set-face-attribute 'org-habit-clear-future-face nil :background "#4C566A")
@@ -731,7 +734,7 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
     (setq org-global-properties
           '(("Effort_All" . "0 0:10 0:15 0:30 0:45 1:00 1:15 1:30 1:45  2:00 2:30  3:00 3:30 4:00")))
 
-        					; org capture
+  					; org capture
 
     (setq org-capture-templates
           '(
@@ -787,18 +790,18 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
              :created t ;
              )
             ("s" "System")
-        	  ("sl" "System Log" entry
-        	   (file+headline "~/Orgfiles/config.org" "Logs")
-        	   "** Changes\n*** %^{Title}\n[%<%Y-%m-%d %a %H:%M>]\n:CONTEXT:\n- File/Location: %^{File or Location}\n- Reason: %^{Reason}\n:END:\n\n%?\n"
-        	   :empty-lines 1)
-        	  ("sf" "System Fix" entry
-        	   (file+headline "~/Orgfiles/config.org" "Logs")
-        	   "** Fixes\n*** %^{Title}\n[%<%Y-%m-%d %a %H:%M>]\n:CONTEXT:\n- File/Location: %^{File or Location}\n- Problem: %^{Problem}\n- Solution: %^{Solution}\n:END:\n\n%?\n"
-        	   :empty-lines 1)
-        	  ("si" "System Install" entry
-        	   (file+headline "~/Orgfiles/config.org" "Logs")
-        	   "** Installs\n*** %^{Title}\n[%<%Y-%m-%d %a %H:%M>]\n:CONTEXT:\n- Package/Tool: %^{Package or Tool}\n- Version: %^{Version}\n- Installed via: %^{apt/pip/cargo/etc}\n- Reason: %^{Reason}\n:END:\n\n%?\n"
-        	   :empty-lines 1)
+            ("sl" "System Log" entry
+             (file+headline "~/Orgfiles/config.org" "Logs")
+             "** Changes\n*** %^{Title}\n[%<%Y-%m-%d %a %H:%M>]\n:CONTEXT:\n- File/Location: %^{File or Location}\n- Reason: %^{Reason}\n:END:\n\n%?\n"
+             :empty-lines 1)
+            ("sf" "System Fix" entry
+             (file+headline "~/Orgfiles/config.org" "Logs")
+             "** Fixes\n*** %^{Title}\n[%<%Y-%m-%d %a %H:%M>]\n:CONTEXT:\n- File/Location: %^{File or Location}\n- Problem: %^{Problem}\n- Solution: %^{Solution}\n:END:\n\n%?\n"
+             :empty-lines 1)
+            ("si" "System Install" entry
+             (file+headline "~/Orgfiles/config.org" "Logs")
+             "** Installs\n*** %^{Title}\n[%<%Y-%m-%d %a %H:%M>]\n:CONTEXT:\n- Package/Tool: %^{Package or Tool}\n- Version: %^{Version}\n- Installed via: %^{apt/pip/cargo/etc}\n- Reason: %^{Reason}\n:END:\n\n%?\n"
+             :empty-lines 1)
             ("l" "Lexicon" )
             (
              "ln" ; key
