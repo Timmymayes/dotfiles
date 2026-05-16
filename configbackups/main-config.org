@@ -3903,6 +3903,54 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 #+RESULTS:
 | /home/tyler/miniconda3/bin | /home/tyler/.local/bin | /usr/local/sbin | /usr/local/bin | /usr/sbin | /usr/bin | /sbin | /bin | /usr/games | /usr/local/games | /snap/bin | /snap/bin | /snap/emacs/3690/usr/bin | /snap/emacs/current/usr/libexec/emacs/30.2/x86_64-pc-linux-gnu |
 
+
+** Directory Tree Stamper
+#+BEGIN_SRC emacs-lisp
+(require 'transient)
+
+(defvar my/insert-map (make-sparse-keymap)
+  "Keymap for personal insert commands (C-c i prefix).")
+(define-key global-map (kbd "C-c i") my/insert-map)
+
+(defun my/insert-char (char)
+  "Insert a unicode character."
+  (insert (string char)))
+
+(transient-define-prefix my/box-primitives-transient ()
+  "Single box-drawing character insertion."
+  [["Light lines"
+    ("-" "─ horizontal" (lambda () (interactive) (my/insert-char ?─)))
+    ("|" "│ vertical"   (lambda () (interactive) (my/insert-char ?│)))]
+   ["Corners"
+    ("1" "┌ top-left"     (lambda () (interactive) (my/insert-char ?┌)))
+    ("2" "┐ top-right"    (lambda () (interactive) (my/insert-char ?┐)))
+    ("3" "└ bottom-left"  (lambda () (interactive) (my/insert-char ?└)))
+    ("4" "┘ bottom-right" (lambda () (interactive) (my/insert-char ?┘)))]
+   ["Junctions"
+    ("f" "├ left-T"    (lambda () (interactive) (my/insert-char ?├)))
+    ("r" "┤ right-T"   (lambda () (interactive) (my/insert-char ?┤)))
+    ("d" "┬ top-T"     (lambda () (interactive) (my/insert-char ?┬)))
+    ("u" "┴ bottom-T"  (lambda () (interactive) (my/insert-char ?┴)))
+    ("+" "┼ cross"     (lambda () (interactive) (my/insert-char ?┼)))]])
+
+(transient-define-prefix my/box-drawing-transient ()
+  "Insert box-drawing chunks for trees and diagrams."
+  [["Tree"
+    ("f" "├── mid item"     (lambda () (interactive) (insert "├── ")))
+    ("l" "└── last item"    (lambda () (interactive) (insert "└── ")))
+    ("m" "│   continuation" (lambda () (interactive) (insert "│   ")))
+    ("s" "    blank indent" (lambda () (interactive) (insert "    ")))]
+   ["Primitives"
+    ("p" "single chars..." my/box-primitives-transient)]])
+
+(define-key my/insert-map (kbd "t") #'my/box-drawing-transient)
+
+(which-key-add-keymap-based-replacements my/insert-map
+  "t" "box drawing")
+
+
+#+END_SRC
+
 ** Section Loaded Message
 #+BEGIN_SRC emacs-lisp
   (message "Testing section loaded")
