@@ -3724,7 +3724,7 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
         (when context
   	(insert "[" context "] "))))
 
-    (define-key org-mode-map (kbd "C-c i") #'my/insert-meeting-todo)
+
     (define-key org-mode-map (kbd "C-c C-x m") #'my/set-meeting-context))
 
 #+END_SRC
