@@ -94,7 +94,7 @@ Require package and setup all package archives. Note changes to mode repositorie
   ;; clean up org package issues
   (assq-delete-all 'org package--builtins)
   (assq-delete-all 'org package--builtin-versions)
-;  (package-refresh-contents)
+  					;  (package-refresh-contents)
   (message "Package contents loaded and refreshed")
 #+END_SRC
 
@@ -639,14 +639,16 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
            ("C-c M-a" . org-attach-screenshot)
            ("C-t". org-toggle-checkbox))
     :config
-    (run-at-time "00:01" 60
-    	       (lambda ()
-    		 (when (seq-some (lambda (buf)
-    				   (string-prefix-p "*Org Agenda" (buffer-name buf)))
-    				 (buffer-list))
-    		   (org-agenda-redo-all))))
 
-    
+    ;; Reload the agenda every minute
+    (run-at-time "00:01" 60
+        	       (lambda ()
+        		 (when (seq-some (lambda (buf)
+        				   (string-prefix-p "*Org Agenda" (buffer-name buf)))
+        				 (buffer-list))
+        		   (org-agenda-redo-all))))
+
+    ;; set agenda files
     (setq org-agenda-files
           (quote ("~/Orgfiles"
                   "~/Orgfiles/Productivity/Goals"
@@ -672,9 +674,11 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
         (re-search-forward ":PROPERTIES:" nil t)
         (org-hide-drawer-toggle )))
 
+    ;; Redefine org-meta to use my custom meeting context version
     (with-eval-after-load 'org
       (define-key org-mode-map (kbd "M-RET") #'my/insert-meeting-todo))
-    
+
+    ;; set org-habit colors to fit with Nano Theme
     (with-eval-after-load 'org-habit
       (set-face-attribute 'org-habit-clear-face nil :background "#5A6680")
       (set-face-attribute 'org-habit-clear-future-face nil :background "#4C566A")
@@ -685,7 +689,7 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
       (set-face-attribute 'org-habit-overdue-face nil :background "#BF616A")
       (set-face-attribute 'org-habit-overdue-future-face nil :background "#8C3A40"))
 
-
+    ;; setup deadlines to match nano theme
     (with-eval-after-load 'org
       (set-face-attribute 'org-upcoming-distant-deadline nil :foreground "#C4A000" :weight 'normal)
       (set-face-attribute 'org-upcoming-deadline nil :foreground "#F5C518" :weight 'bold)
@@ -734,8 +738,14 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
     (setq org-global-properties
           '(("Effort_All" . "0 0:10 0:15 0:30 0:45 1:00 1:15 1:30 1:45  2:00 2:30  3:00 3:30 4:00")))
 
-  					; org capture
+      					; org capture
 
+    (set-face-attribute 'org-agenda-clocking nil
+                        :background 'unspecified
+                        :foreground "#A3BE8C"
+                        :weight 'bold
+                        :extend t)
+    
     (setq org-capture-templates
           '(
             ("t" "Tasks/Projects")
