@@ -4110,7 +4110,7 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
        ("Retrowave Sax"            . "https://www.youtube.com/watch?v=001hXHNo-3w")
        ("I'm A Dude - 10 Hours"    . "https://www.youtube.com/watch?v=e2C1GVITrVI")
        ("Epic Sax Man - 10 hours"  . "https://www.youtube.com/watch?v=ez8m4PXksQs")
-       ("Italy Cafe"               . "https://www.youtube.com/watch?v=wH4xZ7T9kO4")
+       ("Italy Cafe"               . "https://www.youtube.com/watch?v=D_9cyVNxDPk")
        ("YouTube Mix - High BPM Trance" . "https://youtube/q7gv9B4Kw44"))))
 
     (with-eval-after-load 'empv
