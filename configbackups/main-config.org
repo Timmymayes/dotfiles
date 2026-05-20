@@ -2370,90 +2370,90 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
   (defalias 'return 'cl-return)
 
 
-    (require 'calfw)
-      (with-eval-after-load 'calfw
-        (require 'calfw-org)
-        (require 'calfw-cal)
-        (require 'calfw-gcal)
+  (require 'calfw)
+  (with-eval-after-load 'calfw
+    (require 'calfw-org)
+    (require 'calfw-cal)
+    (require 'calfw-gcal)
 
 
-        (defun my/open-calendar ()
-          (interactive)
-          (calfw-open-calendar-buffer
-           :contents-sources
-           (list
-            (calfw-org-create-file-source "SEAS" "~/Orgfiles/SEAS.org" "#a0a0a0")  ; Work orgmode source
-            (calfw-org-create-file-source "PERSONAL" "~/Orgfiles/tasks.org" "Orange") ; Personal orgmode
-            ))))
+    (defun my/open-calendar ()
+      (interactive)
+      (calfw-open-calendar-buffer
+       :contents-sources
+       (list
+        (calfw-org-create-file-source "SEAS" "~/Orgfiles/SEAS.org" "#a0a0a0")  ; Work orgmode source
+        (calfw-org-create-file-source "PERSONAL" "~/Orgfiles/tasks.org" "Orange") ; Personal orgmode
+        ))))
 
-      ;; Remove holidays
-      (setq 
-       holiday-hebrew-holidays nil
-       holiday-islamic-holidays nil
-       holiday-bahai-holidays nil
-       holiday-oriental-holidays nil)
-      (with-eval-after-load 'calfw
-        (ignore-errors
-        ;; Title and headers
-        (set-face-attribute 'calfw-title-face nil
-                            :foreground "#88C0D0" :weight 'bold)
-        (set-face-attribute 'calfw-header-face nil
-                            :foreground "#3B4252" :background "#81A1C1" :weight 'bold)
+  ;; Remove holidays
+  (setq 
+   holiday-hebrew-holidays nil
+   holiday-islamic-holidays nil
+   holiday-bahai-holidays nil
+   holiday-oriental-holidays nil)
+  (with-eval-after-load 'calfw
+    (ignore-errors
+      ;; Title and headers
+      (set-face-attribute 'calfw-title-face nil
+                          :foreground "#88C0D0" :weight 'bold)
+      (set-face-attribute 'calfw-header-face nil
+                          :foreground "#3B4252" :background "#81A1C1" :weight 'bold)
 
-        ;; Grid
-        (set-face-attribute 'calfw-grid-face nil
-                            :foreground "#81A1C1")
+      ;; Grid
+      (set-face-attribute 'calfw-grid-face nil
+                          :foreground "#81A1C1")
 
-        ;; Weekday headers
-        (set-face-attribute 'calfw-sunday-face nil
-                            :foreground "#B48E88" :background "#81A1C1" :weight 'bold)
-        (set-face-attribute 'calfw-saturday-face nil
-                            :foreground "#B48EAD" :background "#81A1C1" :weight 'bold)
+      ;; Weekday headers
+      (set-face-attribute 'calfw-sunday-face nil
+                          :foreground "#B48E88" :background "#81A1C1" :weight 'bold)
+      (set-face-attribute 'calfw-saturday-face nil
+                          :foreground "#B48EAD" :background "#81A1C1" :weight 'bold)
 
-        ;; Day cells
-        (set-face-attribute 'calfw-day-title-face nil
-                            :background "#3B4252")
-        (set-face-attribute 'calfw-default-day-face nil
-                            :background "#2E3440" :weight 'bold)
+      ;; Day cells
+      (set-face-attribute 'calfw-day-title-face nil
+                          :background "#3B4252")
+      (set-face-attribute 'calfw-default-day-face nil
+                          :background "#2E3440" :weight 'bold)
 
-        ;; Today
-        (set-face-attribute 'calfw-today-title-face nil
-                            :background "#3B4252" :weight 'bold)
-        (set-face-attribute 'calfw-today-face nil
-                            :foreground "#88C0D0" :weight 'bold)
+      ;; Today
+      (set-face-attribute 'calfw-today-title-face nil
+                          :background "#3B4252" :weight 'bold)
+      (set-face-attribute 'calfw-today-face nil
+                          :foreground "#88C0D0" :weight 'bold)
 
-        ;; Content and periods
-        (set-face-attribute 'calfw-default-content-face nil
-                            :foreground "#D8DEE9")
-        (set-face-attribute 'calfw-periods-face nil
-                            :foreground "#A3BE8C")
+      ;; Content and periods
+      (set-face-attribute 'calfw-default-content-face nil
+                          :foreground "#D8DEE9")
+      (set-face-attribute 'calfw-periods-face nil
+                          :foreground "#A3BE8C")
 
-        ;; Holidays and annotations
-        (set-face-attribute 'calfw-holiday-face nil
-                            :foreground "#D08770" :weight 'bold)
-        (set-face-attribute 'calfw-annotation-face nil
-                            :foreground "#EBCB8B")
+      ;; Holidays and annotations
+      (set-face-attribute 'calfw-holiday-face nil
+                          :foreground "#D08770" :weight 'bold)
+      (set-face-attribute 'calfw-annotation-face nil
+                          :foreground "#EBCB8B")
 
-        ;; Disabled/out of range days
-        (set-face-attribute 'calfw-disable-face nil
-                            :foreground "#4C566A")
+      ;; Disabled/out of range days
+      (set-face-attribute 'calfw-disable-face nil
+                          :foreground "#4C566A")
 
-        ;; Hidden calendars
-        (set-face-attribute 'calfw-calendar-hidden-face nil
-                            :foreground "#4C566A" :strike-through t)
+      ;; Hidden calendars
+      (set-face-attribute 'calfw-calendar-hidden-face nil
+                          :foreground "#4C566A" :strike-through t)
 
-        ;; Toolbar
-        (set-face-attribute 'calfw-toolbar-face nil
-                            :foreground "#3B4252" :background "#3B4252")
-        (set-face-attribute 'calfw-toolbar-button-off-face nil
-                            :foreground "#616E88" :background "#3B4252")
-        (set-face-attribute 'calfw-toolbar-button-on-face nil
-                            :foreground "#88C0D0" :background "#3B4252" :weight 'bold)))
+      ;; Toolbar
+      (set-face-attribute 'calfw-toolbar-face nil
+                          :foreground "#3B4252" :background "#3B4252")
+      (set-face-attribute 'calfw-toolbar-button-off-face nil
+                          :foreground "#616E88" :background "#3B4252")
+      (set-face-attribute 'calfw-toolbar-button-on-face nil
+                          :foreground "#88C0D0" :background "#3B4252" :weight 'bold)))
 
 
 
-      (global-set-key (kbd "<f17>") 'my/open-calendar)
-      (message "calfw loaded")
+  (global-set-key (kbd "<f17>") 'my/open-calendar)
+  (message "calfw loaded")
 #+END_SRC
 
 #+RESULTS:
@@ -2643,7 +2643,7 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 
 ** Forge
 #+begin_src emacs-lisp
-;;  (use-package forge)
+  ;;  (use-package forge)
 #+end_src
 
 ** Git from Clipboard
@@ -3734,7 +3734,7 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
         (when context
   	(insert "[" context "] "))))
 
-
+    (define-key org-mode-map (kbd "C-c i") #'my/insert-meeting-todo)
     (define-key org-mode-map (kbd "C-c C-x m") #'my/set-meeting-context))
 
 #+END_SRC
@@ -3919,50 +3919,52 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 
 ** Directory Tree Stamper
 #+BEGIN_SRC emacs-lisp
-(require 'transient)
+  (require 'transient)
 
-(defvar my/insert-map (make-sparse-keymap)
-  "Keymap for personal insert commands (C-c i prefix).")
-(define-key global-map (kbd "C-c i") my/insert-map)
+  (defvar my/insert-map (make-sparse-keymap)
+    "Keymap for personal insert commands (C-c i prefix).")
+  (define-key global-map (kbd "C-c M-i") my/insert-map)
 
-(defun my/insert-char (char)
-  "Insert a unicode character."
-  (insert (string char)))
+  (defun my/insert-char (char)
+    "Insert a unicode character."
+    (insert (string char)))
 
-(transient-define-prefix my/box-primitives-transient ()
-  "Single box-drawing character insertion."
-  [["Light lines"
-    ("-" "─ horizontal" (lambda () (interactive) (my/insert-char ?─)))
-    ("|" "│ vertical"   (lambda () (interactive) (my/insert-char ?│)))]
-   ["Corners"
-    ("1" "┌ top-left"     (lambda () (interactive) (my/insert-char ?┌)))
-    ("2" "┐ top-right"    (lambda () (interactive) (my/insert-char ?┐)))
-    ("3" "└ bottom-left"  (lambda () (interactive) (my/insert-char ?└)))
-    ("4" "┘ bottom-right" (lambda () (interactive) (my/insert-char ?┘)))]
-   ["Junctions"
-    ("f" "├ left-T"    (lambda () (interactive) (my/insert-char ?├)))
-    ("r" "┤ right-T"   (lambda () (interactive) (my/insert-char ?┤)))
-    ("d" "┬ top-T"     (lambda () (interactive) (my/insert-char ?┬)))
-    ("u" "┴ bottom-T"  (lambda () (interactive) (my/insert-char ?┴)))
-    ("+" "┼ cross"     (lambda () (interactive) (my/insert-char ?┼)))]])
+  (transient-define-prefix my/box-primitives-transient ()
+    "Single box-drawing character insertion."
+    [["Light lines"
+      ("-" "─ horizontal" (lambda () (interactive) (my/insert-char ?─)))
+      ("|" "│ vertical"   (lambda () (interactive) (my/insert-char ?│)))]
+     ["Corners"
+      ("1" "┌ top-left"     (lambda () (interactive) (my/insert-char ?┌)))
+      ("2" "┐ top-right"    (lambda () (interactive) (my/insert-char ?┐)))
+      ("3" "└ bottom-left"  (lambda () (interactive) (my/insert-char ?└)))
+      ("4" "┘ bottom-right" (lambda () (interactive) (my/insert-char ?┘)))]
+     ["Junctions"
+      ("f" "├ left-T"    (lambda () (interactive) (my/insert-char ?├)))
+      ("r" "┤ right-T"   (lambda () (interactive) (my/insert-char ?┤)))
+      ("d" "┬ top-T"     (lambda () (interactive) (my/insert-char ?┬)))
+      ("u" "┴ bottom-T"  (lambda () (interactive) (my/insert-char ?┴)))
+      ("+" "┼ cross"     (lambda () (interactive) (my/insert-char ?┼)))]])
 
-(transient-define-prefix my/box-drawing-transient ()
-  "Insert box-drawing chunks for trees and diagrams."
-  [["Tree"
-    ("f" "├── mid item"     (lambda () (interactive) (insert "├── ")))
-    ("l" "└── last item"    (lambda () (interactive) (insert "└── ")))
-    ("m" "│   continuation" (lambda () (interactive) (insert "│   ")))
-    ("s" "    blank indent" (lambda () (interactive) (insert "    ")))]
-   ["Primitives"
-    ("p" "single chars..." my/box-primitives-transient)]])
+  (transient-define-prefix my/box-drawing-transient ()
+    "Insert box-drawing chunks for trees and diagrams."
+    [["Tree"
+      ("f" "├── mid item"     (lambda () (interactive) (insert "├── ")))
+      ("l" "└── last item"    (lambda () (interactive) (insert "└── ")))
+      ("m" "│   continuation" (lambda () (interactive) (insert "│   ")))
+      ("s" "    blank indent" (lambda () (interactive) (insert "    ")))]
+     ["Primitives"
+      ("p" "single chars..." my/box-primitives-transient)]])
 
-(define-key my/insert-map (kbd "t") #'my/box-drawing-transient)
+  (define-key my/insert-map (kbd "t") #'my/box-drawing-transient)
 
-(which-key-add-keymap-based-replacements my/insert-map
-  "t" "box drawing")
+  (which-key-add-keymap-based-replacements my/insert-map
+    "t" "box drawing")
 
 
 #+END_SRC
+
+#+RESULTS:
 
 ** Section Loaded Message
 #+BEGIN_SRC emacs-lisp
