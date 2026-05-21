@@ -47,7 +47,9 @@ On the rare occasion utf-8 encoding is lost this is a note for myself on how to 
   (setq w32-pass-apps-to-system nil)
   (setq w32-apps-modifier 'hyper)
   (setq w32-pass-lwindow-to-system nil)
+  (setq w32-pass-rwindow-to-system nil)
   (setq w32-lwindow-modifier 'super)
+  (setq w32-rwindow-modifier 'super)
 #+END_SRC
 
 #+RESULTS:
@@ -3619,7 +3621,7 @@ Move the cursor
       ;; Return focus to config
       (select-window config-window)))
 
-  (global-set-key (kbd "s-c") #'my/open-config-workspace)
+  (global-set-key (kbd "M-s-c") #'my/open-config-workspace)
 
 #+END_SRC
 
