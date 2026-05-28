@@ -653,12 +653,6 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
     :config
 
     ;; Reload the agenda every minute
-    (run-at-time "00:01" 60
-        	       (lambda ()
-        		 (when (seq-some (lambda (buf)
-        				   (string-prefix-p "*Org Agenda" (buffer-name buf)))
-        				 (buffer-list))
-        		   (org-agenda-redo-all))))
 
     ;; set agenda files
     (setq org-agenda-files
