@@ -2094,6 +2094,53 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 
 #+RESULTS:
 : org-agenda-remove-restriction-lock
+** My Org Functions
+#+BEGIN_SRC emacs-lisp
+
+  (defun my/agenda-add-note-heading ()
+    "Add a child NOTE heading to the org entry at point in the agenda."
+    (interactive)
+    (let ((marker (or (org-get-at-bol 'org-marker)
+                      (org-get-at-bol 'org-hd-marker))))
+      (unless marker
+        (user-error "No org entry at point"))
+      (let ((note-text (read-string "Note heading: "))
+            note-pos)
+        (org-with-point-at marker
+          (org-back-to-heading t)
+          (let ((level (1+ (org-current-level))))
+            (org-end-of-subtree t t)
+            (setq note-pos (point-marker))
+            (insert (make-string level ?*) " " note-text " :NOTE:\n"
+                    ":PROPERTIES:\n:CATEGORY: Note\n:END:\n"
+                    (format-time-string "[%Y-%m-%d %a]\n\n"))
+            (save-buffer)))
+        (setq my/last-agenda-note-marker note-pos))))
+
+  (defun my/agenda-jump-to-last-note ()
+    "Jump to the last note heading added via my/agenda-add-note-heading."
+    (interactive)
+    (unless (and (boundp 'my/last-agenda-note-marker)
+                 my/last-agenda-note-marker)
+      (user-error "No note added yet this session"))
+    (switch-to-buffer (marker-buffer my/last-agenda-note-marker))
+    (goto-char my/last-agenda-note-marker)
+    (org-show-context 'default)
+    (forward-line 5))
+
+  (define-key org-agenda-mode-map (kbd "z") #'my/agenda-add-note-heading)
+  (define-key org-agenda-mode-map (kbd "Z") #'my/agenda-jump-to-last-note)
+
+  (define-key org-agenda-mode-map (kbd "C-c C-z") #'my/agenda-add-note-heading)
+  (define-key org-agenda-mode-map (kbd "C-c C-Z") #'my/agenda-jump-to-last-note)
+  (define-key org-agenda-mode-map (kbd "H-z") #'my/agenda-jump-to-last-note)
+
+
+#+END_SRC
+
+#+RESULTS:
+: my/agenda-jump-to-last-note
+
 ** Section Loaded Message
 #+BEGIN_SRC emacs-lisp
   (message "Org Config Setup Section Loaded")
