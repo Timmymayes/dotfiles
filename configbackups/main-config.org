@@ -93,10 +93,18 @@ Require package and setup all package archives. Note changes to mode repositorie
                            ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
 
   (package-initialize)
+  (add-to-list 'load-path
+               (concat user-emacs-directory
+                       (car (file-name-all-completions "org-"
+      						     (concat user-emacs-directory "elpa/")))))
   ;; clean up org package issues
   (assq-delete-all 'org package--builtins)
   (assq-delete-all 'org package--builtin-versions)
-  					;  (package-refresh-contents)
+  ;; supress org-warnings
+  ;;  (add-to-list !warning-supresstypes !(org))
+      					;  (package-refresh-contents)
+
+(setq warning-suppress-log-types '((org) (emacs)))
   (message "Package contents loaded and refreshed")
 #+END_SRC
 
