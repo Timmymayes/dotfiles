@@ -681,8 +681,6 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
         (org-hide-drawer-toggle )))
 
     ;; Redefine org-meta to use my custom meeting context version
-    (with-eval-after-load 'org
-      (define-key org-mode-map (kbd "M-RET") #'my/insert-meeting-todo))
 
     ;; set org-habit colors to fit with Nano Theme
     (with-eval-after-load 'org-habit
