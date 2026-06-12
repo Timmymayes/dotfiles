@@ -756,6 +756,7 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
            ("M-n" . org-next-visible-heading)
            ("C-c C-x l" . my/toggle-logbook)
            ("C-c M-a" . org-attach-screenshot)
+  	 ("C-M-i" . org-indent-block)
            ("C-t". org-toggle-checkbox))
     :config
 
@@ -767,7 +768,7 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
                   "~/Orgfiles/Productivity/Goals"
                   "~/Orgfiles/Productivity/Review"
                   )))
-
+    (setq org-attach-method 'cp)
 
     ;; Toggle functions for opening and closing property and logbook drawers
 
@@ -849,7 +850,7 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
     (setq org-global-properties
           '(("Effort_All" . "0 0:10 0:15 0:30 0:45 1:00 1:15 1:30 1:45  2:00 2:30  3:00 3:30 4:00")))
 
-      					; org capture
+  					; org capture
 
     (set-face-attribute 'org-agenda-clocking nil
                         :background 'unspecified
