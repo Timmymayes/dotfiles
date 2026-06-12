@@ -2838,6 +2838,16 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 #+RESULTS:
 | electric-indent-mode | electric-pair-mode | my-display-numbers-hook  | rainbow-delimiters-mode |
 |                      |                    |                                                  |
+** Paredit
+#+BEGIN_SRC emacs-lisp
+  (use-package paredit
+    :ensure t
+    :hook ((emacs-lisp-mode . paredit-mode)
+           (lisp-mode . paredit-mode)
+           (scheme-mode . paredit-mode)
+           (clojure-mode . paredit-mode)
+           (racket-mode . paredit-mode)))
+#+END_SRC
 ** Line Numbers
 #+begin_src emacs-lisp
   (setq display-line-numbers-type 'relative)
