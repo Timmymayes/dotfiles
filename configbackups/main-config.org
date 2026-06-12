@@ -4265,7 +4265,7 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
   (defun my/empv-play-file-from-music()
     "Play a file via empv starting in ~/Music"
     (interactive)
-    (let ((default-directory (expand-file-name "~/Music/")))
+    (let ((default-directory (expand-file-name "~/Orgfiles/Music/")))
       (call-interactively #'empv-play-file)))
 
 
