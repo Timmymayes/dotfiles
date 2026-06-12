@@ -509,14 +509,88 @@ Turn on Yas global mode
     (define-key my/gptel-map (kbd "r r") #'gptel-rewrite)
     (define-key my/gptel-map (kbd "r s") #'my/gptel-rewrite-spelling))
 
+  ;; Custom Functions
+  (defun my/gptel-use-haiku ()
+    "Switch to Claude Haiku (fast/cheap)."
+    (interactive)
+    (setq gptel-model 'claude-haiku-4-5)
+    (message "GPTel: switched to Claude Haiku"))
 
+  (defun my/gptel-use-sonnet ()
+    "Switch to Claude Sonnet (balanced)."
+    (interactive)
+    (setq gptel-model 'claude-sonnet-4-5)
+    (message "GPTel: switched to Claude Sonnet"))
 
+  (defun my/gptel-use-opus ()
+    "Switch to Claude Opus (powerful/expensive)."
+    (interactive)
+    (setq gptel-model 'claude-opus-4-5)
+    (message "GPTel: switched to Claude Opus"))
+
+  (defvar my/gptel-current-directive 'default
+    "Tracks the currently active gptel directive.")
+
+  (defun my/gptel-directive-default ()
+    "Switch to default gptel directive."
+    (interactive)
+    (setq gptel--system-message
+          (alist-get 'default gptel-directives))
+    (setq my/gptel-current-directive 'default)
+    (message "GPTel: directive → default"))
+
+  (defun my/gptel-directive-mentor ()
+    "Switch to mentor directive - coaching mode."
+    (interactive)
+    (setq gptel--system-message
+          (alist-get 'mentor gptel-directives))
+    (setq my/gptel-current-directive 'mentor)
+    (message "GPTel: directive → mentor"))
+
+  (defun my/gptel-directive-fix ()
+    "Switch to fix directive - terse code correction."
+    (interactive)
+    (setq gptel--system-message
+          (alist-get 'fix gptel-directives))
+    (setq my/gptel-current-directive 'fix)
+    (message "GPTel: directive → fix"))
+
+  (defun my/gptel-directive-review ()
+    "Switch to review directive - succinct code review."
+    (interactive)
+    (setq gptel--system-message
+          (alist-get 'review gptel-directives))
+    (setq my/gptel-current-directive 'review)
+    (message "GPTel: directive → review"))
+
+  ;; Display model and directive in modeline
+  (defun my/gptel-model-short-name ()
+    "Return a short display name for the current gptel model."
+    (pcase gptel-model
+      ('claude-haiku-4-5  "Haiku")
+      ('claude-sonnet-4-5 "Sonnet")
+      ('claude-sonnet-4-6 "Sonnet")
+      ('claude-opus-4-5   "Opus")
+      (_ (symbol-name gptel-model))))
+
+  (defun my/gptel-directive-short-name ()
+    "Return the current directive as a capitalized string."
+    (capitalize (symbol-name my/gptel-current-directive)))
+
+  (defvar my/gptel-mode-line-segment
+    '(:eval (format " [%s:%s]"
+                    (my/gptel-model-short-name)
+                    (my/gptel-directive-short-name)))
+    "Mode-line segment showing current gptel model and directive.")
+
+  ;; Add to global mode-line
+  (add-to-list 'global-mode-string my/gptel-mode-line-segment t)
 
 
 #+END_SRC
 
 #+RESULTS:
-: t
+: my/gptel-directive-review
 ** Misc bindings for now
 #+BEGIN_SRC emacs-lisp
 
