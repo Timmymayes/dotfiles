@@ -566,6 +566,30 @@ Turn on Yas global mode
     (setq my/gptel-current-directive 'review)
     (message "GPTel: directive → review"))
 
+  (defun my/gptel-directive-programming ()
+    "Switch to programming directive."
+    (interactive)
+    (setq gptel--system-message
+          (alist-get 'programming gptel-directives))
+    (setq my/gptel-current-directive 'programming)
+    (message "GPTel: directive → programming"))
+
+  (defun my/gptel-directive-writing ()
+    "Switch to writing directive."
+    (interactive)
+    (setq gptel--system-message
+          (alist-get 'writing gptel-directives))
+    (setq my/gptel-current-directive 'writing)
+    (message "GPTel: directive → writing"))
+
+  (defun my/gptel-directive-chat ()
+    "Switch to chat directive."
+    (interactive)
+    (setq gptel--system-message
+          (alist-get 'chat gptel-directives))
+    (setq my/gptel-current-directive 'chat)
+    (message "GPTel: directive → chat"))
+
   ;; Display model and directive in modeline
   (defun my/gptel-model-short-name ()
     "Return a short display name for the current gptel model."
