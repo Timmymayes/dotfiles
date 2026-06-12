@@ -456,18 +456,24 @@ Turn on Yas global mode
     :config
     (setq gptel-default-mode 'org-mode)
     (setq auth-sources '("~/.authinfo.gpg"))
+    (setq gptel-directives
+        	(append gptel-directives
+        		'((mentor . "You are a programming mentor. Your role is to guide and coach, not to do the work. Ask clarifying questions, point me toward the right concepts, suggest what to look up, and give hints rather than solutions. If I'm going in the wrong direction, tell me why without correcting it for me.")
+                    (fix . "You are a precise code fixer. I will send you broken or incorrect code. Return only the corrected code with minimal explanation unless the fix requires context. Be terse.")
+                    (review . "You are a code reviewer. Succinctly identify problems, bugs, gotchas, edge cases, and design issues. Use a bullet list. Do not rewrite the code unless asked. Prioritize by severity."))))
 
+    
     ;; OpenAI (existing)
     (setq gptel-api-key
-  	(auth-source-pick-first-password :host "api.openai.com"))
+          (auth-source-pick-first-password :host "api.openai.com"))
 
     ;; Claude - store the backend in a variable
     (let ((claude (gptel-make-anthropic "Claude"
-  		  :stream t
-  		  :key (auth-source-pick-first-password :host "api.anthropic.com"))))
+          	  :stream t
+          	  :key (auth-source-pick-first-password :host "api.anthropic.com"))))
       ;; Set it as the default backend
       (setq gptel-backend claude
-  	  gptel-model 'claude-sonnet-4-6))
+            gptel-model 'claude-sonnet-4-6))
 
     (setq gptel-log-level 'info)
     ;; Core keymap
