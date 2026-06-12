@@ -486,6 +486,7 @@ Turn on Yas global mode
     (define-key my/gptel-map (kbd "s")   #'gptel-send)
     (define-key my/gptel-map (kbd "m")   #'gptel-menu)
     (define-key my/gptel-map (kbd "a")   #'gptel-add)
+    (define-key my/gptel-map (kbd "x x") #'gptel-context-remove-all)
     (define-key my/gptel-map (kbd "f")   #'gptel-add-file)
 
     ;; Model switching (1=cheap → 3=expensive)
@@ -498,6 +499,9 @@ Turn on Yas global mode
     (define-key my/gptel-map (kbd "d m") #'my/gptel-directive-mentor)
     (define-key my/gptel-map (kbd "d f") #'my/gptel-directive-fix)
     (define-key my/gptel-map (kbd "d r") #'my/gptel-directive-review)
+    (define-key my/gptel-map (kbd "d p") #'my/gptel-directive-programming)
+    (define-key my/gptel-map (kbd "d w") #'my/gptel-directive-writing)
+    (define-key my/gptel-map (kbd "d c") #'my/gptel-directive-chat)
 
     ;; Memory injection
     (define-key my/gptel-map (kbd "c c") #'my/gptel-inject-core)
@@ -506,8 +510,7 @@ Turn on Yas global mode
     (define-key my/gptel-map (kbd "c d") #'my/gptel-inject-devops)
 
     ;; Rewrite
-    (define-key my/gptel-map (kbd "r r") #'gptel-rewrite)
-    (define-key my/gptel-map (kbd "r s") #'my/gptel-rewrite-spelling))
+    (define-key my/gptel-map (kbd "r r") #'gptel-rewrite))
 
   ;; Custom Functions
   (defun my/gptel-use-haiku ()
