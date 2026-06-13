@@ -416,8 +416,8 @@ Packages that make emacs a little easiler to use. Finding out more about command
 #+begin_src emacs-lisp
   (use-package expand-region
     :bind (
-  	 ("H-." . er/expand-region)
-           ("H-," . er/contract-region)))
+  	 ("H-]" . er/expand-region)
+           ("H-[" . er/contract-region)))
 #+end_src
 
 #+RESULTS:
