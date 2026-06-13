@@ -68,8 +68,7 @@ On the rare occasion utf-8 encoding is lost this is a note for myself on how to 
 ** Undo Limit
 #+BEGIN_SRC emacs-lisp
   (setq undo-limit 160000)
-  (global-set-key (kbd "H-.") 'org-demote-subtree)
-  (global-set-key (kbd "H-,") 'org-promote-subtree)
+
 
 #+END_SRC
 
@@ -413,6 +412,17 @@ Packages that make emacs a little easiler to use. Finding out more about command
 #+RESULTS:
 : my/star-rating
 
+** Expand Region
+#+begin_src emacs-lisp
+  (use-package expand-region
+    :bind (
+  	 ("H-." . er/expand-region)
+           ("H-," . er/contract-region)))
+#+end_src
+
+#+RESULTS:
+: er/contract-region
+
 ** Yas Mode
 Turn on Yas global mode
 
@@ -748,6 +758,8 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
            ("M-s o" . my/org-occur)
            ("H-]" . 'consult-org-roam-forward-links)
            ("H-[" . 'consult-org-roam-backlinks)
+  	 ("H-," . 'org-promote-subtree)
+  	 ("H-." . 'org-demote-subtree)
            ("s-b" . 'org-tree-to-indirect-buffer)
            ("C-c d" . my/set-todo-ordered)
            ("C-M-<right>" . org-demote-subtree)
