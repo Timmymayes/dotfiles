@@ -756,8 +756,6 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
            ("C-H-e" . org-narrow-to-block)
            ("H-o" . consult-org-heading)
            ("M-s o" . my/org-occur)
-           ("H-]" . 'consult-org-roam-forward-links)
-           ("H-[" . 'consult-org-roam-backlinks)
   	 ("H-," . 'org-promote-subtree)
   	 ("H-." . 'org-demote-subtree)
            ("s-b" . 'org-tree-to-indirect-buffer)
@@ -2294,6 +2292,9 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
      ("C-c n m" . my/MOC-find)
      ("C-c n I" . org-roam-node-insert-immediate)
      ("H-i" . org-roam-node-insert-immediate)
+     ("H-]" . 'consult-org-roam-forward-links)
+     ("H-[" . 'consult-org-roam-backlinks)
+
      :map org-mode-map
      ("C-c n b" . org-mark-ring-goto)
 
