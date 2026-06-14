@@ -4006,39 +4006,10 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 * Testing
 #+BEGIN_SRC emacs-lisp
 
-  
-
-  ;;set load path for person elisp
-
-  ;; Removing iy-go-to-char
-  					;load the package iy-go-to-char
-  					;(load "iy-go-to-char")
-
-
   (global-set-key (kbd "<f6>") 'browse-url-of-buffer)
 
-  ;;Calendar keys
-
-  ;; open
-  ;; (fset 'my/org-insert-clean-link
-  ;;       (kmacro-lambda-form [?\[ ?\[ ?\C-d ?\C-y ?\C-f ?\[ ?l ?i ?n ?k ?\C-e ?\]] 0 "%d"))
-
-  ;; (
   (global-set-key (kbd "s-l") 'my/org-insert-clean-link)
-  					;q    (global-set-key (kbd "C-M-.") 'consult-git-grep)
-
-  ;; create new scratch buffer
-  ;; (defalias 'make-scratch
-  ;;    (kmacro "C-x C-f C-SPC C-a <backspace> * S C R A T C H SPC - SPC 0 <f3> * <return>" 1 "%d"))
-
-  ;; (global-set-key (kbd "<f12>") 'make-scratch)
-
-
-
-  ;;   ;
-  					;indenting commands  
   (global-set-key (kbd "C-c i c") 'indent-to-column)
-
   (global-set-key (kbd "M-SPC") 'cycle-spacing)   
 
   ;; macros to set agenda categories
@@ -4046,9 +4017,7 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
         (kmacro-lambda-form [?\C-c ?\C-x ?p ?C ?A ?T ?E ?G ?O ?R ?Y return ?P ?r ?o ?j return ?r] 0 "%d"))
   (fset 'my/org-agenda-set-category-task
         (kmacro-lambda-form [?\C-c ?\C-x ?p ?C ?A ?T ?E ?G ?O ?R ?Y return ?T ?a ?s ?k return ?r] 0 "%d"))
-
-
-
+  
   (global-set-key (kbd "M-+") 'embark-dwim)
   (global-set-key (kbd "C-M-+") 'embark-act)
 
@@ -4065,6 +4034,17 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 
 #+RESULTS:
 : consult-dir-projectile-dirs
+** Elisp font lock hooks
+#+BEGIN_SRC emacs-lisp
+  (defun my/elisp-font-lock-additions ()
+    (font-lock-add-keywords nil
+  			  '(("\\<\\(t\\|nil\\)\\>" . font-lock-constant-face))))
+
+  (add-hook 'emacs-lisp-mode-hook #'my/elisp-font-lock-additions)
+#+END_SRC
+
+#+RESULTS:
+| my/elisp-font-lock-additions | paredit-mode |
 
 ** Org Bookmark Heading
 #+BEGIN_SRC emacs-lisp sdfs   
