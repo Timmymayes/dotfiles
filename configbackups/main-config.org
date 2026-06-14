@@ -1076,8 +1076,6 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
 
   (setq org-agenda-auto-exclude-function 'my/org-auto-exclude-function)
 
-  (fset 'my/set-todo-ordered
-        (kmacro-lambda-form [?\C-c ?\C-x ?p ?\C-n ?\C-n ?O ?r ?d ?e ?r ?e ?d return ?1 return] 0 "%d"))
 
 
 
@@ -4102,9 +4100,12 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 
 ** Dictionary
 #+BEGIN_SRC emacs-lisp
-(use-package dictionary
-  :custom
-  (dictionary-server "dict.org"))
+  (use-package dictionary
+    :custom
+    (dictionary-server "dict.org")
+    (setq dictionary-use-single-buffer t))
+
+  (global-set-key (kbd "C-c d") #'dictionary-lookup-definition)
 #+END_SRC
 
 #+RESULTS:
