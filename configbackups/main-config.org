@@ -2531,6 +2531,47 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 #+RESULTS:
 : 1
 
+* ORG Export
+** SEAS HTML Export
+#+begin_src emacs-lisp
+  (with-eval-after-load 'ox-html
+
+    (setq org-html-htmlize-output-type 'css
+          org-html-head-include-default-style nil
+          org-html-head-include-scripts nil
+          org-html-postamble nil
+          org-html-preamble nil
+          org-html-checkbox-type 'html
+          org-html-head
+          (concat "<style>\n"
+                  (with-temp-buffer
+                    (insert-file-contents "~/Projects/seas-design-system.css")
+                    (buffer-string))
+                  "\n</style>"
+                  "<script>
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('input[type=\"checkbox\"]').forEach(function(cb) {
+    cb.removeAttribute('disabled');
+  });
+});
+</script>"))
+
+    (setq org-publish-project-alist
+          '(("seas-project-html"
+             :base-directory "~/Projects/seas-some-project/"
+             :publishing-directory "~/Projects/seas-some-project/output/"
+             :publishing-function org-html-publish-to-html
+             :html-head "<link rel=\"stylesheet\" href=\"seas-design-system.css\">"
+             :html-head-include-default-style nil
+             :recursive t)
+            ("seas-project-assets"
+             :base-directory "~/Projects/seas-some-project/"
+             :publishing-directory "~/Projects/seas-some-project/output/"
+             :publishing-function org-publish-attachment
+             :base-extension "css\\|png\\|jpg\\|svg")
+            ("seas-project" :components ("seas-project-html" "seas-project-assets")))))
+#+end_src
+
 * calfw-org
 #+BEGIN_SRC emacs-lisp
 
