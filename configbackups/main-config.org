@@ -4009,6 +4009,8 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 * Testing
 #+BEGIN_SRC emacs-lisp
 
+  
+
   ;;set load path for person elisp
 
   ;; Removing iy-go-to-char
@@ -4098,6 +4100,14 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 #+RESULTS:
 | /home/tyler/miniconda3/bin | /home/tyler/.local/bin | /usr/local/sbin | /usr/local/bin | /usr/sbin | /usr/bin | /sbin | /bin | /usr/games | /usr/local/games | /snap/bin | /snap/bin | /snap/emacs/3690/usr/bin | /snap/emacs/current/usr/libexec/emacs/30.2/x86_64-pc-linux-gnu |
 
+** Dictionary
+#+BEGIN_SRC emacs-lisp
+(use-package dictionary
+  :custom
+  (dictionary-server "dict.org"))
+#+END_SRC
+
+#+RESULTS:
 
 ** Directory Tree Stamper
 #+BEGIN_SRC emacs-lisp
