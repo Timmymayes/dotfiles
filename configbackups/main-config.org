@@ -759,7 +759,6 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
   	 ("H-," . 'org-promote-subtree)
   	 ("H-." . 'org-demote-subtree)
            ("s-b" . 'org-tree-to-indirect-buffer)
-           ("C-c d" . my/set-todo-ordered)
            ("C-M-<right>" . org-demote-subtree)
            ("C-M-<left>" . org-promote-subtree)
            ("M-p" . org-previous-visible-heading) 
