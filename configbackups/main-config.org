@@ -4102,12 +4102,13 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
   (use-package dictionary
     :custom
     (dictionary-server "dict.org")
-    (setq dictionary-use-single-buffer t))
+    (dictionary-use-single-buffer t))
 
   (global-set-key (kbd "C-c d") #'dictionary-lookup-definition)
 #+END_SRC
 
 #+RESULTS:
+: dictionary-lookup-definition
 
 ** Directory Tree Stamper
 #+BEGIN_SRC emacs-lisp
