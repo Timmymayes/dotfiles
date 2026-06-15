@@ -467,8 +467,8 @@ Turn on Yas global mode
     (setq gptel-default-mode 'org-mode)
     (setq auth-sources '("~/.authinfo.gpg"))
     (setq gptel-directives
-        	(append gptel-directives
-        		'((mentor . "You are a programming mentor. Your role is to guide and coach, not to do the work. Ask clarifying questions, point me toward the right concepts, suggest what to look up, and give hints rather than solutions. If I'm going in the wrong direction, tell me why without correcting it for me.")
+          (append gptel-directives
+                  '((mentor . "You are a programming mentor. Your role is to guide and coach, not to do the work. Ask clarifying questions, point me toward the right concepts, suggest what to look up, and give hints rather than solutions. If I'm going in the wrong direction, tell me why without correcting it for me.")
                     (fix . "You are a precise code fixer. I will send you broken or incorrect code. Return only the corrected code with minimal explanation unless the fix requires context. Be terse.")
                     (review . "You are a code reviewer. Succinctly identify problems, bugs, gotchas, edge cases, and design issues. Use a bullet list. Do not rewrite the code unless asked. Prioritize by severity."))))
 
@@ -476,11 +476,16 @@ Turn on Yas global mode
     ;; OpenAI (existing)
     (setq gptel-api-key
           (auth-source-pick-first-password :host "api.openai.com"))
-
+    ;; make oolama
+    (gptel-make-ollama "Ollama"
+      :host "localhost:11434"
+      :models '(llama3.1:8b)
+      :stream t)
+    
     ;; Claude - store the backend in a variable
     (let ((claude (gptel-make-anthropic "Claude"
-          	  :stream t
-          	  :key (auth-source-pick-first-password :host "api.anthropic.com"))))
+                    :stream t
+                    :key (auth-source-pick-first-password :host "api.anthropic.com"))))
       ;; Set it as the default backend
       (setq gptel-backend claude
             gptel-model 'claude-sonnet-4-6))
@@ -500,9 +505,13 @@ Turn on Yas global mode
     (define-key my/gptel-map (kbd "f")   #'gptel-add-file)
 
     ;; Model switching (1=cheap → 3=expensive)
-    (define-key my/gptel-map (kbd "1")   #'my/gptel-use-haiku)
-    (define-key my/gptel-map (kbd "2")   #'my/gptel-use-sonnet)
-    (define-key my/gptel-map (kbd "3")   #'my/gptel-use-opus)
+    ;; Model switching (1=local → 2=cheap → 3=mid → 4=expensive)
+    ;; Model switching (1-2=local → 3=cheap → 4=mid → 5=expensive)
+    (define-key my/gptel-map (kbd "1") #'my/gptel-use-llama)
+    (define-key my/gptel-map (kbd "2") #'my/gptel-use-qwen)
+    (define-key my/gptel-map (kbd "3") #'my/gptel-use-haiku)
+    (define-key my/gptel-map (kbd "4") #'my/gptel-use-sonnet)
+    (define-key my/gptel-map (kbd "5") #'my/gptel-use-opus)
 
     ;; Directives
     (define-key my/gptel-map (kbd "d d") #'my/gptel-directive-default)
@@ -523,23 +532,45 @@ Turn on Yas global mode
     (define-key my/gptel-map (kbd "r r") #'gptel-rewrite))
 
   ;; Custom Functions
-  (defun my/gptel-use-haiku ()
-    "Switch to Claude Haiku (fast/cheap)."
-    (interactive)
-    (setq gptel-model 'claude-haiku-4-5)
-    (message "GPTel: switched to Claude Haiku"))
+(defun my/gptel-use-llama ()
+  "Switch to local Llama 3.1 8B via Ollama."
+  (interactive)
+  (setq gptel-backend (gptel-get-backend "Ollama")
+        gptel-model 'llama3.1:8b
+        gptel-max-tokens 4096)
+  (message "GPTel: switched to local Llama 3.1 8B"))
 
-  (defun my/gptel-use-sonnet ()
-    "Switch to Claude Sonnet (balanced)."
-    (interactive)
-    (setq gptel-model 'claude-sonnet-4-5)
-    (message "GPTel: switched to Claude Sonnet"))
+(defun my/gptel-use-qwen ()
+  "Switch to local Qwen 2.5 14B via Ollama."
+  (interactive)
+  (setq gptel-backend (gptel-get-backend "Ollama")
+        gptel-model 'qwen2.5:14b
+        gptel-max-tokens 4096)
+  (message "GPTel: switched to local Qwen 2.5 14B"))
 
-  (defun my/gptel-use-opus ()
-    "Switch to Claude Opus (powerful/expensive)."
-    (interactive)
-    (setq gptel-model 'claude-opus-4-5)
-    (message "GPTel: switched to Claude Opus"))
+(defun my/gptel-use-haiku ()
+  "Switch to Claude Haiku (fast/cheap)."
+  (interactive)
+  (setq gptel-backend (gptel-get-backend "Claude")
+        gptel-model 'claude-haiku-4-5
+        gptel-max-tokens nil)
+  (message "GPTel: switched to Claude Haiku"))
+
+(defun my/gptel-use-sonnet ()
+  "Switch to Claude Sonnet (balanced)."
+  (interactive)
+  (setq gptel-backend (gptel-get-backend "Claude")
+        gptel-model 'claude-sonnet-4-6
+        gptel-max-tokens nil)
+  (message "GPTel: switched to Claude Sonnet"))
+
+(defun my/gptel-use-opus ()
+  "Switch to Claude Opus (powerful/expensive)."
+  (interactive)
+  (setq gptel-backend (gptel-get-backend "Claude")
+        gptel-model 'claude-opus-4-6
+        gptel-max-tokens nil)
+  (message "GPTel: switched to Claude Opus"))
 
   (defvar my/gptel-current-directive 'default
     "Tracks the currently active gptel directive.")
@@ -627,7 +658,7 @@ Turn on Yas global mode
 #+END_SRC
 
 #+RESULTS:
-: my/gptel-directive-review
+| :eval | (format  [%s:%s] (my/gptel-model-short-name) (my/gptel-directive-short-name)) |
 ** Misc bindings for now
 #+BEGIN_SRC emacs-lisp
 
