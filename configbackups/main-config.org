@@ -2549,12 +2549,12 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
                     (buffer-string))
                   "\n</style>"
                   "<script>
-document.addEventListener('DOMContentLoaded', function() {
-  document.querySelectorAll('input[type=\"checkbox\"]').forEach(function(cb) {
-    cb.removeAttribute('disabled');
-  });
-});
-</script>"))
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('input[type=\"checkbox\"]').forEach(function(cb) {
+        cb.removeAttribute('disabled');
+      });
+    });
+    </script>"))
 
     (setq org-publish-project-alist
           '(("seas-project-html"
@@ -2570,7 +2570,31 @@ document.addEventListener('DOMContentLoaded', function() {
              :publishing-function org-publish-attachment
              :base-extension "css\\|png\\|jpg\\|svg")
             ("seas-project" :components ("seas-project-html" "seas-project-assets")))))
+
+
+  ;; css reloader
+  (defun my/reload-css ()
+    "Reload seas-design-system.css into org-html-head without restarting Emacs."
+    (interactive)
+    (setq org-html-head
+          (concat "<style>\n"
+                  (with-temp-buffer
+                    (insert-file-contents "~/Projects/seas-design-system.css")
+                    (buffer-string))
+                  "\n</style>"
+                  "<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('input[type=\"checkbox\"]').forEach(function(cb) {
+      cb.removeAttribute('disabled');
+    });
+  });
+  </script>"))
+    (message "SEAS CSS reloaded."))
+
 #+end_src
+
+#+RESULTS:
+: my/reload-css
 
 * calfw-org
 #+BEGIN_SRC emacs-lisp
