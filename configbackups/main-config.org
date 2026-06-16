@@ -4357,6 +4357,19 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
     (browse-url "https://youtube/q7gv9B4Kw44"))
 
 
+  (defun my/insert-youtube-link-into-m3u ()
+    "insert link from clipboard into correct format"
+    (interactive)
+    (let* ((url (read-string "Youtube URL:"))
+  	 (band-name (read-string "Band:"))
+  	 (song-name (read-string "Song:"))
+  	 (m3u-entry (concat "\n" url "(:title \""  band-name " - " song-name "\":youtube t)"))
+  	 (m3u-to-append (read-file-name "Append to:" "~/Orgfiles/Music/")))
+      
+      (append-to-file m3u-entry nil m3u-to-append)
+      (message (concat m3u-entry " added!"))))
+
+
   (defhydra Music (global-map "<f7>")
     "Music Player"
     ("s" play-retro-sax "Retro-Sax")
@@ -4394,9 +4407,10 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
        ("Italy Cafe"               . "https://www.youtube.com/watch?v=D_9cyVNxDPk")
        ("YouTube Mix - High BPM Trance" . "https://youtube/q7gv9B4Kw44"))))
 
-    (with-eval-after-load 'empv
-      (define-key empv-map (kbd "f") 'my/empv-play-file-from-music)
-      (define-key empv-map (kbd "S") 'empv-playlist-save-to-file))
+  (with-eval-after-load 'empv
+    (define-key empv-map (kbd "y") 'my/insert-youtube-link-into-m3u )
+    (define-key empv-map (kbd "f") 'my/empv-play-file-from-music)
+    (define-key empv-map (kbd "S") 'empv-playlist-save-to-file))
 
   (with-eval-after-load 'embark
     (empv-embark-initialize-extra-actions) )
