@@ -405,7 +405,7 @@ Packages that make emacs a little easiler to use. Finding out more about command
 
   ;; Option B: rg.el — gives you a grep-buffer-style results UI
   (use-package rg
-    :config (rg-enable-default-bindings))  ; C-c s prefix 
+    :config (rg-enable-default-bindings(kbd "C-c C-s")))  ; C-c s prefix 
 
   (use-package orderless
     :ensure t
