@@ -31,7 +31,39 @@ On the rare occasion utf-8 encoding is lost this is a note for myself on how to 
 
   #+END_SRC
 
-  
+** System Definitions for easy single environment setup
+#+BEGIN_SRC emacs-lisp
+(defconst my/windows-p (eq system-type 'windows-nt))
+(defconst my/linux-p (eq system-type 'gnu/linux))
+#+END_SRC
+
+#+RESULTS:
+: my/linux-p
+
+** Linux Tools on Windows
+#+BEGIN_SRC emacs-lisp
+  (when my/windows-p
+    ;; Grep and fd on win - via powershell
+    ;; winget install BurntSushi.ripgrep.MSVC
+    ;; winget install sharkdp.fd
+    (setq grep-program "rg")
+    ;; only needed if you went the GNU findutils route:
+    ;; (setq find-program "C:/Users/tyler/scoop/apps/findutils/current/bin/find.exe")
+
+    ;; Use PowerShell 7 (pwsh) for interactive M-x shell
+    (setq explicit-shell-file-name "pwsh.exe")
+    (setq explicit-pwsh.exe-args '("-NoLogo"))
+    (add-to-list 'exec-path "C:/git/bin")
+    (setenv "PATH" (concat "C:\\git\\bin;" (getenv "PATH")))
+    
+    )
+
+
+#+END_SRC
+
+#+RESULTS:
+: C:\git\bin;/home/tyler/miniconda3/bin:C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\NVIDIA Corporation\NVIDIA App\NvDLISR;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\Tailscale\;C:\Users\timmy\AppData\Local\Programs\Python\Python313\Scripts\;C:\Users\timmy\AppData\Local\Programs\Python\Python313\;C:\Users\timmy\AppData\Local\Programs\Python\Launcher\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\NVIDIA Corporation\NVIDIA App\NvDLISR;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\Tailscale\;C:\Users\timmy\AppData\Local\Microsoft\WindowsApps;C:\git\cmd;C:\Users\timmy\AppData\Local\Microsoft\WinGet\Links;
+
 ** Set default directory for find-file
 #+BEGIN_SRC emacs-lisp
   (setq default-directory "~/Orgfiles")
@@ -54,16 +86,18 @@ On the rare occasion utf-8 encoding is lost this is a note for myself on how to 
 
 #+RESULTS:
 : super
-** Set python to path on windows
+** Set python to path per system
 #+BEGIN_SRC emacs-lisp
-  (when (eq system-type 'windows-nt)
-    (setq python-shell-interpreter "C:/Roop/Miniconda/python.exe")
-    (setq python-shell-interpreter-args "-i")
-    (add-to-list 'exec-path "C:/Roop/Miniconda"))
+  (when my/windows-p
+    (setq python-shell-interpreter "py"
+          python-shell-interpreter-args "-i"))
+
+  (when my/linux-p
+    (setq python-shell-interpreter "python3"))
+
 #+END_SRC
 
 #+RESULTS:
-| C:/Roop/Miniconda | /home/tyler/miniconda3/bin | c:/Program Files (x86)/Common Files/Oracle/Java/javapath | C:/Program Files (x86)/Common Files/Intel/Shared Libraries/redist/intel64/compiler | C:/Windows/system32 | C:/Windows | C:/Windows/System32/Wbem | C:/Windows/System32/WindowsPowerShell/v1.0/ | C:/Windows/System32/OpenSSH/ | C:/Program Files (x86)/NVIDIA Corporation/PhysX/Common | C:/Program Files (x86)/ZeroTier/One/ | C:/Program Files/Git/cmd | C:/ProgramData/chocolatey/bin | C:/Strawberry/c/bin | C:/Strawberry/perl/site/bin | C:/Strawberry/perl/bin | C:/Program Files/Pandoc/ | C:/Program Files/dotnet/ | C:/Program Files/NVIDIA Corporation/NVIDIA App/NvDLISR | C:/Program Files (x86)/Microsoft Visual Studio/2019/BuildTools/VC/Tools/MSVC/14.29.30133/bin/Hostx86/x86/ | C:/Users/tyler/AppData/Local/Programs/Python/Launcher/ | C:/Users/tyler/scoop/apps/gcc/current/bin | C:/Users/tyler/scoop/shims | C:/Users/tyler/AppData/Local/Microsoft/WindowsApps | C:/Users/tyler/AppData/Local/Programs/Microsoft VS Code/bin | C:/ProgramData/chocolatey/lib/mingw/tools/install/mingw64/bin | C:/Users/tyler/AppData/Local/Programs/MiKTeX/miktex/bin/x64/ | C:/Ledger/ | c:/Program Files/Emacs/emacs-28.2/libexec/emacs/28.2/x86_64-w64-mingw32 |
 
 ** Undo Limit
 #+BEGIN_SRC emacs-lisp
@@ -84,27 +118,27 @@ On the rare occasion utf-8 encoding is lost this is a note for myself on how to 
 Require package and setup all package archives. Note changes to mode repositories has some adjusted code in there that may change. 
 
 #+BEGIN_SRC emacs-lisp
-  (require 'package)
-  (setq package-archives '(("melpa" . "https://melpa.org/packages/")
-                           ;; old org link commented out for deprication 
-                           ;;("org" . "https://orgmode.org/elpa/")
-                           ("gnu" . "https://elpa.gnu.org/packages/")
-                           ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
+    (require 'package)
+    (setq package-archives '(("melpa" . "https://melpa.org/packages/")
+                             ;; old org link commented out for deprication 
+                             ;;("org" . "https://orgmode.org/elpa/")
+                             ("gnu" . "https://elpa.gnu.org/packages/")
+                             ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
 
-  (package-initialize)
-  (add-to-list 'load-path
-               (concat user-emacs-directory
-                       (car (file-name-all-completions "org-"
-      						     (concat user-emacs-directory "elpa/")))))
-  ;; clean up org package issues
-  (assq-delete-all 'org package--builtins)
-  (assq-delete-all 'org package--builtin-versions)
-  ;; supress org-warnings
-  ;;  (add-to-list !warning-supresstypes !(org))
-      					;  (package-refresh-contents)
+    (package-initialize)
+    ;; (add-to-list 'load-path
+    ;;              (concat user-emacs-directory
+    ;;                      (car (file-name-all-completions "org-"
+    ;;     						     (concat user-emacs-directory "elpa/")))))
+    ;; clean up org package issues
+    (assq-delete-all 'org package--builtins)
+    (assq-delete-all 'org package--builtin-versions)
+    ;; supress org-warnings
+    ;;  (add-to-list !warning-supresstypes !(org))
+        					;  (package-refresh-contents)
 
-(setq warning-suppress-log-types '((org) (emacs)))
-  (message "Package contents loaded and refreshed")
+  (setq warning-suppress-log-types '((org) (emacs)))
+    (message "Package contents loaded and refreshed")
 #+END_SRC
 
 #+RESULTS:
@@ -367,6 +401,11 @@ Packages that make emacs a little easiler to use. Finding out more about command
      ("M-y" . consult-yank-pop)
      ("C-H-b" . consult-buffer)
      ("H-l" . consult-line)))
+
+
+  ;; Option B: rg.el — gives you a grep-buffer-style results UI
+  (use-package rg
+    :config (rg-enable-default-bindings))  ; C-c s prefix 
 
   (use-package orderless
     :ensure t
