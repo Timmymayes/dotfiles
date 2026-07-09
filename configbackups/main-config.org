@@ -2338,6 +2338,12 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
     :ensure t
     :init
     (setq org-roam-v2-act t)
+    (setq org-roam-file-exclude-regexp
+      '("\\.stversions/"
+        "-conflict-"
+        "~[0-9]\\{8\\}-[0-9]\\{6\\}\\.org$"
+        "~$"
+        "\\.git/"))
     :custom
     (org-roam-directory "~/RoamNotes")
     (org-roam-completion-everywhere t)
