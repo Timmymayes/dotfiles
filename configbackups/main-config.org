@@ -17,11 +17,17 @@ This is my first run through configuring emacs so there is probably a lot of ine
 * Initialization
 Initial setup for the core of Emacs. Mostly low level system type elements and package usage. 
 ** DEBUG on error
+:PROPERTIES:
+:ID:       fb4825f5-6f61-44f7-8575-e5089a509e5c
+:END:
 #+BEGIN_SRC emacs-lisp
   					;(setq debug-on-error t)
 #+END_SRC
 
 ** UTF-8 buffer revert comand
+:PROPERTIES:
+:ID:       83c05245-25a9-4e02-9d13-80b2fe81e04a
+:END:
 On the rare occasion utf-8 encoding is lost this is a note for myself on how to fix it.
 
 - (revert-buffer-with-coding-system (C-x ret r) then select utf-8
@@ -32,6 +38,9 @@ On the rare occasion utf-8 encoding is lost this is a note for myself on how to 
   #+END_SRC
 
 ** System Definitions for easy single environment setup
+:PROPERTIES:
+:ID:       219db535-e7b1-44ed-b45f-4283ae5c1663
+:END:
 #+BEGIN_SRC emacs-lisp
 (defconst my/windows-p (eq system-type 'windows-nt))
 (defconst my/linux-p (eq system-type 'gnu/linux))
@@ -41,6 +50,9 @@ On the rare occasion utf-8 encoding is lost this is a note for myself on how to 
 : my/linux-p
 
 ** Linux Tools on Windows
+:PROPERTIES:
+:ID:       a2ad5430-adaf-4a74-81b7-4aa8e9e79cf8
+:END:
 #+BEGIN_SRC emacs-lisp
   (when my/windows-p
     ;; Grep and fd on win - via powershell
@@ -65,15 +77,24 @@ On the rare occasion utf-8 encoding is lost this is a note for myself on how to 
 : C:\git\bin;/home/tyler/miniconda3/bin:C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\NVIDIA Corporation\NVIDIA App\NvDLISR;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\Tailscale\;C:\Users\timmy\AppData\Local\Programs\Python\Python313\Scripts\;C:\Users\timmy\AppData\Local\Programs\Python\Python313\;C:\Users\timmy\AppData\Local\Programs\Python\Launcher\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\NVIDIA Corporation\NVIDIA App\NvDLISR;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\Tailscale\;C:\Users\timmy\AppData\Local\Microsoft\WindowsApps;C:\git\cmd;C:\Users\timmy\AppData\Local\Microsoft\WinGet\Links;
 
 ** Set default directory for find-file
+:PROPERTIES:
+:ID:       0288f636-ba07-455d-ace5-43f19f7eef2a
+:END:
 #+BEGIN_SRC emacs-lisp
   (setq default-directory "~/Orgfiles")
 #+END_SRC
 ** Load additional Lisp directory
+:PROPERTIES:
+:ID:       046af46f-1aef-4c34-b75b-4704d06a488f
+:END:
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'load-path "~/.emacs.d/lisp")
   ;;tangle test
 #+END_SRC
 ** Setup Hyper & Super on Windows
+:PROPERTIES:
+:ID:       8643cfdc-f594-45ad-bfb5-6a7df3843daa
+:END:
 #+BEGIN_SRC emacs-lisp
   ;; setup passthrough keys
   (setq w32-pass-apps-to-system nil)
@@ -87,6 +108,9 @@ On the rare occasion utf-8 encoding is lost this is a note for myself on how to 
 #+RESULTS:
 : super
 ** Set python to path per system
+:PROPERTIES:
+:ID:       07f9e20d-b5aa-4b59-9722-2ca9fa4fa8b1
+:END:
 #+BEGIN_SRC emacs-lisp
   (when my/windows-p
     (setq python-shell-interpreter "py"
@@ -100,6 +124,9 @@ On the rare occasion utf-8 encoding is lost this is a note for myself on how to 
 #+RESULTS:
 
 ** Undo Limit
+:PROPERTIES:
+:ID:       60921ee6-6ba8-4555-a770-6b17e8665513
+:END:
 #+BEGIN_SRC emacs-lisp
   (setq undo-limit 160000)
 
@@ -110,11 +137,17 @@ On the rare occasion utf-8 encoding is lost this is a note for myself on how to 
 : 50
 
 ** Server Setup
+:PROPERTIES:
+:ID:       5921305d-d6fa-4c30-aa55-2843ffcb3839
+:END:
 #+BEGIN_SRC emacs-lisp
   (server-start)
 #+END_SRC
 
 ** Package Setup
+:PROPERTIES:
+:ID:       e38df1ee-24bf-414e-a872-02139e77adc0
+:END:
 Require package and setup all package archives. Note changes to mode repositories has some adjusted code in there that may change. 
 
 #+BEGIN_SRC emacs-lisp
@@ -144,6 +177,9 @@ Require package and setup all package archives. Note changes to mode repositorie
 #+RESULTS:
 
 ** Use Package Setup
+:PROPERTIES:
+:ID:       6c530129-7efe-4484-a3eb-c43b473bee3a
+:END:
 Install use-package and enable ':ensure t' globally. the ':ensusre' keyword causes the package(s) within use-package statements to be installed automatically if not already present on your system. To avoid having to add it to every statement we use use-package-always-ensure.
 #+NAME: Install
 #+begin_src emacs-lisp
@@ -162,6 +198,9 @@ Install use-package and enable ':ensure t' globally. the ':ensusre' keyword caus
 : t
 
 ** Keep Folders Clean
+:PROPERTIES:
+:ID:       b71bdda7-04f9-4703-b192-5a056673167c
+:END:
 Move all backup files into a single directory. Another option is to turn off backups completely but I don't mind having backups in case I screw something up. 
 #+BEGIN_SRC emacs-lisp
   (setq backup-directory-alist '(("." . "~/.emacs.d/tmp/backups/")))
@@ -173,11 +212,17 @@ Move all backup files into a single directory. Another option is to turn off bac
 #+RESULTS:
 : ((. . ~/.emacs.d/tmp/backups/))
 ** Section Loaded Msg
+:PROPERTIES:
+:ID:       0b4f8c88-316f-43e7-9d9d-8cb586ae8bab
+:END:
 #+BEGIN_SRC emacs-lisp
   (message "Initilization finished")
 #+END_SRC
 * UI Config
 ** Basic UI Config
+:PROPERTIES:
+:ID:       97718043-db39-4f3f-b6a6-4ea4540afb70
+:END:
 Basic setup for cleaning up the ui.
 
 #+begin_src emacs-lisp
@@ -209,6 +254,9 @@ Basic setup for cleaning up the ui.
 #+RESULTS:
 
 ** Themes
+:PROPERTIES:
+:ID:       20003db0-5453-4a7f-ac38-7bd78e832f5b
+:END:
 Read more about this here: [[https://github.com/rougier/nano-modeline][nano-modeline git hub with info]]
 #+BEGIN_SRC emacs-lisp
   (use-package nano-theme
@@ -255,6 +303,9 @@ Read more about this here: [[https://github.com/rougier/nano-modeline][nano-mode
 : nano-vertico
 
 ** Transparency
+:PROPERTIES:
+:ID:       b96cd425-0268-442e-a831-d63de1964916
+:END:
 Transparency toggle for when you want to have a cool hacker mode.
 #+BEGIN_SRC emacs-lisp
 
@@ -280,6 +331,9 @@ Transparency toggle for when you want to have a cool hacker mode.
 : my/toggle-transparency
 
 ** Section Loaded Msg
+:PROPERTIES:
+:ID:       ee3bb1c4-7e59-4bdb-9b01-9519fb8eb78e
+:END:
 #+BEGIN_SRC emacs-lisp
   (message "UI Config Section Finished Loading")
 #+END_SRC
@@ -287,6 +341,9 @@ Transparency toggle for when you want to have a cool hacker mode.
 * Emacs Usability
 Packages that make emacs a little easiler to use. Finding out more about commands, completion and command descriptions in autocomplete buffer.
 ** Helpful
+:PROPERTIES:
+:ID:       2bd6547f-f15b-4112-b27a-d48db39a7f3a
+:END:
 #+begin_src emacs-lisp
   (use-package helpful
     :bind
@@ -300,6 +357,9 @@ Packages that make emacs a little easiler to use. Finding out more about command
 : helpful-key
 
 ** Whichkey
+:PROPERTIES:
+:ID:       3e2e354f-c866-430b-8e3c-9b388eae68f3
+:END:
 #+begin_src emacs-lisp
   (use-package which-key
     :init (which-key-mode)
@@ -313,6 +373,9 @@ Packages that make emacs a little easiler to use. Finding out more about command
 : t
 
 ** Completion
+:PROPERTIES:
+:ID:       9bab75f8-9255-4091-8aeb-435b972f57b6
+:END:
 #+begin_src emacs-lisp
 
   (use-package vertico
@@ -452,6 +515,9 @@ Packages that make emacs a little easiler to use. Finding out more about command
 : my/star-rating
 
 ** Expand Region
+:PROPERTIES:
+:ID:       378673df-df5b-4406-a475-bc87ac311195
+:END:
 #+begin_src emacs-lisp
   (use-package expand-region
     :bind (
@@ -463,6 +529,9 @@ Packages that make emacs a little easiler to use. Finding out more about command
 : er/contract-region
 
 ** Yas Mode
+:PROPERTIES:
+:ID:       69305290-c734-4f52-8794-b9d0767eb4d8
+:END:
 Turn on Yas global mode
 
 #+BEGIN_SRC emacs-lisp
@@ -483,6 +552,9 @@ Turn on Yas global mode
 #+RESULTS:
 : [yas] Prepared just-in-time loading of snippets successfully.
 ** Scale Text Hydra
+:PROPERTIES:
+:ID:       8638752e-9cb0-479e-a130-6589aa01983d
+:END:
 #+BEGIN_SRC emacs-lisp
   (defhydra hydra-zoom (global-map "<f16>")
     "Zoom"
@@ -494,10 +566,16 @@ Turn on Yas global mode
 #+RESULTS:
 : hydra-zoom/body
 ** Section Loaded Message
+:PROPERTIES:
+:ID:       b4915a56-e059-4192-a1dd-6dfe33c8821e
+:END:
 #+BEGIN_SRC emacs-lisp
   (message "Usabiliy Section Finished Loading")
 #+END_SRC
 * LLM Setup
+:PROPERTIES:
+:ID:       751c6110-f494-4bf4-95cf-e6531870194c
+:END:
 
 #+BEGIN_SRC emacs-lisp
 
@@ -699,15 +777,24 @@ Turn on Yas global mode
 #+RESULTS:
 | :eval | (format  [%s:%s] (my/gptel-model-short-name) (my/gptel-directive-short-name)) |
 ** Misc bindings for now
+:PROPERTIES:
+:ID:       01bcd447-67c4-4355-b771-5b6187ca904f
+:END:
 #+BEGIN_SRC emacs-lisp
 
 #+END_SRC
 ** Section Loaded Message
+:PROPERTIES:
+:ID:       3d6134cd-b503-4ee9-9f8b-572e7393f3ed
+:END:
 #+BEGIN_SRC emacs-lisp
   (message "LLM Setup finished Loading")
 #+END_SRC
 * Window Control & Config
 ** Avy & Ace
+:PROPERTIES:
+:ID:       d5ad94ef-ba4f-43b9-abd8-295569670b7b
+:END:
 Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
 #+BEGIN_SRC emacs-lisp
   (use-package ace-window)
@@ -755,6 +842,9 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
 #+RESULTS:[]
 : counsel-ibuffer
 ** Frame Control
+:PROPERTIES:
+:ID:       a253cf0a-ce85-4a5b-a0b2-39a8b3fded82
+:END:
 #+BEGIN_SRC emacs-lisp
   ;; Frame delete is C-H-esc
 
@@ -780,6 +870,9 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
 : my/make-frame-on-bottom-dell
 ** Calendar
 *** Put Calendar below capture window
+:PROPERTIES:
+:ID:       bd16fc5c-9477-40ab-a814-60694f5d201e
+:END:
 #+BEGIN_SRC emacs-lisp
 
   (add-to-list 'display-buffer-alist
@@ -787,6 +880,9 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
                  (display-buffer-below-selected)))
 #+END_SRC
 *** Set location for sunrise/sunset
+:PROPERTIES:
+:ID:       534ec8ec-e24b-4e41-98a1-015330c89ffb
+:END:
 
 #+BEGIN_SRC emacs-lisp
   (setq calendar-latitude 33.19)
@@ -798,11 +894,17 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
 #+RESULTS:
 : Vista, CA
 ** Section Loaded Message
+:PROPERTIES:
+:ID:       013701dd-bfc9-4e0f-9c68-e881eb0125ff
+:END:
 #+BEGIN_SRC emacs-lisp
   (message "Window Control & Config Section Loaded")
 #+END_SRC
 * Org Config Setup
 *** Custom org- setup function
+:PROPERTIES:
+:ID:       ee35b528-f7b3-4179-a6da-b2f4221be614
+:END:
 #+begin_src emacs-lisp
                              ;;;;; Org mode setup ;;;;;
 
@@ -826,8 +928,8 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
            ("C-H-e" . org-narrow-to-block)
            ("H-o" . consult-org-heading)
            ("M-s o" . my/org-occur)
-  	 ("H-," . 'org-promote-subtree)
-  	 ("H-." . 'org-demote-subtree)
+    	 ("H-," . 'org-promote-subtree)
+    	 ("H-." . 'org-demote-subtree)
            ("s-b" . 'org-tree-to-indirect-buffer)
            ("C-M-<right>" . org-demote-subtree)
            ("C-M-<left>" . org-promote-subtree)
@@ -835,12 +937,12 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
            ("M-n" . org-next-visible-heading)
            ("C-c C-x l" . my/toggle-logbook)
            ("C-c M-a" . org-attach-screenshot)
-  	 ("C-M-i" . org-indent-block)
+    	 ("C-M-i" . org-indent-block)
            ("C-t". org-toggle-checkbox))
     :config
 
-    ;; Reload the agenda every minute
-
+    ;; use ids for linking
+    (setq org-id-link-to-org-use-id t)
     ;; set agenda files
     (setq org-agenda-files
           (quote ("~/Orgfiles"
@@ -929,7 +1031,7 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
     (setq org-global-properties
           '(("Effort_All" . "0 0:10 0:15 0:30 0:45 1:00 1:15 1:30 1:45  2:00 2:30  3:00 3:30 4:00")))
 
-  					; org capture
+    					; org capture
 
     (set-face-attribute 'org-agenda-clocking nil
                         :background 'unspecified
@@ -1027,6 +1129,9 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
 : org-toggle-checkbox
 
 *** Bindings  
+:PROPERTIES:
+:ID:       e9be5709-f9a3-48d1-8d2b-6887877242fe
+:END:
 #+BEGIN_SRC emacs-lisp 
   					; hotkey bindings
   (define-key global-map (kbd "C-c c")
@@ -1153,6 +1258,9 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
 #+RESULTS:
 : #[256 "\301\242\302\305\300\306#\210\301\240*\207" [[3 24 112 14 14 79 114 100 101 114 101 100 return 49 return] (0) "%d" kmacro-counter-format-start kmacro-counter execute-kbd-macro kmacro-loop-setup-function] 5 kmacro]
 ** Org Agenda Custom Functions & Macros
+:PROPERTIES:
+:ID:       5ead4de2-f567-4f75-b599-e28b6df04a71
+:END:
 #+BEGIN_SRC emacs-lisp
   ;; Jumping Macro Definitions
 
@@ -1238,6 +1346,9 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
 
 #+END_SRC>
 *** Custom Agenda Setup
+:PROPERTIES:
+:ID:       f5a2570e-8156-44cc-9e23-8fad2fdcb201
+:END:
 #+BEGIN_SRC emacs-lisp
 
   (setq org-agenda-custom-commands
@@ -1768,6 +1879,9 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 |   | Agenda | ((agenda  nil) (tags REFILE ((org-agenda-overriding-header Tasks to Refile) (org-tags-match-list-sublevels nil))) (tags-todo -CANCELLED/! ((org-agenda-overriding-header Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -HOLD-CANCELLED/! ((org-agenda-overriding-header Projects) (org-agenda-skip-function 'bh/skip-non-projects) (org-tags-match-list-sublevels 'indented) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -CANCELLED/!NEXT ((org-agenda-overriding-header (concat Project Next Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function 'bh/skip-projects-and-habits-and-single-tasks) (org-tags-match-list-sublevels t) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(todo-state-down effort-up category-keep)))) (tags-todo -REFILE-CANCELLED-WAITING-HOLD/! ((org-agenda-overriding-header (concat Project Subtasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function 'bh/skip-non-project-tasks) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -REFILE-CANCELLED-WAITING-HOLD/! ((org-agenda-overriding-header (concat Standalone Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function 'bh/skip-project-tasks) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -CANCELLED+WAITING | HOLD/! ((org-agenda-overriding-header (concat Waiting and Postponed Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function 'bh/skip-non-tasks) (org-tags-match-list-sublevels nil) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks))) (tags -REFILE/ ((org-agenda-overriding-header Tasks to Archive) (org-agenda-skip-function 'bh/skip-non-archivable-tasks) (org-tags-match-list-sublevels nil)))) | nil |
 
 *** Helper functions
+:PROPERTIES:
+:ID:       3b875b4d-6226-4d92-af1c-6a5f3d66fa08
+:END:
 #+begin_src emacs-lisp
   ;; start norang helpers
 
@@ -2087,6 +2201,9 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 #+RESULTS:
 | #[0 \301\211\207 [imenu-create-index-function org-imenu-get-tree] 2] | org-transclusion-mode | org-mode-visual-fill | #[nil ((add-hook 'after-save-hook #'my/org-babel-tangle-config)) nil] | #[nil ((display-line-numbers-mode 0)) nil] | org-modern-mode | valign-mode | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-fold-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes | org-mode-setup | nano-modeline-org-mode |
 *** Font Configuration
+:PROPERTIES:
+:ID:       72a34bcb-7be0-4b53-aea2-e4b123ac49d6
+:END:
 #+begin_src emacs-lisp
   (dolist (face '((org-level-1 . 1.2)
                   (org-level-2 . 1.1)
@@ -2120,6 +2237,9 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 : t
 
 *** Org Modern
+:PROPERTIES:
+:ID:       b4b087a7-adcf-4d21-aa63-7e60a7df3cd4
+:END:
 #+BEGIN_SRC emacs-lisp
   (use-package org-modern
     :hook (org-mode . org-modern-mode)
@@ -2152,6 +2272,9 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 #+RESULTS:
 
 *** Structure Templates
+:PROPERTIES:
+:ID:       383633db-e515-4f5b-84ad-dafe8fa2cee8
+:END:
 #+begin_src emacs-lisp
   ;; This is needed as of Org 9.2
                                           ;  (require 'org-tempo)
@@ -2171,6 +2294,9 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 
 
 *** Category Icons
+:PROPERTIES:
+:ID:       be7c69ec-84e8-4500-8f0b-1fdee7f5fa3d
+:END:
 #+BEGIN_SRC emacs-lisp
   (load "org-agenda-category-icons")
   (org-agenda-category-icons!
@@ -2217,6 +2343,9 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 #+RESULTS:
 
 *** Language Setup
+:PROPERTIES:
+:ID:       4306efee-4192-42a5-80ed-edd9e74ed204
+:END:
 #+begin_src emacs-lisp
   (org-babel-do-load-languages
    'org-babel-load-languages
@@ -2234,6 +2363,9 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 
 
 *** Auto-Tangle Config Files
+:PROPERTIES:
+:ID:       49d55645-40af-4e64-b6bf-f584927e67f4
+:END:
 #+begin_src emacs-lisp
   ;;auto tangle my emacs config file
   (defun my/org-babel-tangle-config()
@@ -2252,6 +2384,9 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 | (lambda nil (add-hook 'after-save-hook #'my/org-babel-tangle-config)) | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes |
 
 *** Visual Fill Mode
+:PROPERTIES:
+:ID:       0873020a-7c6e-4d36-8d59-65daa46c8b6a
+:END:
 #+begin_src emacs-lisp
   (defun org-mode-visual-fill()
     (setq visual-fill-column-width 110 visual-fill-column-center-text t)
@@ -2269,6 +2404,7 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 *** Pomodoro
 :PROPERTIES:
 :APPT_WARNTIME: 1
+:ID:       b04c4878-7920-437b-84ef-4bd9cef80d90
 :END:
 #+BEGIN_SRC emacs-lisp 
   (setq org-clock-sound "~/Orgfiles/Kids_cheering.wav")
@@ -2280,6 +2416,9 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 #+RESULTS:
 : org-agenda-remove-restriction-lock
 ** My Org Functions
+:PROPERTIES:
+:ID:       f5abd1af-30c8-4465-9f40-831e9ace99fb
+:END:
 #+BEGIN_SRC emacs-lisp
 
   (defun my/agenda-add-note-heading ()
@@ -2327,10 +2466,16 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 : my/agenda-jump-to-last-note
 
 ** Section Loaded Message
+:PROPERTIES:
+:ID:       209dd53b-ac06-4d13-8d9a-11619d1ca194
+:END:
 #+BEGIN_SRC emacs-lisp
   (message "Org Config Setup Section Loaded")
 #+END_SRC
 * Org-Roam Setup
+:PROPERTIES:
+:ID:       dfce8654-f011-4183-a2e2-3147938f8285
+:END:
 #+BEGIN_SRC emacs-lisp
 
 
@@ -2470,10 +2615,16 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 #+RESULTS:
 : org-roam-ui-open
 ** Section Loaded Message
+:PROPERTIES:
+:ID:       51b97ae6-431c-4eeb-873e-cf9c02f89552
+:END:
 #+BEGIN_SRC emacs-lisp
   (message "Org-Roam Section Loaded")
 #+END_SRC
 * Org-Remark
+:PROPERTIES:
+:ID:       5b46c563-5cf5-4fd7-a89e-43fd2de17548
+:END:
 #+BEGIN_SRC emacs-lisp
 
   (use-package org-remark)
@@ -2526,10 +2677,16 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 #+END_SRC
 
 ** Section Loaded Message
+:PROPERTIES:
+:ID:       495eb7e5-77b1-4d99-8ad8-1708116055df
+:END:
 #+BEGIN_SRC emacs-lisp
   (message "Org-remark Section Loaded")
 #+END_SRC
 * Org-Translcude
+:PROPERTIES:
+:ID:       4e283b37-92d8-4aba-ab47-17db8a752b43
+:END:
 #+BEGIN_SRC emacs-lisp
   (use-package org-transclusion)
   (add-hook 'org-mode-hook #'org-transclusion-mode)
@@ -2552,10 +2709,16 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 : #[256 "\301\242\302\305\300\306#\210\301\240*\207" [[67108896 3 14 134217847 16 25 3 16 3 16 134217848 111 114 103 45 116 114 97 110 115 99 108 117 115 105 111 110 45 100 101 97 tab return 16 11] (0) "%d" kmacro-counter-format-start kmacro-counter execute-kbd-macro kmacro-loop-setup-function] 5 kmacro]
 
 ** Section Loaded Message
+:PROPERTIES:
+:ID:       001676c1-dfda-4b44-bc5a-e1be75daf6c6
+:END:
 #+BEGIN_SRC emacs-lisp
   (message "Org-Transclude Loaded")
 #+END_SRC
 * Org-Present
+:PROPERTIES:
+:ID:       3f5ca25c-ecbc-4bf8-a38a-be2fd0a7cb69
+:END:
 #+BEGIN_SRC emacs-lisp
   (use-package org-present)
   (eval-after-load "org-present"
@@ -2589,6 +2752,9 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 | lambda | nil | (org-present-small) | (org-remove-inline-images) | (org-present-show-cursor) | (org-present-read-write) |
 
 * Org-ql
+:PROPERTIES:
+:ID:       e3609623-8b92-4762-bb34-0f7ae237cea9
+:END:
 #+BEGIN_SRC emacs-lisp
   (setq org-directory "~/Orgfiles")
   (global-set-key (kbd "C-H-M-f") 'org-ql-find)
@@ -2609,6 +2775,9 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 
 * ORG Export
 ** SEAS HTML Export
+:PROPERTIES:
+:ID:       8f601aae-1a92-4ba5-b623-ff32deda19de
+:END:
 #+begin_src emacs-lisp
   (with-eval-after-load 'ox-html
 
@@ -2673,6 +2842,9 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 : my/reload-css
 
 * calfw-org
+:PROPERTIES:
+:ID:       d315bdcb-e930-429e-833a-397fc768c3b6
+:END:
 #+BEGIN_SRC emacs-lisp
 
   (require 'cl-lib)
@@ -2770,6 +2942,9 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 : my/open-calendar
 
 * Ledger-Mode
+:PROPERTIES:
+:ID:       141f13ad-6fd3-4178-9394-6626ebcef3cd
+:END:
 #+BEGIN_SRC emacs-lisp
   (use-package ledger-mode
     :ensure t
@@ -2800,6 +2975,9 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 | account        | %(binary) -f %(ledger-file) reg %(account)            |
 
 * Tramp
+:PROPERTIES:
+:ID:       89c1c96b-f2ba-49dd-be16-06693a0c9cf3
+:END:
 #+BEGIN_SRC emacs-lisp
   ;; TRAMP Configuration
   (use-package tramp
@@ -2888,6 +3066,9 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 * IDE Setup
 
 ** Project.el
+:PROPERTIES:
+:ID:       2d2433b8-aa6b-4d99-8638-0668ebf5b603
+:END:
 #+BEGIN_SRC emacs-lisp
   (message "loading project.el")  
   (use-package project
@@ -2912,6 +3093,9 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 : #[nil ((use-package-autoload-keymap 'project-prefix-map 'project nil)) nil nil nil nil]
 
 ** Magit
+:PROPERTIES:
+:ID:       4becc3d1-48ee-4d51-83e1-80cf546efed1
+:END:
 #+begin_src emacs-lisp
   (use-package magit
     :commands (magit-status magit-get-current-branch)
@@ -2935,6 +3119,9 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 : ~/Projects/
 
 ** Git Gutter
+:PROPERTIES:
+:ID:       3d59ec80-9623-4101-9ec2-7a71a4a84204
+:END:
 #+BEGIN_SRC emacs-lisp
   (use-package git-gutter
     :hook (prog-mode . git-gutter-mode)
@@ -2952,11 +3139,17 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 : t
 
 ** Forge
+:PROPERTIES:
+:ID:       bf6e4882-8e57-4f4c-b238-99d19e3e0383
+:END:
 #+begin_src emacs-lisp
   ;;  (use-package forge)
 #+end_src
 
 ** Git from Clipboard
+:PROPERTIES:
+:ID:       74003e46-5651-4447-bf9a-682901416ab2
+:END:
 #+begin_src emacs-lisp
 
   (defun ar/git-clone-clipboard-url ()
@@ -2996,6 +3189,9 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 #+end_src
 
 ** Rainbow Deliminators
+:PROPERTIES:
+:ID:       66b4c6bd-5d1a-4b72-872b-729b6e7161f2
+:END:
 #+begin_src emacs-lisp
   (use-package rainbow-delimiters
     :hook (prog-mode . rainbow-delimiters-mode))
@@ -3006,6 +3202,9 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 | rainbow-delimiters-mode |
 
 ** Electric Pair mode
+:PROPERTIES:
+:ID:       eaf71d0b-8499-4f14-a68e-2db979d1b803
+:END:
 #+BEGIN_SRC emacs-lisp
   (add-hook 'prog-mode-hook 'electric-pair-mode)
   (add-hook 'prog-mode-hook 'electric-indent-mode)
@@ -3018,6 +3217,9 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 | electric-indent-mode | electric-pair-mode | my-display-numbers-hook  | rainbow-delimiters-mode |
 |                      |                    |                                                  |
 ** Paredit
+:PROPERTIES:
+:ID:       0717566a-30a5-4bda-944d-f5e02c7909f9
+:END:
 #+BEGIN_SRC emacs-lisp
   (use-package paredit
     :ensure t
@@ -3028,6 +3230,9 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
            (racket-mode . paredit-mode)))
 #+END_SRC
 ** Line Numbers
+:PROPERTIES:
+:ID:       ed5c5f11-67b8-474f-b94a-bd3772d03520
+:END:
 #+begin_src emacs-lisp
   (setq display-line-numbers-type 'relative)
 
@@ -3052,6 +3257,9 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 
 #+RESULTS:
 ** subword mode
+:PROPERTIES:
+:ID:       1ec8be4e-2e68-457d-9e6e-dcd148dba301
+:END:
 #+BEGIN_SRC emacs-lisp
   ;;removed for symbol searching
   ;; (add-hook 'prog-mode-hook 'subword-mode)
@@ -3061,12 +3269,18 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 | subword-mode | my-display-numbers-hook | electric-indent-mode | electric-pair-mode | rainbow-delimiters-mode | git-gutter-mode |
 
 ** Commenting
+:PROPERTIES:
+:ID:       01a3016a-806d-4b6f-b8c8-a587aceb561b
+:END:
 #+begin_src emacs-lisp
   (use-package evil-nerd-commenter
     :bind ("M-;" . evilnc-comment-or-uncomment-lines))
 #+end_src
 
 ** Mini-map
+:PROPERTIES:
+:ID:       c1992169-4e5a-4d50-9fce-5dbc74a06168
+:END:
 #+BEGIN_SRC emacs-lisp
   (use-package minimap)
 
@@ -3084,6 +3298,9 @@ Some possible html modes to look into:
 http://xahlee.info/emacs/emacs/emacs_html.html
 http://xahlee.info/emacs/emacs/xah-css-mode.html
 **** web-mode
+:PROPERTIES:
+:ID:       7e44cde1-b98e-484b-9543-c789cc502ca2
+:END:
 #+BEGIN_SRC emacs-lisp
   (use-package web-mode)
   (setq web-mode-enable-current-column-highlight t)
@@ -3116,6 +3333,9 @@ http://xahlee.info/emacs/emacs/xah-css-mode.html
 #+RESULTS:
 : t
 **** emmet-mode
+:PROPERTIES:
+:ID:       a2f9cdf2-4e11-4b8d-b3c0-bc39834658d2
+:END:
 #+BEGIN_SRC emacs-lisp
   (use-package emmet-mode
     :bind (
@@ -3146,10 +3366,16 @@ http://xahlee.info/emacs/emacs/xah-css-mode.html
 #+RESULTS:
 | lambda | nil | (let ((web-mode-cur-language (web-mode-language-at-pos))) (if (string= web-mode-cur-language php) (yas-activate-extra-mode 'php-mode) (yas-deactivate-extra-mode 'php-mode)) (if (string= web-mode-cur-language css) (setq emmet-use-css-transform t) (setq emmet-use-css-transform nil))) |
 **** css-mode
+:PROPERTIES:
+:ID:       d5afb792-1a3f-48c1-970c-39b73a1d947a
+:END:
 #+BEGIN_SRC emacs-lisp
 
 #+END_SRC
 *** Language Server
+:PROPERTIES:
+:ID:       2fff3225-1990-4f91-8c05-89f53c4fa5e1
+:END:
 #+begin_src emacs-lisp
                                           ; breadcrumb setup
 
@@ -3189,6 +3415,9 @@ http://xahlee.info/emacs/emacs/xah-css-mode.html
 #+RESULTS:
 : close
 *** TypeScript
+:PROPERTIES:
+:ID:       faa395e4-1208-4514-b629-9e5662caff8b
+:END:
 #+begin_src emacs-lisp
   (use-package typescript-mode
     :mode "\\.ts\\'"
@@ -3197,6 +3426,9 @@ http://xahlee.info/emacs/emacs/xah-css-mode.html
     (setq typescript-indent-level 2))
 #+end_src
 *** Javascript
+:PROPERTIES:
+:ID:       380f0cf1-bf9f-4ec5-9fd4-f99cc8d0ae50
+:END:
 Following setup from here: https://www.chadstovern.com/javascript-in-emacs-revisited/
 #+BEGIN_SRC emacs-lisp
   (use-package rjsx-mode
@@ -3281,6 +3513,9 @@ Following setup from here: https://www.chadstovern.com/javascript-in-emacs-revis
 #+RESULTS:
 
 *** Ligatures
+:PROPERTIES:
+:ID:       cc4f329c-d456-4869-90dd-ef49ef1a4a21
+:END:
 #+BEGIN_SRC emacs-lisp
   ;; This assumes you've installed the package via MELPA.
   (use-package ligature
@@ -3315,6 +3550,9 @@ Following setup from here: https://www.chadstovern.com/javascript-in-emacs-revis
 : t
 
 *** Haxe
+:PROPERTIES:
+:ID:       cf8c4af6-d044-429d-8c50-2d583063be07
+:END:
 #+BEGIN_SRC emacs-lisp
   ;; This isn't really a package, it just provides a `haxe-mode' to work with
   (use-package haxe-mode
@@ -3339,6 +3577,9 @@ Following setup from here: https://www.chadstovern.com/javascript-in-emacs-revis
 #+RESULTS:
 
 *** elisp
+:PROPERTIES:
+:ID:       dd6871d4-0db6-4cd2-bbfd-c72f1094a580
+:END:
 #+BEGIN_SRC emacs-lisp
 
   (defun my/sexp-newline ()
@@ -3354,6 +3595,9 @@ Following setup from here: https://www.chadstovern.com/javascript-in-emacs-revis
 : my/sexp-newline
 
 ** Better Completions
+:PROPERTIES:
+:ID:       01b1fec0-f20f-4cea-9dd8-b5646edc3bcd
+:END:
 #+begin_src emacs-lisp
   (use-package company
     :after lsp-mode
@@ -3386,6 +3630,9 @@ Following setup from here: https://www.chadstovern.com/javascript-in-emacs-revis
 Dap mode here: https://www.youtube.com/watch?v=0bilcQVSlbM
 
 ** Section Loaded Message
+:PROPERTIES:
+:ID:       8337a141-c181-4a8d-b772-c4ea6d4afffb
+:END:
 #+BEGIN_SRC emacs-lisp
   (message "IDE Setup Section Loaded")
 #+END_SRC
@@ -3393,6 +3640,9 @@ Dap mode here: https://www.youtube.com/watch?v=0bilcQVSlbM
 * Macros, Functions and Keybinds
 A section for my personal macors functions and keybinds  
 ** Dabbrev
+:PROPERTIES:
+:ID:       07e37727-a9d5-4a26-8fb5-b8a8ad78d705
+:END:
 #+BEGIN_SRC emacs-lisp
 
   (defun my/dabbrev-expand-lisp ()
@@ -3412,6 +3662,9 @@ A section for my personal macors functions and keybinds
 : dabbrev-completion
 
 ** next-tag - "C-x t" - Move inside the next tag set in web-mode
+:PROPERTIES:
+:ID:       c901aad3-abc1-4b1f-a690-905fee116e2a
+:END:
 #+BEGIN_SRC emacs-lisp
   (defun next-tag()
     (interactive)
@@ -3463,6 +3716,9 @@ Managing Windows, buffers etc
 
 *** General movement
 **** Functions and Bindings
+:PROPERTIES:
+:ID:       39826ac9-1a56-4a88-8afe-786599f858d1
+:END:
 #+BEGIN_SRC emacs-lisp
   ;; Macros & commands
                                           ;(fset 'buffer-quick-switch
@@ -3522,6 +3778,9 @@ Managing Windows, buffers etc
 #+RESULTS:
 : bookmark-jump
 *** Homebrew Harpoon
+:PROPERTIES:
+:ID:       bb9c239f-818d-4409-ad8f-16b9397bde82
+:END:
 #+BEGIN_SRC emacs-lisp
 
 
@@ -3672,6 +3931,9 @@ Move the cursor
 
 
 *** Function Definitions
+:PROPERTIES:
+:ID:       64d7df9d-7da2-4069-be77-287472410c7f
+:END:
 #+BEGIN_SRC emacs-lisp
   (defun my/pop-local-mark-ring ()
     "Move cursor to last mark position of current buffer, repeat calls will cycle"
@@ -3784,6 +4046,9 @@ Move the cursor
 
 : wrap-sexp-backward-with-parenthesis
 *** Key binding
+:PROPERTIES:
+:ID:       8ed62867-fadf-4417-a63b-785d5961a428
+:END:
 #+BEGIN_SRC emacs-lisp
 
   (global-set-key (kbd "M-o") 'my/insert-line-above-and-go)
@@ -3817,6 +4082,9 @@ Move the cursor
 
 ** Editing Text
 *** Function Definitions
+:PROPERTIES:
+:ID:       23f460e9-661e-4b42-b8c2-49539f40cf26
+:END:
 #+BEGIN_SRC emacs-lisp
   (defun duplicate-current-line()
     "Duplicates the entire line under point. Repetable with 'd' "
@@ -3868,6 +4136,9 @@ Move the cursor
 #+RESULTS:
 : kill-line-at-point
 *** Keybinds
+:PROPERTIES:
+:ID:       60945c6b-bacd-40f2-aebd-0b78fd9e1c2e
+:END:
 #+BEGIN_SRC emacs-lisp
 
   (global-set-key (kbd "C-M-i") 'indent-region)
@@ -3883,6 +4154,9 @@ Move the cursor
 #+RESULTS:
 
 ** Jump to Scratch
+:PROPERTIES:
+:ID:       53b4cb47-6c71-4ad6-9dc9-82dc6b770646
+:END:
 #+BEGIN_SRC emacs-lisp
   (defun my/jump-to-scratch ()
     "Jump to a scratch buffer. If multiple scratch buffers exist, prompt to choose."
@@ -3910,6 +4184,9 @@ Move the cursor
 : my/jump-to-scratch
 
 ** Load config workspace
+:PROPERTIES:
+:ID:       b9dfbe16-bebf-47dd-8b20-07e6cebe7523
+:END:
 #+BEGIN_SRC emacs-lisp
   (defun my/open-config-workspace ()
     "
@@ -3947,6 +4224,9 @@ Move the cursor
 : my/open-config-workspace
 
 ** Keymap backup & restore
+:PROPERTIES:
+:ID:       11aedc39-5cda-42de-8890-366feeaeb60e
+:END:
 #+BEGIN_SRC emacs-lisp
   (defun my/backup-global-keymap ()
     "Save a snapshot of the current global keymap."
@@ -3983,6 +4263,9 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 
 
 *** Bindings
+:PROPERTIES:
+:ID:       03003ec9-bb8d-463c-99c7-f8a4aaab699b
+:END:
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "H-w") 'widen)
   (global-set-key (kbd "H-r") 'narrow-to-region)
@@ -3998,6 +4281,9 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 
 ** Org Agenda
 *** my/org-agenda-lock
+:PROPERTIES:
+:ID:       940c1ee5-ee8e-486c-adc2-f538f5bf1fcc
+:END:
 #+BEGIN_SRC emacs-lisp
   (defvar my/agenda-restriction-active nil
     "Whether the agenda restriction lock is currently active.")
@@ -4017,6 +4303,9 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
     (org-agenda-redo))
 #+END_SRC
 ** Org
+:PROPERTIES:
+:ID:       0f29bb8f-2a5a-48ce-b4b9-804f8c6cff63
+:END:
 #+BEGIN_SRC emacs-lisp
 
   (defun my/next-error()
@@ -4059,10 +4348,16 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 
 #+END_SRC
 ** Productivity
+:PROPERTIES:
+:ID:       2ddf35b7-015b-4225-be88-02e046981a7f
+:END:
 #+BEGIN_SRC emacs-lisp
 
 #+END_SRC
 *** Star Rating Insert
+:PROPERTIES:
+:ID:       0a04d023-9ef9-4942-aef0-77dbd0e3163e
+:END:
 #+BEGIN_SRC emacs-lisp
 
 
@@ -4071,6 +4366,9 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 #+RESULTS:
 : hydra-insert-rating/body
 ** Section Loaded Message
+:PROPERTIES:
+:ID:       908f9de9-69d0-4d33-8567-990bb00fcd28
+:END:
 #+BEGIN_SRC emacs-lisp
   (message "Macros, Functions and Keybinds loaded")
 #+END_SRC
@@ -4090,6 +4388,9 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 | S      | create symbolic link       |
 
 ** config
+:PROPERTIES:
+:ID:       b0d1363e-9d3e-489f-95b2-45898964e575
+:END:
 #+BEGIN_SRC emacs-lisp
                                           ; list directories first
   (setq dired-listing-switches "-agho --group-directories-first")
@@ -4100,6 +4401,9 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 #+RESULTS:
 : t
 ** SIngle Dired Buffer
+:PROPERTIES:
+:ID:       b83bb515-fefa-4492-a6f8-991e6d94c399
+:END:
 #+BEGIN_SRC emacs-lisp
   ;;  (use-package dired-single)
 #+END_SRC
@@ -4107,6 +4411,9 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 #+RESULTS:
 
 ** Icons
+:PROPERTIES:
+:ID:       f31dbebd-21f1-480a-9d07-ce328ca8592a
+:END:
 #+BEGIN_SRC emacs-lisp
 
   (use-package all-the-icons)
@@ -4124,6 +4431,9 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 #+RESULTS:
 | all-the-icons-dired-mode |
 ** Hide Dot Files
+:PROPERTIES:
+:ID:       47265328-f0d2-4251-9df5-b82627756dc8
+:END:
 - hotkey: . (dot)
 #+BEGIN_SRC emacs-lisp
     (defun my-dired-mode-hook ()
@@ -4141,10 +4451,16 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 #+RESULTS:
 : dired-hide-dotfiles-mode
 ** Section Loaded Message
+:PROPERTIES:
+:ID:       0077b2c4-5197-4016-b3a8-77ed64a2acfd
+:END:
 #+BEGIN_SRC emacs-lisp
   (message "dired loaded")
 #+END_SRC
 * Testing
+:PROPERTIES:
+:ID:       91bcf1f0-89ea-4c1c-bfa0-2aea6cecb463
+:END:
 #+BEGIN_SRC emacs-lisp
 
   (global-set-key (kbd "<f6>") 'browse-url-of-buffer)
@@ -4176,6 +4492,9 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 #+RESULTS:
 : consult-dir-projectile-dirs
 ** Elisp font lock hooks
+:PROPERTIES:
+:ID:       f54c0c9c-0e4f-4ef0-a921-bd102217f318
+:END:
 #+BEGIN_SRC emacs-lisp
   (defun my/elisp-font-lock-additions ()
     (font-lock-add-keywords nil
@@ -4188,6 +4507,9 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 | my/elisp-font-lock-additions | paredit-mode |
 
 ** Org Bookmark Heading
+:PROPERTIES:
+:ID:       4db82b34-8b18-4d74-9a73-2b1282c7ddc8
+:END:
 #+BEGIN_SRC emacs-lisp sdfs   
   (require 'org-bookmark-heading)
   (global-set-key (kbd "C-x r b") 'consult-bookmark)
@@ -4198,6 +4520,9 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 : consult-bookmark
 
 ** Org-Drill Fix
+:PROPERTIES:
+:ID:       9a2f8e56-e9d3-4e34-9861-9abd71476402
+:END:
 #+BEGIN_SRC emacs-lisp
   (defun org-drill-time-to-inactive-org-timestamp (time)
     "Convert TIME into org-mode timestamp."
@@ -4210,6 +4535,9 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 : org-drill-time-to-inactive-org-timestamp
 
 ** Adding to path for empv
+:PROPERTIES:
+:ID:       de9cceed-47a7-4fb5-b851-3ecc12ea1ba2
+:END:
 #+BEGIN_SRC emacs-lisp
   (setenv "PATH" (concat "/home/tyler/miniconda3/bin:" (getenv "PATH")))
   (add-to-list 'exec-path "/home/tyler/miniconda3/bin")
@@ -4219,6 +4547,9 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 | /home/tyler/miniconda3/bin | /home/tyler/.local/bin | /usr/local/sbin | /usr/local/bin | /usr/sbin | /usr/bin | /sbin | /bin | /usr/games | /usr/local/games | /snap/bin | /snap/bin | /snap/emacs/3690/usr/bin | /snap/emacs/current/usr/libexec/emacs/30.2/x86_64-pc-linux-gnu |
 
 ** Dictionary
+:PROPERTIES:
+:ID:       91d73180-6a8d-4dc6-98d9-d9eb68e371e1
+:END:
 #+BEGIN_SRC emacs-lisp
   (use-package dictionary
     :custom
@@ -4232,6 +4563,9 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 : dictionary-lookup-definition
 
 ** Directory Tree Stamper
+:PROPERTIES:
+:ID:       9a3ead06-424a-4ceb-97a2-fcc7b316f0ff
+:END:
 #+BEGIN_SRC emacs-lisp
   (require 'transient)
 
@@ -4281,11 +4615,17 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 #+RESULTS:
 
 ** Section Loaded Message
+:PROPERTIES:
+:ID:       282cc289-8b2c-4c0c-9cb1-6b8feef1a0ab
+:END:
 #+BEGIN_SRC emacs-lisp
   (message "Testing section loaded")
 #+END_SRC
 
 * Elfeed
+:PROPERTIES:
+:ID:       ac1816aa-a5a1-44a9-850c-49a348c98b72
+:END:
 #+BEGIN_SRC emacs-lisp
   (message "Elfeed loading...")
 
@@ -4389,6 +4729,9 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 : #[nil ((let* ((video-id (elfeed-tube--entry-video-id elfeed-show-entry)) (url (concat "https://youtube.com/watch?v=" video-id))) (mpv--enqueue `("loadfile" ,url "append") #'ignore) (message "Enqueued: %s" (elfeed-entry-title elfeed-show-entry)))) nil nil nil nil]
 
 * Load Music
+:PROPERTIES:
+:ID:       6baab66b-1a21-4dad-8b9e-91c4944037fe
+:END:
 #+BEGIN_SRC emacs-lisp
 
   (defun play-retro-sax ()
@@ -4469,6 +4812,9 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 * Xah Lee Implementations
 Tried out Xah-fly-keys and didn't love his command mode but he has some really good helper rowing those below
 ** Function definitions
+:PROPERTIES:
+:ID:       3793ab02-0df5-49b5-ae2c-47a80fca5385
+:END:
 #+BEGIN_SRC emacs-lisp
   (defun xah-beginning-of-line-or-block ()
     "Move cursor to beginning of line or previous block.
@@ -4519,6 +4865,9 @@ Tried out Xah-fly-keys and didn't love his command mode but he has some really g
 : xah-end-of-line-or-block
 
 ** Bindings
+:PROPERTIES:
+:ID:       6339b7d2-fcb4-4f54-aede-0b8c041fe43d
+:END:
 #+BEGIN_SRC emacs-lisp
   (define-key global-map (kbd "M-p") 'xah-beginning-of-line-or-block)
   (define-key global-map (kbd "M-n") 'xah-end-of-line-or-block)
@@ -4528,12 +4877,18 @@ Tried out Xah-fly-keys and didn't love his command mode but he has some really g
 : xah-end-of-line-or-block
 
 ** Section Loaded Message
+:PROPERTIES:
+:ID:       6a9d3eb1-90d6-4b80-b20d-ffe1d4b9b0ef
+:END:
 #+BEGIN_SRC emacs-lisp
   (message "Xah Lee section loaded")
 #+END_SRC
 
 * Final Loading
 * Setup final org settings
+:PROPERTIES:
+:ID:       b5c6dac1-e9af-42a0-b392-24cab22097c9
+:END:
 #+BEGIN_SRC emacs-lisp
   ;;Make org links open in same window
   (setq org-link-frame-setup
@@ -4566,6 +4921,9 @@ Tried out Xah-fly-keys and didn't love his command mode but he has some really g
 #+RESULTS:
 : my/org-agenda-set-category-task
 ** default frame settings
+:PROPERTIES:
+:ID:       aaef7e05-2e3d-4f3b-8165-5f7ff558689b
+:END:
 #+BEGIN_SRC emacs-lisp
 
   (setq default-frame-alist '(
@@ -4588,6 +4946,9 @@ Tried out Xah-fly-keys and didn't love his command mode but he has some really g
 #+RESULTS:
 [[file:test.png]]
 ** Load Hyper
+:PROPERTIES:
+:ID:       9f05f700-407e-41c4-b2ba-f35e9234c774
+:END:
 #+BEGIN_SRC emacs-lisp
 
     ;; (defun my/enable-hyper-key()
@@ -4607,6 +4968,9 @@ Tried out Xah-fly-keys and didn't love his command mode but he has some really g
 #+RESULTS:
 : my/enable-hyper-key
 ** Load keymap
+:PROPERTIES:
+:ID:       a8938bc9-b5f7-4024-8790-2a7db66782fb
+:END:
 #+BEGIN_SRC emacs-lisp
   (my/backup-global-keymap)
 #+END_SRC
@@ -4615,6 +4979,9 @@ Tried out Xah-fly-keys and didn't love his command mode but he has some really g
 : Global keymap backed up.
 
 ** Section Loaded Message
+:PROPERTIES:
+:ID:       c696cf9a-6d09-45e5-b726-c36583f5503d
+:END:
 #+BEGIN_SRC emacs-lisp
   (message "Final Section loaded")
 #+END_SRC
