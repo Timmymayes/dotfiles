@@ -572,6 +572,9 @@ Turn on Yas global mode
 #+BEGIN_SRC emacs-lisp
   (message "Usabiliy Section Finished Loading")
 #+END_SRC
+
+* LLM Tooling
+
 * LLM Setup
 :PROPERTIES:
 :ID:       751c6110-f494-4bf4-95cf-e6531870194c
@@ -596,7 +599,8 @@ Turn on Yas global mode
     ;; make oolama
     (gptel-make-ollama "Ollama"
       :host "localhost:11434"
-      :models '(llama3.1:8b)
+      :models '(llama3.1
+  	      qwen2.5-coder:14b)
       :stream t)
     
     ;; Claude - store the backend in a variable
@@ -649,45 +653,45 @@ Turn on Yas global mode
     (define-key my/gptel-map (kbd "r r") #'gptel-rewrite))
 
   ;; Custom Functions
-(defun my/gptel-use-llama ()
-  "Switch to local Llama 3.1 8B via Ollama."
-  (interactive)
-  (setq gptel-backend (gptel-get-backend "Ollama")
-        gptel-model 'llama3.1:8b
-        gptel-max-tokens 4096)
-  (message "GPTel: switched to local Llama 3.1 8B"))
+  (defun my/gptel-use-llama ()
+    "Switch to local Llama 3.1 8B via Ollama."
+    (interactive)
+    (setq gptel-backend (gptel-get-backend "Ollama")
+          gptel-model 'llama3.1
+          gptel-max-tokens 4096)
+    (message "GPTel: switched to local Llama 3.1"))
 
-(defun my/gptel-use-qwen ()
-  "Switch to local Qwen 2.5 14B via Ollama."
-  (interactive)
-  (setq gptel-backend (gptel-get-backend "Ollama")
-        gptel-model 'qwen2.5:14b
-        gptel-max-tokens 4096)
-  (message "GPTel: switched to local Qwen 2.5 14B"))
+  (defun my/gptel-use-qwen ()
+    "Switch to local Qwen 2.5 14B via Ollama."
+    (interactive)
+    (setq gptel-backend (gptel-get-backend "Ollama")
+          gptel-model 'qwen2.5-coder:14b
+          gptel-max-tokens 4096)
+    (message "GPTel: switched to local Qwen 2.5-coder 14B"))
 
-(defun my/gptel-use-haiku ()
-  "Switch to Claude Haiku (fast/cheap)."
-  (interactive)
-  (setq gptel-backend (gptel-get-backend "Claude")
-        gptel-model 'claude-haiku-4-5
-        gptel-max-tokens nil)
-  (message "GPTel: switched to Claude Haiku"))
+  (defun my/gptel-use-haiku ()
+    "Switch to Claude Haiku (fast/cheap)."
+    (interactive)
+    (setq gptel-backend (gptel-get-backend "Claude")
+          gptel-model 'claude-haiku-4-5
+          gptel-max-tokens nil)
+    (message "GPTel: switched to Claude Haiku"))
 
-(defun my/gptel-use-sonnet ()
-  "Switch to Claude Sonnet (balanced)."
-  (interactive)
-  (setq gptel-backend (gptel-get-backend "Claude")
-        gptel-model 'claude-sonnet-4-6
-        gptel-max-tokens nil)
-  (message "GPTel: switched to Claude Sonnet"))
+  (defun my/gptel-use-sonnet ()
+    "Switch to Claude Sonnet (balanced)."
+    (interactive)
+    (setq gptel-backend (gptel-get-backend "Claude")
+          gptel-model 'claude-sonnet-4-6
+          gptel-max-tokens nil)
+    (message "GPTel: switched to Claude Sonnet"))
 
-(defun my/gptel-use-opus ()
-  "Switch to Claude Opus (powerful/expensive)."
-  (interactive)
-  (setq gptel-backend (gptel-get-backend "Claude")
-        gptel-model 'claude-opus-4-6
-        gptel-max-tokens nil)
-  (message "GPTel: switched to Claude Opus"))
+  (defun my/gptel-use-opus ()
+    "Switch to Claude Opus (powerful/expensive)."
+    (interactive)
+    (setq gptel-backend (gptel-get-backend "Claude")
+          gptel-model 'claude-opus-4-6
+          gptel-max-tokens nil)
+    (message "GPTel: switched to Claude Opus"))
 
   (defvar my/gptel-current-directive 'default
     "Tracks the currently active gptel directive.")
@@ -748,6 +752,28 @@ Turn on Yas global mode
     (setq my/gptel-current-directive 'chat)
     (message "GPTel: directive → chat"))
 
+
+
+  
+
+
+
+#+END_SRC
+
+#+RESULTS:
+| :eval | (format  [%s:%s] (my/gptel-model-short-name) (my/gptel-directive-short-name)) |
+** Misc bindings for now
+:PROPERTIES:
+:ID:       01bcd447-67c4-4355-b771-5b6187ca904f
+:END:
+#+BEGIN_SRC emacs-lisp
+
+#+END_SRC
+** Modeline Setup
+:PROPERTIES:
+:ID:       18b50228-e487-40dd-839d-fa514c8f6e55
+:END:
+#+BEGIN_SRC emacs-lisp
   ;; Display model and directive in modeline
   (defun my/gptel-model-short-name ()
     "Return a short display name for the current gptel model."
@@ -771,17 +797,42 @@ Turn on Yas global mode
   ;; Add to global mode-line
   (add-to-list 'global-mode-string my/gptel-mode-line-segment t)
 
+  ;; Poll nvidia smi and put the mem usage int he modeline 
+  (defvar my/gpu-vram-string ""
+    "Current VRAM usage string for mode-line display.")
 
-#+END_SRC
+  (defun my/update-gpu-vram ()
+    "Query nvidia-smi and update `my/gpu-vram-string'."
+    (let ((output (ignore-errors
+                    (with-temp-buffer
+                      (call-process "nvidia-smi" nil t nil
+                                    "--query-gpu=memory.used,memory.total"
+                                    "--format=csv,noheader,nounits")
+                      (string-trim (buffer-string))))))
+      (setq my/gpu-vram-string
+            (if (and output (string-match "\\([0-9]+\\), *\\([0-9]+\\)" output))
+                (format " GPU:%s/%sMB"
+                        (match-string 1 output)
+                        (match-string 2 output))
+              " GPU:N/A"))))
 
-#+RESULTS:
-| :eval | (format  [%s:%s] (my/gptel-model-short-name) (my/gptel-directive-short-name)) |
-** Misc bindings for now
-:PROPERTIES:
-:ID:       01bcd447-67c4-4355-b771-5b6187ca904f
-:END:
-#+BEGIN_SRC emacs-lisp
+  (defvar my/gpu-vram-timer nil)
 
+  (defun my/gpu-vram-mode-line-enable ()
+    "Start periodic VRAM polling for the mode-line."
+    (interactive)
+    (my/update-gpu-vram)
+    (setq my/gpu-vram-timer
+          (run-with-timer 0 5 #'my/update-gpu-vram)) ; every 5 seconds
+    (unless (memq 'my/gpu-vram-string global-mode-string)
+      (add-to-list 'global-mode-string 'my/gpu-vram-string t)))
+
+  (defun my/gpu-vram-mode-line-disable ()
+    (interactive)
+    (when my/gpu-vram-timer
+      (cancel-timer my/gpu-vram-timer)
+      (setq my/gpu-vram-timer nil))
+    (setq global-mode-string (remove 'my/gpu-vram-string global-mode-string)))
 #+END_SRC
 ** Section Loaded Message
 :PROPERTIES:
