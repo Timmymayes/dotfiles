@@ -4865,10 +4865,10 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
     "insert link from clipboard into correct format"
     (interactive)
     (let* ((url (read-string "Youtube URL:"))
-  	 (band-name (read-string "Band:"))
-  	 (song-name (read-string "Song:"))
-  	 (m3u-entry (concat "\n" url "(:title \""  band-name " - " song-name "\":youtube t)"))
-  	 (m3u-to-append (read-file-name "Append to:" "~/Orgfiles/Music/")))
+        	 (band-name (read-string "Band:"))
+        	 (song-name (read-string "Song:"))
+        	 (m3u-entry (concat "\n" url "(:title \""  band-name " - " song-name "\":youtube t)"))
+        	 (m3u-to-append (read-file-name "Append to:" "~/Orgfiles/Music/")))
       
       (append-to-file m3u-entry nil m3u-to-append)
       (message (concat m3u-entry " added!"))))
@@ -4891,6 +4891,7 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
     :ensure t
     :bind
     (
+     ("")
      ("s-[" . empv-volume-down)
      ("s-]" . empv-volume-up))
     :bind-keymap
@@ -4914,11 +4915,36 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
   (with-eval-after-load 'empv
     (define-key empv-map (kbd "y") 'my/insert-youtube-link-into-m3u )
     (define-key empv-map (kbd "f") 'my/empv-play-file-from-music)
+    (define-key empv-map (kbd "m") 'my/mpv-play-m3u)
     (define-key empv-map (kbd "S") 'empv-playlist-save-to-file))
+
+  (which-key-add-keymap-based-replacements empv-map
+  "y" "M3U Link Inserter"
+  "f" "Play from Music"
+  "m" "MPV Direct - Load M3U"
+  "S" "Save Playlist")
 
   (with-eval-after-load 'embark
     (empv-embark-initialize-extra-actions) )
+
+  (when my/windows-p
+    (setq empv-mpv-binary "mpv")
+    (setq empv-socket-file "\\\\.\\pipe\\empv-socket"))
+
+  ;; playlist player (for when empv doesn't work)
+
+  (defun my/mpv-play-m3u ()
+    "Prompt for an m3u file in the Music directory and play it audio-only."
+    (interactive)
+    (let* ((default-directory (expand-file-name "~/Orgfiles/Music/"))
+           (file (read-file-name "Playlist: " default-directory nil t nil
+                                 (lambda (f) (string-suffix-p ".m3u" f)))))
+      (start-process "mpv" nil "mpv" "--no-video" (expand-file-name file))))
+
+
   (message "music section loaded")
+
+
 
 #+END_SRC
 
