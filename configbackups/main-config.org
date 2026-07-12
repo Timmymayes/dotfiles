@@ -918,7 +918,7 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
 #+END_SRC
 
 #+RESULTS:
-: my/make-frame-on-bottom-dell
+: delete-frame
 ** Calendar
 *** Put Calendar below capture window
 :PROPERTIES:
@@ -1052,6 +1052,7 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
     (setq org-agenda-window-setup 'current-window)
     (setq org-use-speed-commands t)      
     (setq org-capture-babel-evaluate t)
+    (setq org-todo-repeat-to-state "NEXT")
     (setq org-todo-keywords
           ;; need to add in "Someday Maybe status"
           (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
@@ -4860,18 +4861,48 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
     (interactive)
     (browse-url "https://youtube/q7gv9B4Kw44"))
 
+  ;; Old version of my inserter 
+  ;; (defun my/insert-youtube-luink-into-m3u ()
+  ;;   "insert link from clipboard into correct format"
+  ;;   (interactive)
+  ;;   (let* ((url (read-string "Youtube URL:"))
+  ;;          (band-name (read-string "Band:"))
+  ;;          (song-name (read-string "Song:"))
+  ;;          (m3u-entry (concat "\n" url "(:title \""  band-name " - " song-name "\":youtube t)"))
+  ;;          (m3u-to-append (read-file-name "Append to:" "~/Orgfiles/Music/")))
+
+  ;;     (append-to-file m3u-entry nil m3u-to-append)
+  ;;     (message (concat m3u-entry " added!"))))
 
   (defun my/insert-youtube-link-into-m3u ()
-    "insert link from clipboard into correct format"
+    "Insert link from clipboard into correct format."
     (interactive)
-    (let* ((url (read-string "Youtube URL:"))
-           (band-name (read-string "Band:"))
-           (song-name (read-string "Song:"))
-           (m3u-entry (concat "\n" url "(:title \""  band-name " - " song-name "\":youtube t)"))
-           (m3u-to-append (read-file-name "Append to:" "~/Orgfiles/Music/")))
+    ;; Initialize history variables if they don't exist
+    (unless (boundp 'band-name-history)
+      (setq band-name-history nil))
+    (unless (boundp 'song-name-history)
+      (setq song-name-history nil))
+
+    (let* ((url (read-string "Youtube URL: "))
+           ;; Use the last entered value from history as a default
+           (band-name (read-string (format "Band (%s): " (car (reverse band-name-history))) nil nil (car (reverse band-name-history))))
+           (song-name (read-string (format "Song (%s): " (car (reverse song-name-history))) nil nil (car (reverse song-name-history)))))
       
-      (append-to-file m3u-entry nil m3u-to-append)
-      (message (concat m3u-entry " added!"))))
+      ;; Update history with the new values if they are not already present
+      (unless (member band-name band-name-history)
+        (push band-name band-name-history))
+      (unless (member song-name song-name-history)
+        (push song-name song-name-history))
+
+      ;; Construct the M3U entry
+      (let ((m3u-entry (concat "\n" url "(:title \"" band-name " - " song-name "\":youtube t)"))
+            (m3u-to-append (read-file-name "Append to:" "~/Orgfiles/Music/")))
+
+        ;; Append to file
+        (append-to-file m3u-entry nil m3u-to-append)
+        ;; Show message
+        (message "%s added!" m3u-entry))))
+
 
 
   (defhydra Music (global-map "<f7>")
