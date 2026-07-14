@@ -3168,6 +3168,7 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
   (message "loading project.el")  
   (use-package project
     :ensure nil ;; don't try to install it's built in
+    :demand t
     :bind-keymap ("C-c p" . project-prefix-map)
     :config
     (setq project-switch-commands
@@ -3175,8 +3176,15 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
   	  (consult-ripgrep "Ripgrep" ?r)
   	  (project-eshell "Eshell" ?e)
   	  (my/project-vterm "Vterm" ?v)
-  	  (magit-project-status "Magit" ?m)))
-    )
+  	  (magit-project-status "Magit" ?m))))
+    
+
+  (defun my/project-try-local (dir)
+    "If DIR or a parent contains a .project marker file, treat that as project root."
+    (when-let ((root (locate-dominating-file dir ".project")))
+      (cons 'transient root)))
+
+  (add-hook 'project-find-functions #'my/project-try-local)
 
   (defun my/project-vterm ()
     (interactive)
@@ -3185,7 +3193,7 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
 #+END_SRC
 
 #+RESULTS:
-: #[nil ((use-package-autoload-keymap 'project-prefix-map 'project nil)) nil nil nil nil]
+| my/project-try-local | project-try-vc |
 
 ** Magit
 :PROPERTIES:
@@ -3495,8 +3503,22 @@ http://xahlee.info/emacs/emacs/xah-css-mode.html
 
   (use-package treemacs
     :config
-    (setq treemacs-select-when-already-in-treemacs 'close))
+    (setq treemacs-select-when-already-in-treemacs 'close)
+    (treemacs-project-follow-mode t)
+    (setq treemacs-project-follow-cleanup nil))
 
+  (defun my/treemacs-add-project-el-project ()
+    "Add the current project.el project to the treemacs workspace and reveal it."
+    (interactive)
+    (let* ((root (if-let ((proj (project-current)))
+                     (project-root proj)
+                   default-directory)))
+      (unless (treemacs-is-path root :in-workspace (treemacs-current-workspace))
+        (treemacs-add-project-to-workspace root))
+      (treemacs-select-window)
+      (treemacs-display-current-project-exclusively)))
+
+  (define-key project-prefix-map (kbd "t") #'my/treemacs-add-project-el-project)
 
   (use-package lsp-treemacs
     :after lsp)
