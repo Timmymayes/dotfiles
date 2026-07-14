@@ -495,16 +495,17 @@ Packages that make emacs a little easiler to use. Finding out more about command
   ;;     (setq h (1- h))))
 
   (defun my/star-rating (n)
-    "Function to insert a NUMBER star rating"
+    "Insert an N-star rating out of 5 using plain Unicode stars."
     (interactive "N")
     (let ((h 5))
       (while (> n 0)
-        (insert (all-the-icons-faicon "star"))
+        (insert "★")
         (setq n (1- n))
         (setq h (1- h)))
       (while (> h 0)
-        (insert (all-the-icons-faicon "star-o"))
+        (insert "☆")
         (setq h (1- h)))))
+
 
 
 
