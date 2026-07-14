@@ -4539,6 +4539,18 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
   (add-to-list 'all-the-icons-extension-icon-alist
                '("org_archive" all-the-icons-faicon "archive" :face all-the-icons-orange))
 
+  ;; Explicitly map each all-the-icons font family to its Unicode PUA
+  ;; range so Emacs doesn't rely on automatic per-face font fallback
+  ;; (which is what was failing inside fixed-pitch org-table faces).
+  ;; Use 'append here — 'prepend is only needed on NS/Mac ports.
+
+  (set-fontset-font t 'unicode (font-spec :family "all-the-icons")   nil 'append)
+  (set-fontset-font t 'unicode (font-spec :family "file-icons")      nil 'append)
+  (set-fontset-font t 'unicode (font-spec :family "FontAwesome")     nil 'append)
+  (set-fontset-font t 'unicode (font-spec :family "Material Icons")  nil 'append)
+  (set-fontset-font t 'unicode (font-spec :family "github-octicons") nil 'append)
+  (set-fontset-font t 'unicode (font-spec :family "Weather Icons")   nil 'append)
+
 
 
   (use-package all-the-icons-dired
@@ -4546,7 +4558,7 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 #+END_SRC
 
 #+RESULTS:
-| all-the-icons-dired-mode |
+| my/remote-buffer-setup | all-the-icons-dired-mode |
 ** Hide Dot Files
 :PROPERTIES:
 :ID:       47265328-f0d2-4251-9df5-b82627756dc8
