@@ -2266,7 +2266,7 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
     :hook (org-mode . org-modern-mode)
     :config
     (global-org-modern-mode)
-    (setq org-modern-star '("◉" "○" "●" "○" "●" "○" "●")
+    (setq 
           org-modern-table nil     ;; keep valign handling this
           org-modern-list '((?- . "•") (?+ . "◦") (?* . "▸"))
           org-modern-checkbox nil  ;; keep default checkboxes unless you want to style them
@@ -2285,6 +2285,8 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
   	  ("PHONE"     . (:background "#A3BE8C" :foreground "white"))))
     )
 
+;;org-modern-star '("◉" "○" "●" "○" "●" "○" "●")
+  
   ;; still need to suppress line numbers in org
   (dolist (mode '(org-mode-hook))
     (add-hook mode (lambda () (display-line-numbers-mode 0))))
