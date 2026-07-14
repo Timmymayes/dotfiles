@@ -1310,6 +1310,47 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
 
 #+RESULTS:
 : #[256 "\301\242\302\305\300\306#\210\301\240*\207" [[3 24 112 14 14 79 114 100 101 114 101 100 return 49 return] (0) "%d" kmacro-counter-format-start kmacro-counter execute-kbd-macro kmacro-loop-setup-function] 5 kmacro]
+*** Goal Link Inserter
+:PROPERTIES:
+:ID:       5c6002cb-cb2e-46bf-af89-2c14d6070bab
+:END:
+#+BEGIN_SRC emacs-lisp
+  (defvar my/goals-file "~/Orgfiles/Productivity/Goals/Goals.org"
+    "Path to the goals file containing CUSTOM_ID targets.")
+
+  (defvar my/goals-custom-id-cache nil
+    "Alist of (HEADING . CUSTOM_ID) scraped from `my/goals-file'.")
+
+  (defun my/goals-refresh-custom-ids ()
+    "Scan `my/goals-file' and cache its CUSTOM_ID headings."
+    (interactive)
+    (setq my/goals-custom-id-cache
+          (when (file-exists-p my/goals-file)
+            (with-current-buffer (find-file-noselect my/goals-file)
+              (org-map-entries
+               (lambda ()
+                 (let ((id (org-entry-get (point) "CUSTOM_ID"))
+                       (heading (org-get-heading t t t t)))
+                   (when id (cons heading id))))
+               nil 'file))))
+    (message "Loaded %d goal IDs" (length my/goals-custom-id-cache)))
+
+  (defun my/goals-insert-link ()
+    "Insert a link to a heading in `my/goals-file' by CUSTOM_ID, picked via completion."
+    (interactive)
+    (unless my/goals-custom-id-cache
+      (my/goals-refresh-custom-ids))
+    (let* ((choice (completing-read "Goal: " my/goals-custom-id-cache nil t))
+           (id (cdr (assoc choice my/goals-custom-id-cache))))
+      (when id
+        (insert (format "[[file:%s::#%s][%s]]" my/goals-file id choice)))))
+
+  ;; Populate the cache once Emacs finishes starting
+  (add-hook 'emacs-startup-hook #'my/goals-refresh-custom-ids)
+
+  (global-set-key (kbd "C-c i g") #'my/goals-insert-link)  
+#+END_SRC
+
 ** Org Agenda Custom Functions & Macros
 :PROPERTIES:
 :ID:       5ead4de2-f567-4f75-b599-e28b6df04a71
