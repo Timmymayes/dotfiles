@@ -2411,18 +2411,25 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
 :ID:       0873020a-7c6e-4d36-8d59-65daa46c8b6a
 :END:
 #+begin_src emacs-lisp
-  (defun org-mode-visual-fill()
-    (setq visual-fill-column-width 110 visual-fill-column-center-text t)
-    (visual-fill-column-mode 1))
+  ;; (defun org-mode-visual-fill()
+  ;;   (setq visual-fill-column-width 110 visual-fill-column-center-text t)
+  ;;   (visual-fill-column-mode 1))
 
 
-  (use-package visual-fill-column
-    :hook (org-mode . org-mode-visual-fill)) 
+  ;; (use-package visual-fill-column
+  ;;   :hook (org-mode . org-mode-visual-fill))
+
+  
+  (use-package olivetti
+    :hook (org-mode . olivetti-mode)
+    :custom
+    (olivetti-body-width 110))
+
 
 #+end_src
 
 #+RESULTS:
-| #[0 \301\211\207 [imenu-create-index-function org-imenu-get-tree] 2] | org-transclusion-mode | org-mode-visual-fill | (lambda nil (add-hook 'after-save-hook #'my/org-babel-tangle-config)) | (lambda nil (display-line-numbers-mode 0)) | my/org-buffer-setup | org-bullets-mode | valign-mode | org-mode-setup | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes |
+| #[0 \301\211\207 [imenu-create-index-function org-imenu-get-tree] 2] | org-transclusion-mode | org-mode-visual-fill | (lambda nil (add-hook 'after-save-hook #'my/org-babel-tangle-config)) | (lambda nil (display-line-numbers-mode 0)) | my/org-buffer-setup | org-s-mode | valign-mode | org-mode-setup | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes |
 
 *** Pomodoro
 :PROPERTIES:
