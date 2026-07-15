@@ -3036,6 +3036,94 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
 #+RESULTS:
 : my/open-calendar
 
+** Calfw Quarterly View
+:PROPERTIES:
+:ID:       2d755815-4edc-416a-8cbd-db66018445a8
+:END:
+#+BEGIN_SRC emacs-lisp
+
+
+
+  (with-eval-after-load 'calfw
+    (require 'calfw-org)
+
+    (defun my/cfw-month-offset (month year n)
+      "Return a cfw:date for MONTH/YEAR advanced by N months.
+    Day is fixed at 1 to avoid end-of-month rollover surprises."
+      (let ((total (+ (1- month) n)))
+        (cfw:date (1+ (mod total 12)) 1 (+ year (floor total 12)))))
+
+    (defun my/cfw-quarterly-sources ()
+      "Org sources shared by each panel in the quarterly view."
+      (list
+       (cfw:org-create-file-source "SEAS" "~/Orgfiles/SEAS.org" "#a0a0a0")
+       (cfw:org-create-file-source "PERSONAL" "~/Orgfiles/tasks.org" "Orange")))
+
+    (defun my/open-quarterly-calendar-view ()
+      "Open a 3-panel quarterly calfw view in the current frame.
+
+    Layout:
+      - Left:        current month (wide panel)
+      - Top-right:   current month + 1
+      - Bottom-right current month + 2
+
+    Each panel is an independent cfw: buffer, so navigating one
+    does not move the others."
+      (interactive)
+      (delete-other-windows)
+      (let* ((today (calendar-current-date))
+             (month (nth 0 today))
+             (year (nth 2 today))
+             (sources (my/cfw-quarterly-sources))
+             (left-buf (get-buffer-create "*cal-month-0*"))
+             (tr-buf (get-buffer-create "*cal-month-1*"))
+             (br-buf (get-buffer-create "*cal-month-2*"))
+             (right-window (split-window-right)))
+        ;; Left panel: current month, in the originally selected window
+        (cfw:open-calendar-buffer
+         :buffer left-buf
+         :date today
+         :contents-sources sources)
+        ;; Right column, split top/bottom
+        (select-window right-window)
+        (let ((bottom-window (split-window-below)))
+          (cfw:open-calendar-buffer
+           :buffer tr-buf
+           :date (my/cfw-month-offset month year 1)
+           :contents-sources sources)
+          (select-window bottom-window)
+          (cfw:open-calendar-buffer
+           :buffer br-buf
+           :date (my/cfw-month-offset month year 2)
+           :contents-sources sources))
+        ;; leave focus on the current-month panel
+        (select-window (get-buffer-window left-buf))))
+
+    ;; (global-set-key (kbd "C-H-M-q") 'my/open-quarterly-calendar-view)
+
+    (message "calfw-quarterly-view loaded"))
+
+
+  (defun my/refresh-all-calfw-buffers ()
+    "Refresh every live calfw calendar buffer without disturbing
+  which window/buffer currently has focus."
+    (interactive)
+    (let ((current (selected-window))
+          (count 0))
+      (dolist (buf (buffer-list))
+        (with-current-buffer buf
+          (when (eq major-mode 'cfw:calendar-mode)
+            (cfw:refresh-calendar-buffer t)
+            (setq count (1+ count)))))
+      (when (window-live-p current)
+        (select-window current))
+      (message "Refreshed %d calfw buffer%s" count (if (= count 1) "" "s"))))
+
+  ;; (global-set-key (kbd "C-H-M-r") 'my/refresh-all-calfw-buffers)
+
+  (message "calfw-quarterly-refresh loaded")
+#+END_SRC
+
 * Ledger-Mode
 :PROPERTIES:
 :ID:       141f13ad-6fd3-4178-9394-6626ebcef3cd
