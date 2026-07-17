@@ -284,20 +284,21 @@ Read more about this here: [[https://github.com/rougier/nano-modeline][nano-mode
 
     )
   ;; define org stylizing colors
-  (set-face-attribute 'org-code nil
-                      :foreground "#D08770"   ;; orange (Nord12)
-                      :inherit 'fixed-pitch)
-  (set-face-attribute 'org-verbatim nil
-                      :foreground "#A3BE8C"   ;; Aurora Green (Nord14)
-                      :inherit 'fixed-pitch)
-  (set-face-attribute 'org-link nil
-                      :foreground "#81A1C1"   ;; light blue (Nord9)
-                      :underline t
-                      :weight 'normal)
+  (with-eval-after-load 'org
+    (set-face-attribute 'org-code nil
+                        :foreground "#D08770"   ;; orange (Nord12)
+                        :inherit 'fixed-pitch)
+    (set-face-attribute 'org-verbatim nil
+                        :foreground "#A3BE8C"   ;; Aurora Green (Nord14)
+                        :inherit 'fixed-pitch)
+    (set-face-attribute 'org-link nil
+                        :foreground "#81A1C1"   ;; light blue (Nord9)
+                        :underline t
+                        :weight 'normal)
     (set-face-attribute 'italic nil
-                       :inherit 'unspecified
-                       :foreground 'unspecified
-                       :slant 'italic)
+                        :inherit 'unspecified
+                        :foreground 'unspecified
+                        :slant 'italic))
 
   ;; load magit correctly
   (with-eval-after-load 'magit
@@ -1376,6 +1377,9 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
 
   (global-set-key (kbd "C-c i g") #'my/goals-insert-link)  
 #+END_SRC
+
+#+RESULTS:
+: my/goals-insert-link
 
 ** Org Agenda Custom Functions & Macros
 :PROPERTIES:
@@ -4593,7 +4597,7 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
         (when context
   	(insert "[" context "] "))))
 
-    (define-key org-mode-map (kbd "C-c i") #'my/insert-meeting-todo)
+    (define-key org-mode-map (kbd "C-c i t") #'my/insert-meeting-todo)
     (define-key org-mode-map (kbd "C-c C-x m") #'my/set-meeting-context))
 
 #+END_SRC
