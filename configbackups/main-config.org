@@ -91,6 +91,14 @@ On the rare occasion utf-8 encoding is lost this is a note for myself on how to 
   (add-to-list 'load-path "~/.emacs.d/lisp")
   ;;tangle test
 #+END_SRC
+** Setup Custom.el file
+#+BEGIN_SRC emacs-lisp
+  ;; Keep customize's auto-generated output (safe-local-variable-values, etc.)
+  ;; out of the tangled init.el, since that file gets overwritten on every tangle.
+  (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+  (when (file-exists-p custom-file)
+    (load custom-file))
+#+END_SRC
 ** Setup Hyper & Super on Windows
 :PROPERTIES:
 :ID:       8643cfdc-f594-45ad-bfb5-6a7df3843daa
@@ -980,8 +988,8 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
            ("C-H-e" . org-narrow-to-block)
            ("H-o" . consult-org-heading)
            ("M-s o" . my/org-occur)
-    	 ("H-," . 'org-promote-subtree)
-    	 ("H-." . 'org-demote-subtree)
+  	 ("H-," . 'org-promote-subtree)
+  	 ("H-." . 'org-demote-subtree)
            ("s-b" . 'org-tree-to-indirect-buffer)
            ("C-M-<right>" . org-demote-subtree)
            ("C-M-<left>" . org-promote-subtree)
@@ -1405,7 +1413,15 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
   (define-key org-agenda-mode-map (kbd "C-j w") 'my/org-agenda-jump-to-waiting-and-postponed-tasks)
   (define-key org-agenda-mode-map (kbd "C-j a") 'my/org-agenda-jump-to-tasks-to-archive)
   (define-key org-agenda-mode-map (kbd "C-j r") 'my/org-agenda-jump-to-tasks-to-refile)
-
+  (define-key org-agenda-mode-map (kbd "<C-tab>") 'my/org-agenda-zoom-to-entry)
+  (define-key org-agenda-mode-map (kbd "C-o") 'my/org-agenda-view-entry-narrowed)
+  (define-key org-agenda-mode-map (kbd "H-,") 'org-agenda-remove-restriction-lock)
+  (define-key org-agenda-mode-map (kbd "H-.") 'my/org-agenda-set-restriction-lock)
+  (define-key org-agenda-mode-map (kbd "H-/") 'my/toggle-org-agenda-restriction)
+  (define-key org-agenda-mode-map (kbd "M-s o") 'org-occur-in-agenda-files)
+  (define-key org-agenda-mode-map (kbd "[") 'my/org-agenda-set-category-project)
+  (define-key org-agenda-mode-map (kbd "]") 'my/org-agenda-set-category-task)
+  (define-key org-agenda-mode-map (kbd "C-c C-e") 'org-export-dispatch)
 
   (global-set-key  (kbd "H-c t") 'my/org-convert-list-into-todos)
 
@@ -1416,14 +1432,12 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
   (fset 'my/org-agenda-view-entry-narrowed
         (kmacro-lambda-form [?  ?\C-x ?o ?\H-e ?\C-x ?o] 0 "%d"))
 
-  (define-key org-agenda-mode-map (kbd "<C-tab>") 'my/org-agenda-zoom-to-entry)
-  (define-key org-agenda-mode-map (kbd "C-o") 'my/org-agenda-view-entry-narrowed)
 
 
 #+END_SRC
 
 #+RESULTS:
-: my/org-agenda-view-entry-narrowed
+: #[256 "\301\242\302\305\300\306#\210\301\240*\207" [[32 24 111 16777317 24 111] (0) "%d" kmacro-counter-format-start kmacro-counter execute-kbd-macro kmacro-loop-setup-function] 5 kmacro]
 *** Custom habit hider
 #+BEGIN_SRC emacs-lisp
 ;; ---- selective habit hiding support (local to agenda views) -------------
@@ -2482,9 +2496,10 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
     (org-show-context 'default)
     (forward-line 5))
 
+
+  ;; org-agenda note keybinds
   (define-key org-agenda-mode-map (kbd "z") #'my/agenda-add-note-heading)
   (define-key org-agenda-mode-map (kbd "Z") #'my/agenda-jump-to-last-note)
-
   (define-key org-agenda-mode-map (kbd "C-c C-z") #'my/agenda-add-note-heading)
   (define-key org-agenda-mode-map (kbd "C-c C-Z") #'my/agenda-jump-to-last-note)
   (define-key org-agenda-mode-map (kbd "H-z") #'my/agenda-jump-to-last-note)
@@ -5184,12 +5199,6 @@ Tried out Xah-fly-keys and didn't love his command mode but he has some really g
           (wl . wl-other-frame)))
 
   ;; set org agenda mode map commands 
-  (define-key org-agenda-mode-map (kbd "H-,") 'org-agenda-remove-restriction-lock)
-  (define-key org-agenda-mode-map (kbd "H-.") 'my/org-agenda-set-restriction-lock)
-  (define-key org-agenda-mode-map (kbd "H-/") 'my/toggle-org-agenda-restriction)
-  (define-key org-agenda-mode-map (kbd "M-s o") 'org-occur-in-agenda-files)
-  (define-key org-agenda-mode-map (kbd "[") 'my/org-agenda-set-category-project)
-  (define-key org-agenda-mode-map (kbd "]") 'my/org-agenda-set-category-task)
 
 
 
