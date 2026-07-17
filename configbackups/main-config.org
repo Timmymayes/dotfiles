@@ -92,6 +92,9 @@ On the rare occasion utf-8 encoding is lost this is a note for myself on how to 
   ;;tangle test
 #+END_SRC
 ** Setup Custom.el file
+:PROPERTIES:
+:ID:       2538d948-f3a8-4c5a-9986-70a49c010dbd
+:END:
 #+BEGIN_SRC emacs-lisp
   ;; Keep customize's auto-generated output (safe-local-variable-values, etc.)
   ;; out of the tangled init.el, since that file gets overwritten on every tangle.
@@ -280,6 +283,21 @@ Read more about this here: [[https://github.com/rougier/nano-modeline][nano-mode
     (set-face-attribute 'font-lock-constant-face nil :foreground "#D08770")
 
     )
+  ;; define org stylizing colors
+  (set-face-attribute 'org-code nil
+                      :foreground "#D08770"   ;; orange (Nord12)
+                      :inherit 'fixed-pitch)
+  (set-face-attribute 'org-verbatim nil
+                      :foreground "#A3BE8C"   ;; Aurora Green (Nord14)
+                      :inherit 'fixed-pitch)
+  (set-face-attribute 'org-link nil
+                      :foreground "#81A1C1"   ;; light blue (Nord9)
+                      :underline t
+                      :weight 'normal)
+    (set-face-attribute 'italic nil
+                       :inherit 'unspecified
+                       :foreground 'unspecified
+                       :slant 'italic)
 
   ;; load magit correctly
   (with-eval-after-load 'magit
