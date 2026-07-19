@@ -260,9 +260,28 @@ Basic setup for cleaning up the ui.
   (use-package hydra)
 
   ;; using eshell to run bash script on startup setting up hyper and F keys
-#+end_src
 
+
+  
+#+end_src
+** Mixed Pitch
+:PROPERTIES:
+:ID:       1fbb9862-a776-47df-85c2-119b8d93187a
+:END:
+Fixes tables/code rendering fixed-pitch inside variable-pitch org
+prose. Supersedes the plain :inherit 'fixed-pitch approach, which
+loses to any explicit :family the theme already set on that face.
+#+begin_src emacs-lisp
+  (use-package mixed-pitch
+    :after org
+    :config
+    ;; org-block's fixed-pitch face is an org 9.0+ addition; mixed-pitch's
+    ;; own default list may not include it depending on version, and it's
+    ;; a face you're explicitly styling already — include it to be safe.
+    (add-to-list 'mixed-pitch-fixed-pitch-faces 'org-block))
+#+end_src
 #+RESULTS:
+: t
 
 ** Themes
 :PROPERTIES:
@@ -991,10 +1010,13 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
 
   (defun org-mode-setup()
     (org-indent-mode)
-    (variable-pitch-mode 1) 
+    (mixed-pitch-mode 1) 
     (auto-fill-mode 0)
     (visual-line-mode 1))
 #+end_src
+
+#+RESULTS:
+: org-mode-setup
 
 
 #+begin_src emacs-lisp
@@ -4891,6 +4913,8 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 #+BEGIN_SRC emacs-lisp
   (message "Testing section loaded")
 #+END_SRC
+
+
 
 * Elfeed
 :PROPERTIES:
