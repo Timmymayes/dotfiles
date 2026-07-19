@@ -1028,6 +1028,10 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
                   "~/Orgfiles/Productivity/Goals"
                   "~/Orgfiles/Productivity/Review"
                   )))
+
+    (setq org-agenda-clockreport-parameter-plist
+  	'(:link t :maxlevel 2 :fileskip0 t))
+    
     (setq org-attach-method 'cp)
 
     ;; Toggle functions for opening and closing property and logbook drawers
