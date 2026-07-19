@@ -2266,18 +2266,7 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
           nil
         next-headline)))
 
-  ;; Agenda Sorting
 
-
-
-
-  ;; End norang agenda setup
-
-
-
-  ;; setup v-align mode for tables
-  (use-package valign)
-  (add-hook 'org-mode-hook #'valign-mode)
 
 #+end_src
 
@@ -2329,7 +2318,7 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
     :config
     (global-org-modern-mode)
     (setq 
-          org-modern-table nil     ;; keep valign handling this
+          org-modern-table nil    
           org-modern-list '((?- . "•") (?+ . "◦") (?* . "▸"))
           org-modern-checkbox nil  ;; keep default checkboxes unless you want to style them
           org-modern-tag t
