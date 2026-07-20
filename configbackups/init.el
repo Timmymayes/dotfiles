@@ -2503,13 +2503,13 @@ document.addEventListener('DOMContentLoaded', function() {
     "Return a cfw:date for MONTH/YEAR advanced by N months.
   Day is fixed at 1 to avoid end-of-month rollover surprises."
     (let ((total (+ (1- month) n)))
-      (cfw:date (1+ (mod total 12)) 1 (+ year (floor total 12)))))
+      (calfw-date (1+ (mod total 12)) 1 (+ year (floor total 12)))))
 
   (defun my/cfw-quarterly-sources ()
     "Org sources shared by each panel in the quarterly view."
     (list
-     (cfw:org-create-file-source "SEAS" "~/Orgfiles/SEAS.org" "#a0a0a0")
-     (cfw:org-create-file-source "PERSONAL" "~/Orgfiles/tasks.org" "Orange")))
+     (calfw-org-create-file-source "SEAS" "~/Orgfiles/SEAS.org" "#a0a0a0")
+     (calfw-org-create-file-source "PERSONAL" "~/Orgfiles/tasks.org" "Orange")))
 
   (defun my/open-quarterly-calendar-view ()
     "Open a 3-panel quarterly calfw view in the current frame.
@@ -2532,19 +2532,19 @@ document.addEventListener('DOMContentLoaded', function() {
            (br-buf (get-buffer-create "*cal-month-2*"))
            (right-window (split-window-right)))
       ;; Left panel: current month, in the originally selected window
-      (cfw:open-calendar-buffer
+      (calfw-open-calendar-buffer
        :buffer left-buf
        :date today
        :contents-sources sources)
       ;; Right column, split top/bottom
       (select-window right-window)
       (let ((bottom-window (split-window-below)))
-        (cfw:open-calendar-buffer
+        (calfw-open-calendar-buffer
          :buffer tr-buf
          :date (my/cfw-month-offset month year 1)
          :contents-sources sources)
         (select-window bottom-window)
-        (cfw:open-calendar-buffer
+        (calfw-open-calendar-buffer
          :buffer br-buf
          :date (my/cfw-month-offset month year 2)
          :contents-sources sources))
@@ -2564,7 +2564,7 @@ which window/buffer currently has focus."
         (count 0))
     (dolist (buf (buffer-list))
       (with-current-buffer buf
-        (when (eq major-mode 'cfw:calendar-mode)
+        (when (eq major-mode 'calfw-calendar-mode)
           (cfw:refresh-calendar-buffer t)
           (setq count (1+ count)))))
     (when (window-live-p current)
