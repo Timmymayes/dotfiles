@@ -1,5 +1,5 @@
 ﻿#+STARTUP: content
-#+PROPERTY: header-args:emacs-lisp :tangle ~/Projects/init.el
+#+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el
 
 
 * Config Overview
@@ -12,7 +12,6 @@ This is my first run through configuring emacs so there is probably a lot of ine
 ** Make this natiavly installable
 
 *** Issue list
-- Roboto mono doesn't install
 
 * Initialization
 Initial setup for the core of Emacs. Mostly low level system type elements and package usage. 
@@ -22,6 +21,7 @@ Initial setup for the core of Emacs. Mostly low level system type elements and p
 :END:
 #+BEGIN_SRC emacs-lisp
   					;(setq debug-on-error t)
+  					;another comment
 #+END_SRC
 
 ** UTF-8 buffer revert comand
@@ -2313,34 +2313,34 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
 :ID:       b4b087a7-adcf-4d21-aa63-7e60a7df3cd4
 :END:
 #+BEGIN_SRC emacs-lisp
-  (use-package org-modern
-    :hook (org-mode . org-modern-mode)
-    :config
-    (global-org-modern-mode)
-    (setq 
-          org-modern-table nil    
-          org-modern-list '((?- . "•") (?+ . "◦") (?* . "▸"))
-          org-modern-checkbox nil  ;; keep default checkboxes unless you want to style them
-          org-modern-tag t
-          org-modern-priority t
-          org-modern-todo t
-          org-modern-timestamp t)
-    (setq org-modern-todo-faces
-  	'(("TODO"      . (:background "#BF616A" :foreground "white"))
-  	  ("NEXT"      . (:background "#81A1C1" :foreground "white"))
-  	  ("DONE"      . (:background "#A3BE8C" :foreground "white"))
-  	  ("WAITING"   . (:background "#D08770" :foreground "white"))
-  	  ("HOLD"      . (:background "#B48EAD" :foreground "white"))
-  	  ("CANCELLED" . (:background "#A3BE8C" :foreground "white"))
-  	  ("MEETING"   . (:background "#A3BE8C" :foreground "white"))
-  	  ("PHONE"     . (:background "#A3BE8C" :foreground "white"))))
-    )
+    (use-package org-modern
+      :hook (org-mode . org-modern-mode)
+      :config
+      (global-org-modern-mode)
+      (setq 
+       org-modern-table nil    
+            org-modern-list '((?- . "•") (?+ . "◦") (?* . "▸"))
+            org-modern-checkbox nil  ;; keep default checkboxes unless you want to style them
+            org-modern-tag t
+            org-modern-priority t
+            org-modern-todo t
+            org-modern-timestamp t)
+      (setq org-modern-todo-faces
+    	'(("TODO"      . (:background "#BF616A" :foreground "white"))
+    	  ("NEXT"      . (:background "#81A1C1" :foreground "white"))
+    	  ("DONE"      . (:background "#A3BE8C" :foreground "white"))
+    	  ("WAITING"   . (:background "#D08770" :foreground "white"))
+    	  ("HOLD"      . (:background "#B48EAD" :foreground "white"))
+    	  ("CANCELLED" . (:background "#A3BE8C" :foreground "white"))
+    	  ("MEETING"   . (:background "#A3BE8C" :foreground "white"))
+    	  ("PHONE"     . (:background "#A3BE8C" :foreground "white"))))
+      )
 
-;;org-modern-star '("◉" "○" "●" "○" "●" "○" "●")
-  
-  ;; still need to suppress line numbers in org
-  (dolist (mode '(org-mode-hook))
-    (add-hook mode (lambda () (display-line-numbers-mode 0))))
+  ;;org-modern-star '("◉" "○" "●" "○" "●" "○" "●")
+    
+    ;; still need to suppress line numbers in org
+    (dolist (mode '(org-mode-hook))
+      (add-hook mode (lambda () (display-line-numbers-mode 0))))
 #+END_SRC
 
 #+RESULTS:
@@ -2441,6 +2441,54 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
 :ID:       49d55645-40af-4e64-b6bf-f584927e67f4
 :END:
 #+begin_src emacs-lisp
+  ;;auto tangle my emacs config file
+  (defun my/mirror-tangled-files-to-dotfiles (&rest _)
+    "Copy the tangled early-init.el/init.el into the dotfiles repo's
+   configbackups folder, since ~/.emacs.d isn't itself git-tracked.
+   Fires after ANY org-babel-tangle call, not just save-triggered ones."
+    (dolist (fname '("init.el" "early-init.el"))
+      (let ((src (expand-file-name fname "~/.emacs.d")))
+        (when (file-exists-p src)
+          (copy-file src
+                     (expand-file-name (concat "configbackups/" fname) "~/dotfiles")
+                     t)))))
+  (advice-add 'org-babel-tangle :after #'my/mirror-tangled-files-to-dotfiles)
+
+  (defun my/org-babel-tangle-config()
+    (when (string-equal (buffer-file-name)
+                        (expand-file-name "~/dotfiles/configbackups/main-config.org"))
+      ;; dynamic scoping
+      (let ((org-confirm-babel-evaluate nil))
+        (org-babel-tangle))))
+  (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'my/org-babel-tangle-config)))
+  (message "Tangling enabled")
+
+  ;; ;;auto tangle my emacs config file
+  ;; (defun my/mirror-tangled-files-to-dotfiles ()
+  ;;   "Copy the tangled early-init.el/init.el into the dotfiles repo's
+  ;; configbackups folder, since ~/.emacs.d isn't itself git-tracked.
+  ;; Historically a manual copy; now happens automatically on every tangle."
+  ;;   (dolist (fname '("init.el" "early-init.el"))
+  ;;     (let ((src (expand-file-name fname "~/.emacs.d")))
+  ;;       (when (file-exists-p src)
+  ;;         (copy-file src
+  ;;                    (expand-file-name (concat "configbackups/" fname) "~/dotfiles")
+  ;;                    t))))) ;; t = overwrite without confirmation
+
+  ;; (defun my/org-babel-tangle-config()
+  ;;   (when (string-equal (buffer-file-name)
+  ;;                       (expand-file-name "~/dotfiles/configbackups/main-config.org"))
+  ;;     ;; dynamic scoping
+  ;;     (let ((org-confirm-babel-evaluate nil))
+  ;;       (org-babel-tangle)
+  ;;       (my/mirror-tangled-files-to-dotfiles))))
+  ;; (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'my/org-babel-tangle-config)))
+  ;; (message "Tangling enabled")
+#+end_src
+
+#+RESULTS:
+: Tangling enabled
+
   ;;auto tangle my emacs config file
   (defun my/org-babel-tangle-config()
     (when (string-equal (buffer-file-name)
@@ -3354,12 +3402,7 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
 #+begin_src emacs-lisp
   (use-package magit
     :commands (magit-status magit-get-current-branch)
-    :bind (("C-s-g". magit-status)
-           ("s-g m" . magit-status)
-           ("s-g j" . magit-dispatch)
-           ("s-g k" . magit-file-dispatch)
-           ("s-g l" . magit-log-buffer-file)
-           ("s-g b" . magit-blame))
+    :bind (("C-x g". magit-status))
     :custom
     (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
   (setq magit-clone-default-directory "~/Projects/")
@@ -4902,7 +4945,6 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 #+BEGIN_SRC emacs-lisp
   (message "Testing section loaded")
 #+END_SRC
-
 
 
 * Elfeed
