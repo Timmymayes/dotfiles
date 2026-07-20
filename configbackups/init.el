@@ -60,6 +60,7 @@
                          ("gnu" . "https://elpa.gnu.org/packages/")
                          ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
 
+(setq package-check-signature nil)
 (package-initialize)
 (assq-delete-all 'org package--builtins)
 (assq-delete-all 'org package--builtin-versions)
