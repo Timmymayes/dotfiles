@@ -25,6 +25,7 @@
 (setq default-directory "~/Orgfiles")
 
 (add-to-list 'load-path "~/.emacs.d/lisp")
+(add-to-list 'load-path (expand-file-name "configbackups/lisp" "~/dotfiles"))
 ;;tangle test
 
 ;; Keep customize's auto-generated output (safe-local-variable-values, etc.)
@@ -53,26 +54,20 @@
 (server-start)
 
 (require 'package)
-  (setq package-archives '(("melpa" . "https://melpa.org/packages/")
-                           ;; old org link commented out for deprication 
-                           ;;("org" . "https://orgmode.org/elpa/")
-                           ("gnu" . "https://elpa.gnu.org/packages/")
-                           ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
+(setq package-archives '(("melpa" . "https://melpa.org/packages/")
+                         ;; old org link commented out for deprication 
+                         ;;("org" . "https://orgmode.org/elpa/")
+                         ("gnu" . "https://elpa.gnu.org/packages/")
+                         ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
 
-  (package-initialize)
-  ;; (add-to-list 'load-path
-  ;;              (concat user-emacs-directory
-  ;;                      (car (file-name-all-completions "org-"
-  ;;     						     (concat user-emacs-directory "elpa/")))))
-  ;; clean up org package issues
-  (assq-delete-all 'org package--builtins)
-  (assq-delete-all 'org package--builtin-versions)
-  ;; supress org-warnings
-  ;;  (add-to-list !warning-supresstypes !(org))
-      					;  (package-refresh-contents)
+(package-initialize)
+(assq-delete-all 'org package--builtins)
+(assq-delete-all 'org package--builtin-versions)
+(unless package-archive-contents
+  (package-refresh-contents))
 
 (setq warning-suppress-log-types '((org) (emacs)))
-  (message "Package contents loaded and refreshed")
+(message "Package contents loaded and refreshed")
 
 ;; Initialize use-package on non-Linux platforms
 

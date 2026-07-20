@@ -89,6 +89,7 @@ On the rare occasion utf-8 encoding is lost this is a note for myself on how to 
 :END:
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'load-path "~/.emacs.d/lisp")
+  (add-to-list 'load-path (expand-file-name "configbackups/lisp" "~/dotfiles"))
   ;;tangle test
 #+END_SRC
 ** Setup Custom.el file
@@ -162,27 +163,21 @@ On the rare occasion utf-8 encoding is lost this is a note for myself on how to 
 Require package and setup all package archives. Note changes to mode repositories has some adjusted code in there that may change. 
 
 #+BEGIN_SRC emacs-lisp
-    (require 'package)
-    (setq package-archives '(("melpa" . "https://melpa.org/packages/")
-                             ;; old org link commented out for deprication 
-                             ;;("org" . "https://orgmode.org/elpa/")
-                             ("gnu" . "https://elpa.gnu.org/packages/")
-                             ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
+  (require 'package)
+  (setq package-archives '(("melpa" . "https://melpa.org/packages/")
+                           ;; old org link commented out for deprication 
+                           ;;("org" . "https://orgmode.org/elpa/")
+                           ("gnu" . "https://elpa.gnu.org/packages/")
+                           ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
 
-    (package-initialize)
-    ;; (add-to-list 'load-path
-    ;;              (concat user-emacs-directory
-    ;;                      (car (file-name-all-completions "org-"
-    ;;     						     (concat user-emacs-directory "elpa/")))))
-    ;; clean up org package issues
-    (assq-delete-all 'org package--builtins)
-    (assq-delete-all 'org package--builtin-versions)
-    ;; supress org-warnings
-    ;;  (add-to-list !warning-supresstypes !(org))
-        					;  (package-refresh-contents)
+  (package-initialize)
+  (assq-delete-all 'org package--builtins)
+  (assq-delete-all 'org package--builtin-versions)
+  (unless package-archive-contents
+    (package-refresh-contents))
 
   (setq warning-suppress-log-types '((org) (emacs)))
-    (message "Package contents loaded and refreshed")
+  (message "Package contents loaded and refreshed")
 #+END_SRC
 
 #+RESULTS:
