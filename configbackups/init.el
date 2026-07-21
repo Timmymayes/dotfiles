@@ -655,21 +655,49 @@
 
 ;; Frame delete is C-H-esc
 
-
-;; macros to create new frames based on monitor. 
-(fset 'my/make-frame-on-asus
-      (kmacro-lambda-form [?\M-x ?m ?a ?k ?e ?- ?f ?r ?a ?m ?e ?- ?o ?n ?- ?m ?o ?n ?i ?t ?o ?r return ?D ?P ?- ?0 return] 0 "%d"))
-
-(fset 'my/make-frame-on-top-dell
-      (kmacro-lambda-form [?\M-x ?m ?a ?k ?e ?- ?f ?r ?a ?m ?e ?- ?o ?n ?- ?m ?o ?n ?i ?t ?o ?r ?\C-m ?D ?P ?- ?2 ?\C-m] 0 "%d"))
-
-(fset 'my/make-frame-on-bottom-dell
-      (kmacro-lambda-form [?\M-x ?m ?a ?k ?e ?- ?f ?r ?a ?m ?e ?- ?o ?n ?- ?m ?o ?n ?i ?t ?o ?r return ?H ?D ?M ?I ?- ?0 return] 0 "%d"))
+(defvar my/monitor-slots-alist
+  '(("tyler-winhome"
+     (1 . "\\\\.\\DISPLAY3")   ; vertical ASUS on left
+     (2 . "\\\\.\\DISPLAY1")   ; top Dell ultrawide
+     (3 . "\\\\.\\DISPLAY2"))) ; bottom Dell ultrawide (origin)
+  "Per-machine mapping of monitor slot numbers to monitor names.")
 
 
-(global-set-key (kbd "C-H-1") 'my/make-frame-on-asus)
-(global-set-key (kbd "C-H-2") 'my/make-frame-on-top-dell)
-(global-set-key (kbd "C-H-3") 'my/make-frame-on-bottom-dell)
+
+(defun my/frame-on-slot (slot)
+  "Create a frame on the monitor mapped to SLOT for the current machine."
+  (interactive "nMonitor slot: ")
+  (let* ((machine (system-name))
+         (slots (cdr (assoc machine my/monitor-slots-alist)))
+         (monitor (cdr (assoc slot slots))))
+    (my/make-frame-on-monitor monitor)))
+
+(defun my/make-frame-on-monitor (monitor-name)
+  "Create a new frame on MONITOR-NAME, apply theme, faces, and transparency."
+  (interactive)
+  (let* ((monitors (display-monitor-attributes-list))
+         (target (when monitor-name
+                   (seq-find (lambda (m)
+                               (string= (cdr (assq 'name m)) monitor-name))
+                             monitors)))
+         (workarea (when target (cdr (assq 'workarea target))))
+         (frame (if workarea
+                    (make-frame
+                     `((left . (+ ,(nth 0 workarea)))
+                       (top . (+ ,(nth 1 workarea)))
+                       (width . 120)
+                       (height . 40)
+                       (alpha . (60 . 45))))
+                  (make-frame '((alpha . (60 . 45)))))))
+    (my/apply-theme-and-faces frame)
+    (select-frame-set-input-focus frame)
+    frame))
+
+
+
+(global-set-key (kbd "C-H-1") (lambda () (interactive) (my/frame-on-slot 1)))
+(global-set-key (kbd "C-H-2") (lambda () (interactive) (my/frame-on-slot 2)))
+(global-set-key (kbd "C-H-3") (lambda () (interactive) (my/frame-on-slot 3)))
 
 (add-to-list 'display-buffer-alist
              `(,(rx string-start "*Calendar*" string-end)
@@ -1897,18 +1925,18 @@
 (all-the-icons-completion-mode 1)
 
 (use-package org-modern
-    :hook (org-mode . org-modern-mode)
-    :config
-    (global-org-modern-mode)
-    (setq 
-     org-modern-table nil    
-          org-modern-list '((?- . "•") (?+ . "◦") (?* . "▸"))
-          org-modern-checkbox nil  ;; keep default checkboxes unless you want to style them
-          org-modern-tag t
-          org-modern-priority t
-          org-modern-todo t
-          org-modern-timestamp t)
-    (setq org-modern-todo-faces
+  :hook (org-mode . org-modern-mode)
+  :config
+  (global-org-modern-mode)
+  (setq 
+   org-modern-table nil    
+   org-modern-list '((?- . "•") (?+ . "◦") (?* . "▸"))
+   org-modern-checkbox nil  ;; keep default checkboxes unless you want to style them
+   org-modern-tag t
+   org-modern-priority t
+   org-modern-todo t
+   org-modern-timestamp t)
+  (setq org-modern-todo-faces
   	'(("TODO"      . (:background "#BF616A" :foreground "white"))
   	  ("NEXT"      . (:background "#81A1C1" :foreground "white"))
   	  ("DONE"      . (:background "#A3BE8C" :foreground "white"))
@@ -1917,13 +1945,13 @@
   	  ("CANCELLED" . (:background "#A3BE8C" :foreground "white"))
   	  ("MEETING"   . (:background "#A3BE8C" :foreground "white"))
   	  ("PHONE"     . (:background "#A3BE8C" :foreground "white"))))
-    )
+  )
 
-;;org-modern-star '("◉" "○" "●" "○" "●" "○" "●")
-  
-  ;; still need to suppress line numbers in org
-  (dolist (mode '(org-mode-hook))
-    (add-hook mode (lambda () (display-line-numbers-mode 0))))
+(setq org-modern-star '("◉" "○" "●" "○" "●" "○" "●"))
+
+;; still need to suppress line numbers in org
+(dolist (mode '(org-mode-hook))
+  (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 ;; This is needed as of Org 9.2
                                         ;  (require 'org-tempo)
@@ -2462,12 +2490,34 @@ document.addEventListener('DOMContentLoaded', function() {
       (calfw-org-create-file-source "PERSONAL" "~/Orgfiles/tasks.org" "Orange") ; Personal orgmode
       ))))
 
-;; Remove holidays
-(setq 
- holiday-hebrew-holidays nil
- holiday-islamic-holidays nil
- holiday-bahai-holidays nil
- holiday-oriental-holidays nil)
+;; Remove holidays for calfw
+
+
+(setq holiday-hebrew-holidays nil)     ;; Rosh HaShanah, Yom Kippur, Sukkot, etc.
+(setq holiday-islamic-holidays nil)    ;; Ramadan, Eid, etc.
+(setq holiday-christian-holidays nil)  ;; Easter, Ash Wednesday, etc.
+(setq holiday-bahai-holidays nil)      ;; Bahá'í holidays
+(setq holiday-oriental-holidays nil)   ;; Chinese New Year, etc.
+(setq holiday-solar-holidays nil)      ;; Equinoxes/solstices, if you don't want those either
+
+;; Keep holiday-general-holidays (Labor Day, New Year's, etc.)
+;; and holiday-local-holidays / holiday-other-holidays if you want to add your own.
+
+;; Recompute calendar-holidays from the (now trimmed) category variables.
+;; This mirrors what calendar.el does internally in calendar-holiday-list setup.
+(setq calendar-holidays
+      (append holiday-general-holidays
+              holiday-local-holidays
+              holiday-other-holidays
+              holiday-christian-holidays
+              holiday-hebrew-holidays
+              holiday-islamic-holidays
+              holiday-bahai-holidays
+              holiday-oriental-holidays
+              holiday-solar-holidays))
+
+
+
 (with-eval-after-load 'calfw
   (ignore-errors
     ;; Title and headers
@@ -2600,7 +2650,7 @@ which window/buffer currently has focus."
     (dolist (buf (buffer-list))
       (with-current-buffer buf
         (when (eq major-mode 'calfw-calendar-mode)
-          (cfw:refresh-calendar-buffer t)
+          (calfw-refresh-calendar-buffer t)
           (setq count (1+ count)))))
     (when (window-live-p current)
       (select-window current))
@@ -2680,15 +2730,15 @@ which window/buffer currently has focus."
 (setq dired-free-space nil)
 
 ;; Setup local shell variables for tramp connections
+(with-eval-after-load 'tramp
+  (connection-local-set-profile-variables
+   'remote-bash-profile
+   '((explicit-shell-file-name . "/bin/bash")
+     (explicit-bash-args . ("--login" "-i"))))
 
-(connection-local-set-profile-variables
- 'remote-bash-profile
- '((explicit-shell-file-name . "/bin/bash")
-   (explicit-bash-args . ("--login" "-i"))))
-
-(connection-local-set-profiles
- '(:application tramp)
- 'remote-bash-profile)
+  (connection-local-set-profiles
+   '(:application tramp)
+   'remote-bash-profile))
 
 
 (defun my/remote-buffer-setup ()
@@ -4010,128 +4060,128 @@ Version: 2018-06-04 2021-03-16 2022-03-05"
 (message "Xah Lee section loaded")
 
 (use-package dashboard
-  :ensure t
-  :after (all-the-icons org)
-  :init
-  (setq dashboard-startup-banner "~/EMACS Wordmark-02.png")
-  (setq dashboard-center-content t)
-  (setq dashboard-vertically-center-content t)
-  (setq dashboard-icon-type 'all-the-icons)
-  (setq dashboard-set-heading-icons t)
-  (setq dashboard-set-file-icons t)
-  :config
-  (setq dashboard-footer-messages
-      	'("While any text editor can save your files, only Emacs can save your soul"
-      	  "Vi Vi Vi, the editor of the beast"
-          ))
-  (setq dashboard-banner-logo-title "It's time to work.")
-  
-  (defvar my/dashboard-bookmark-exclusions
-    '("org-capture-last-stored-marker"
-      "org-refile-last-stored"
-      "org-capture-last-stored"))
-  (advice-add 'bookmark-all-names :filter-return
-              (lambda (names)
-                (seq-remove (lambda (n) (member n my/dashboard-bookmark-exclusions))
-                            names)))
+    :ensure t
+    :after (all-the-icons org)
+    :init
+    (setq dashboard-startup-banner "~/EMACS Wordmark-02.png")
+    (setq dashboard-center-content t)
+    (setq dashboard-vertically-center-content t)
+    (setq dashboard-icon-type 'all-the-icons)
+    (setq dashboard-set-heading-icons t)
+    (setq dashboard-set-file-icons t)
+    :config
+    (setq dashboard-footer-messages
+        	'("While any text editor can save your files, only Emacs can save your soul"
+        	  "Vi Vi Vi, the editor of the beast"
+            ))
+    (setq dashboard-banner-logo-title "It's time to work.")
+    
+    (defvar my/dashboard-bookmark-exclusions
+      '("org-capture-last-stored-marker"
+        "org-refile-last-stored"
+        "org-capture-last-stored"))
+    (advice-add 'bookmark-all-names :filter-return
+                (lambda (names)
+                  (seq-remove (lambda (n) (member n my/dashboard-bookmark-exclusions))
+                              names)))
 
-  (defun my/dashboard-insert-tasks (list-size)
-    "Add the list of LIST-SIZE task entries (CATEGORY=\"Task\")."
-    (require 'org-agenda)
-    (let ((dashboard-match-agenda-entry "CATEGORY=\"Task\""))
-      (dashboard-insert-section
-       "Tasks:"
-       (dashboard-agenda--sorted-agenda)
-       list-size
-       'my-tasks
-       "t"
-       `(lambda (&rest _)
-          (let ((file (get-text-property 0 'dashboard-agenda-file ,el))
-        	(point (get-text-property 0 'dashboard-agenda-loc ,el)))
-            (funcall dashboard-agenda-action file point)))
-       (format "%s" el))))
-  
-  (defun my/dashboard-insert-projects (list-size)
-    "Add the list of LIST-SIZE project entries (CATEGORY=\"Proj\")."
-    (require 'org-agenda)
-    (let ((dashboard-match-agenda-entry "CATEGORY=\"Proj\"")
-          (dashboard-filter-agenda-entry 'dashboard-filter-agenda-by-todo))
-      (dashboard-insert-section
-       "Projects:"
-       (dashboard-agenda--sorted-agenda)
-       list-size
-       'my-projects
-       "p"
-       `(lambda (&rest _)
-          (let ((file (get-text-property 0 'dashboard-agenda-file ,el))
-    		(point (get-text-property 0 'dashboard-agenda-loc ,el)))
-            (funcall dashboard-agenda-action file point)))
-       (format "%s" el))))
-
-
-
-  (defun my/dashboard-filter-goal-by-90-day-deadline ()
-    "Include entry if it has a deadline within the next 90 days and is not done.
-    An entry is included if this function returns nil and excluded if returns point."
-    (let ((deadline (org-get-deadline-time (point)))
-          (cutoff (time-add (current-time) (* 86400 90))))
-      (unless (and (not (org-entry-is-done-p))
-                   (not (org-in-archived-heading-p))
-                   deadline
-                   (time-less-p deadline cutoff))
-    	(point))))
-
-  (defun my/dashboard-insert-goals (list-size)
-    "Add the list of LIST-SIZE goal entries with deadlines within 90 days."
-    (require 'org-agenda)
-    (let ((dashboard-match-agenda-entry "CATEGORY=\"Goals\"")
-          (dashboard-filter-agenda-entry 'my/dashboard-filter-goal-by-90-day-deadline))
-      (dashboard-insert-section
-       "Goals (next 90 days):"
-       (dashboard-agenda--sorted-agenda)
-       list-size
-       'my-goals
-       "g"
-       `(lambda (&rest _)
-          (let ((file (get-text-property 0 'dashboard-agenda-file ,el))
-    		(point (get-text-property 0 'dashboard-agenda-loc ,el)))
-            (funcall dashboard-agenda-action file point)))
-       (format "%s" el))))
-
-  (defvar my/dashboard-prefontify-files
-    '("~/Orgfiles/tasks.org"
-      "~/Orgfiles/config.org"
-      "~/Orgfiles/Productivity/Goals/Goals.org"
-      "~/Orgfiles/SEAS.org")
-    "Files to fully fontify before dashboard extracts entries.
-Ensures TODO keyword decorations from org-modern render correctly
-in the dashboard buffer.")
-
-  (add-hook 'dashboard-before-initialize-hook #'my/dashboard-prefontify-files)
-
-  (defun my/dashboard-prefontify-files ()
-    "Load and fully fontify files in `my/dashboard-prefontify-files'."
-    (dolist (file my/dashboard-prefontify-files)
-      (when (file-exists-p file)
-	(with-current-buffer (find-file-noselect file)
-          (font-lock-ensure)))))
-
-
-  (add-to-list 'dashboard-item-generators '(my-tasks . my/dashboard-insert-tasks)) 
-  (add-to-list 'dashboard-item-generators '(my-goals . my/dashboard-insert-goals))
-  (add-to-list 'dashboard-item-generators '(my-projects . my/dashboard-insert-projects))
+    (defun my/dashboard-insert-tasks (list-size)
+      "Add the list of LIST-SIZE task entries (CATEGORY=\"Task\")."
+      (require 'org-agenda)
+      (let ((dashboard-match-agenda-entry "CATEGORY=\"Task\""))
+        (dashboard-insert-section
+         "Tasks:"
+         (dashboard-agenda--sorted-agenda)
+         list-size
+         'my-tasks
+         "t"
+         `(lambda (&rest _)
+            (let ((file (get-text-property 0 'dashboard-agenda-file ,el))
+          	(point (get-text-property 0 'dashboard-agenda-loc ,el)))
+              (funcall dashboard-agenda-action file point)))
+         (format "%s" el))))
+    
+    (defun my/dashboard-insert-projects (list-size)
+      "Add the list of LIST-SIZE project entries (CATEGORY=\"Proj\")."
+      (require 'org-agenda)
+      (let ((dashboard-match-agenda-entry "CATEGORY=\"Proj\"")
+            (dashboard-filter-agenda-entry 'dashboard-filter-agenda-by-todo))
+        (dashboard-insert-section
+         "Projects:"
+         (dashboard-agenda--sorted-agenda)
+         list-size
+         'my-projects
+         "p"
+         `(lambda (&rest _)
+            (let ((file (get-text-property 0 'dashboard-agenda-file ,el))
+      		(point (get-text-property 0 'dashboard-agenda-loc ,el)))
+              (funcall dashboard-agenda-action file point)))
+         (format "%s" el))))
 
 
 
+    (defun my/dashboard-filter-goal-by-90-day-deadline ()
+      "Include entry if it has a deadline within the next 90 days and is not done.
+      An entry is included if this function returns nil and excluded if returns point."
+      (let ((deadline (org-get-deadline-time (point)))
+            (cutoff (time-add (current-time) (* 86400 90))))
+        (unless (and (not (org-entry-is-done-p))
+                     (not (org-in-archived-heading-p))
+                     deadline
+                     (time-less-p deadline cutoff))
+      	(point))))
 
-  (setq dashboard-items '((recents . 5)
-                          (bookmarks . 5)
-                          (my-tasks . 5)
-                          (my-goals . 5)
-                          (my-projects . 5)))
-  (dashboard-setup-startup-hook))
+    (defun my/dashboard-insert-goals (list-size)
+      "Add the list of LIST-SIZE goal entries with deadlines within 90 days."
+      (require 'org-agenda)
+      (let ((dashboard-match-agenda-entry "CATEGORY=\"Goals\"")
+            (dashboard-filter-agenda-entry 'my/dashboard-filter-goal-by-90-day-deadline))
+        (dashboard-insert-section
+         "Goals (next 90 days):"
+         (dashboard-agenda--sorted-agenda)
+         list-size
+         'my-goals
+         "g"
+         `(lambda (&rest _)
+            (let ((file (get-text-property 0 'dashboard-agenda-file ,el))
+      		(point (get-text-property 0 'dashboard-agenda-loc ,el)))
+              (funcall dashboard-agenda-action file point)))
+         (format "%s" el))))
 
-(setq initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
+    (defvar my/dashboard-prefontify-files
+      '("~/Orgfiles/tasks.org"
+        "~/Orgfiles/config.org"
+        "~/Orgfiles/Productivity/Goals/Goals.org"
+        "~/Orgfiles/SEAS.org")
+      "Files to fully fontify before dashboard extracts entries.
+  Ensures TODO keyword decorations from org-modern render correctly
+  in the dashboard buffer.")
+
+;;    (add-hook 'dashboard-before-initialize-hook #'my/dashboard-prefontify-files)
+
+    (defun my/dashboard-prefontify-files ()
+      "Load and fully fontify files in `my/dashboard-prefontify-files'."
+      (dolist (file my/dashboard-prefontify-files)
+        (when (file-exists-p file)
+  	(with-current-buffer (find-file-noselect file)
+            (font-lock-ensure)))))
+
+
+    (add-to-list 'dashboard-item-generators '(my-tasks . my/dashboard-insert-tasks)) 
+    (add-to-list 'dashboard-item-generators '(my-goals . my/dashboard-insert-goals))
+    (add-to-list 'dashboard-item-generators '(my-projects . my/dashboard-insert-projects))
+
+
+
+
+    (setq dashboard-items '((recents . 5)
+                            (bookmarks . 5)
+                            (my-goals . 5)  			  
+                            (my-tasks . 5)
+                            (my-projects . 5)))
+    (dashboard-setup-startup-hook))
+
+  (setq initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
 
 ;;Make org links open in same window
 (setq org-link-frame-setup
