@@ -2644,6 +2644,17 @@ which window/buffer currently has focus."
 
 (setq dired-free-space nil)
 
+;; Setup local shell variables for tramp connections
+
+(connection-local-set-profile-variables
+ 'remote-bash-profile
+ '((explicit-shell-file-name . "/bin/bash")
+   (explicit-bash-args . ("--login" "-i"))))
+
+(connection-local-set-profiles
+ '(:application tramp)
+ 'remote-bash-profile)
+
 
 (defun my/remote-buffer-setup ()
   (when (file-remote-p default-directory)
@@ -2652,7 +2663,7 @@ which window/buffer currently has focus."
 
 (add-hook 'find-file-hook #'my/remote-buffer-setup -90)
 (add-hook 'dired-mode-hook #'my/remote-buffer-setup -90)
-;;; end speed up
+  ;;; end speed up
 
 ;; NAS Bookmark
 (defun my/open-nas ()
@@ -3972,7 +3983,9 @@ Version: 2018-06-04 2021-03-16 2022-03-05"
         (file . find-file)
         (wl . wl-other-frame)))
 
-;; set org agenda mode map commands
+;; set org agenda mode map commands 
+
+(message "Updated msg for testing")
 
 (setq default-frame-alist '(
                             (vertical-scroll-bars) 

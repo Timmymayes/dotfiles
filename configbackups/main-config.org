@@ -12,7 +12,8 @@ This is my first run through configuring emacs so there is probably a lot of ine
 ** Make this natiavly installable
 
 *** Issue list
-
+- test issue
+  
 * Initialization
 Initial setup for the core of Emacs. Mostly low level system type elements and package usage. 
 ** DEBUG on error
@@ -3323,6 +3324,17 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
 
   (setq dired-free-space nil)
 
+  ;; Setup local shell variables for tramp connections
+
+  (connection-local-set-profile-variables
+   'remote-bash-profile
+   '((explicit-shell-file-name . "/bin/bash")
+     (explicit-bash-args . ("--login" "-i"))))
+
+  (connection-local-set-profiles
+   '(:application tramp)
+   'remote-bash-profile)
+
 
   (defun my/remote-buffer-setup ()
     (when (file-remote-p default-directory)
@@ -3331,7 +3343,7 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
 
   (add-hook 'find-file-hook #'my/remote-buffer-setup -90)
   (add-hook 'dired-mode-hook #'my/remote-buffer-setup -90)
-  ;;; end speed up
+    ;;; end speed up
 
   ;; NAS Bookmark
   (defun my/open-nas ()
@@ -3392,7 +3404,7 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
 #+END_SRC
 
 #+RESULTS:
-| my/project-try-local | project-try-vc |
+: my/project-vterm
 
 ** Magit
 :PROPERTIES:
@@ -5292,7 +5304,7 @@ Tried out Xah-fly-keys and didn't love his command mode but he has some really g
 
   ;; set org agenda mode map commands 
 
-
+  (message "Updated msg for testing")
 
 
 
