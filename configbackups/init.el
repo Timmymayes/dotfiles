@@ -2373,6 +2373,16 @@
 (fset 'my/org-transclusion-make
       (kmacro-lambda-form [?\C-  ?\C-c ?\C-n ?\M-w ?\C-p ?\C-y ?\C-c ?\C-p ?\C-c ?\C-p ?\M-x ?o ?r ?g ?- ?t ?r ?a ?n ?s ?c ?l ?u ?s ?i ?o ?n ?- ?d ?e ?a tab return ?\C-p ?\C-k] 0 "%d"))
 
+
+
+(defun my/transclusion-refresh ()
+  "Toggle `org-transclusion-mode' off/on - I can embed this into yas-snippets  using backticks around teh function call and render the transclusion. Sick..."
+  (when (bound-and-true-p org-transclusion-mode)
+    (run-at-time 0 nil
+                 (lambda ()
+                   (org-transclusion-mode 0)
+                   (org-transclusion-mode 1)))))
+
 (message "Org-Transclude Loaded")
 
 (use-package org-present)

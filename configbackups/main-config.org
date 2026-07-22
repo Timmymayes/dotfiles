@@ -2974,6 +2974,16 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
 
 
 
+  (defun my/transclusion-refresh ()
+    "Toggle `org-transclusion-mode' off/on - I can embed this into yas-snippets  using backticks around teh function call and render the transclusion. Sick..."
+    (when (bound-and-true-p org-transclusion-mode)
+      (run-at-time 0 nil
+                   (lambda ()
+                     (org-transclusion-mode 0)
+                     (org-transclusion-mode 1)))))
+
+
+
 #+END_SRC
 
 #+RESULTS:
