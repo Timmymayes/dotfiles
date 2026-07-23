@@ -1,4 +1,7 @@
-﻿#+STARTUP: content
+﻿:PROPERTIES:
+:ID:       ff3ba8d9-69c5-47c9-8a78-ebaebfcef668
+:END:
+#+STARTUP: content
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el
 
 
@@ -288,8 +291,8 @@ Basic setup for cleaning up the ui.
 ;; bundled with Windows and isn't guaranteed installed, causing
 ;; dictionary-word-definition-face to fail to resolve *any* glyph
 ;; (shows as tofu boxes, even for plain ASCII).
-(when (eq system-type 'windows-nt)
-  (set-face-attribute 'dictionary-word-definition-face nil :family "Consolas"))
+;;(when (eq system-type 'windows-nt)
+  ;;(set-face-attribute 'dictionary-word-definition-face nil :family "Consolas"))
 #+END_SRC
 ** Mixed Pitch
 :PROPERTIES:
@@ -326,12 +329,12 @@ Read more about this here: [[https://github.com/rougier/nano-modeline][nano-mode
     (when frame (select-frame frame))
     (load-theme 'nano-dark t)
     (set-face-attribute 'default nil :font "Roboto Mono" :height 140)
-    (set-face-attribute 'font-lock-keyword-face nil :foreground "#88c0D0" :weight 'bold)
-    (set-face-attribute 'font-lock-type-face nil :foreground "#EbCB8B" :weight 'normal)
+    (set-face-attribute 'font-lock-keyword-face nil :foreground "#B48EAD" :weight 'bold)
+    (set-face-attribute 'font-lock-type-face nil :foreground "#F5C518" :weight 'normal)
     (set-face-attribute 'font-lock-function-name-face nil :foreground "#7FD1ae" :weight 'bold)
     (set-face-attribute 'font-lock-string-face nil :foreground "#A3BE8C")
     (set-face-attribute 'font-lock-comment-face nil :foreground "#616E88" :slant 'italic)
-    (set-face-attribute 'font-lock-builtin-face nil :foreground "#B48EAD")
+    (set-face-attribute 'font-lock-builtin-face nil :foreground "#5E81AC")
     (set-face-attribute 'font-lock-constant-face nil :foreground "#D08770")
 
     ;; Org heading fonts — must run AFTER load-theme, since reloading the
@@ -358,11 +361,11 @@ Read more about this here: [[https://github.com/rougier/nano-modeline][nano-mode
 
 
 
-    (set-face-attribute 'highlight-function-calls-face nil :foreground "#B48E88" :underline nil)
+    (set-face-attribute 'highlight-function-calls-face nil :foreground "#88C0D0" :underline nil)
 
 
-    (set-face-attribute 'highlight-quoted-symbol nil :foreground "#F5C518")
-    (set-face-attribute 'highlight-quoted-quote nil :foreground "#D08770")
+    (set-face-attribute 'highlight-quoted-symbol nil :foreground "#E8CB8B")
+    (set-face-attribute 'highlight-quoted-quote nil :foreground "#88C0D0")
     
     ;; Transparency: 60% opaque focused / 45% opaque unfocused
     (set-frame-parameter (selected-frame) 'alpha '(60 . 45)))
