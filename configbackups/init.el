@@ -109,6 +109,13 @@
 
 ;; using eshell to run bash script on startup setting up hyper and F keys
 
+;; Fix dictionary-mode word-definition face on Windows: DejaVu Serif isn't
+;; bundled with Windows and isn't guaranteed installed, causing
+;; dictionary-word-definition-face to fail to resolve *any* glyph
+;; (shows as tofu boxes, even for plain ASCII).
+(when (eq system-type 'windows-nt)
+  (set-face-attribute 'dictionary-word-definition-face nil :family "Consolas"))
+
 (use-package mixed-pitch
   :after org
   :config
@@ -157,12 +164,12 @@
   (set-face-attribute 'org-column-title nil :inherit 'fixed-pitch)
 
 
-  (with-eval-after-load 'highlight-function
-    (set-face-attribute 'highlight-function-calls-face nil :foreground "#B48E88" :underline nil))
 
-  (with-eval-after-load 'highlight-quoted
-    (set-face-attribute 'highlight-quoted-symbol nil :foreground "#F5C518")
-    (set-face-attribute 'highlight-quoted-quote nil :foreground "#D08770"))
+  (set-face-attribute 'highlight-function-calls-face nil :foreground "#B48E88" :underline nil)
+
+
+  (set-face-attribute 'highlight-quoted-symbol nil :foreground "#F5C518")
+  (set-face-attribute 'highlight-quoted-quote nil :foreground "#D08770")
   
   ;; Transparency: 60% opaque focused / 45% opaque unfocused
   (set-frame-parameter (selected-frame) 'alpha '(60 . 45)))
@@ -4196,7 +4203,7 @@ Version: 2018-06-04 2021-03-16 2022-03-05"
        "t"
        `(lambda (&rest _)
           (let ((file (get-text-property 0 'dashboard-agenda-file ,el))
-            	(point (get-text-property 0 'dashboard-agenda-loc ,el)))
+                (point (get-text-property 0 'dashboard-agenda-loc ,el)))
             (funcall dashboard-agenda-action file point)))
        (format "%s" el))))
   
@@ -4213,7 +4220,7 @@ Version: 2018-06-04 2021-03-16 2022-03-05"
        "p"
        `(lambda (&rest _)
           (let ((file (get-text-property 0 'dashboard-agenda-file ,el))
-        	(point (get-text-property 0 'dashboard-agenda-loc ,el)))
+            	(point (get-text-property 0 'dashboard-agenda-loc ,el)))
             (funcall dashboard-agenda-action file point)))
        (format "%s" el))))
 
@@ -4221,7 +4228,7 @@ Version: 2018-06-04 2021-03-16 2022-03-05"
 
   (defun my/dashboard-filter-goal-by-90-day-deadline ()
     "Include entry if it has a deadline within the next 90 days and is not done.
-        An entry is included if this function returns nil and excluded if returns point."
+            An entry is included if this function returns nil and excluded if returns point."
     (let ((deadline (org-get-deadline-time (point)))
           (cutoff (time-add (current-time) (* 86400 90))))
       (unless (and (not (org-entry-is-done-p))
@@ -4243,7 +4250,7 @@ Version: 2018-06-04 2021-03-16 2022-03-05"
        "g"
        `(lambda (&rest _)
           (let ((file (get-text-property 0 'dashboard-agenda-file ,el))
-        	(point (get-text-property 0 'dashboard-agenda-loc ,el)))
+            	(point (get-text-property 0 'dashboard-agenda-loc ,el)))
             (funcall dashboard-agenda-action file point)))
        (format "%s" el))))
 
@@ -4253,8 +4260,8 @@ Version: 2018-06-04 2021-03-16 2022-03-05"
       "~/Orgfiles/Productivity/Goals/Goals.org"
       "~/Orgfiles/SEAS.org")
     "Files to fully fontify before dashboard extracts entries.
-    Ensures TODO keyword decorations from org-modern render correctly
-    in the dashboard buffer.")
+        Ensures TODO keyword decorations from org-modern render correctly
+        in the dashboard buffer.")
 
   ;;    (add-hook 'dashboard-before-initialize-hook #'my/dashboard-prefontify-files)
 
@@ -4262,7 +4269,7 @@ Version: 2018-06-04 2021-03-16 2022-03-05"
     "Load and fully fontify files in `my/dashboard-prefontify-files'."
     (dolist (file my/dashboard-prefontify-files)
       (when (file-exists-p file)
-    	(with-current-buffer (find-file-noselect file)
+        (with-current-buffer (find-file-noselect file)
           (font-lock-ensure)))))
 
 
@@ -4282,14 +4289,33 @@ Version: 2018-06-04 2021-03-16 2022-03-05"
 
 (setq initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
 
+(defvar my/dashboard-initialized nil
+  "Non-nil once dashboard content has been built for this session.")
+
+(defun my/build-dashboard ()
+  "Build the dashboard buffer once."
+  (unless my/dashboard-initialized
+    (dashboard-open)
+    (setq my/dashboard-initialized t)))
+
 (defun my/show-dashboard-on-new-frame (&optional frame)
-  "Show the dashboard buffer in FRAME (or the selected frame)."
-  (when frame (select-frame frame))
+  "Show the dashboard buffer in FRAME, refreshing centering on first real frame only."
+  (when frame
+    (run-with-timer 0.1 nil
+                    (lambda ()
+                      (raise-frame frame)
+                      (select-frame-set-input-focus frame))))
   (switch-to-buffer (get-buffer-create "*dashboard*"))
-  (dashboard-open))
+  (if my/dashboard-initialized
+      (dashboard-refresh-buffer)
+    (my/build-dashboard)))
+
+
 
 (if (daemonp)
-    (add-hook 'server-after-make-frame-hook #'my/show-dashboard-on-new-frame)
+    (progn
+      (my/build-dashboard) ;; scan recentf/bookmarks/agenda now, before any client connects
+      (add-hook 'server-after-make-frame-hook #'my/show-dashboard-on-new-frame))
   (my/show-dashboard-on-new-frame))
 
 ;;Make org links open in same window

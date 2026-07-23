@@ -279,6 +279,18 @@ Basic setup for cleaning up the ui.
 
 #+RESULTS:
 
+** Dictionary fix
+:PROPERTIES:
+:ID:       0b1e0a50-b184-493d-bea5-931790f92629
+:END:
+#+BEGIN_SRC emacs-lisp
+;; Fix dictionary-mode word-definition face on Windows: DejaVu Serif isn't
+;; bundled with Windows and isn't guaranteed installed, causing
+;; dictionary-word-definition-face to fail to resolve *any* glyph
+;; (shows as tofu boxes, even for plain ASCII).
+(when (eq system-type 'windows-nt)
+  (set-face-attribute 'dictionary-word-definition-face nil :family "Consolas"))
+#+END_SRC
 ** Mixed Pitch
 :PROPERTIES:
 :ID:       1fbb9862-a776-47df-85c2-119b8d93187a
@@ -345,12 +357,12 @@ Read more about this here: [[https://github.com/rougier/nano-modeline][nano-mode
     (set-face-attribute 'org-column-title nil :inherit 'fixed-pitch)
 
 
-    (with-eval-after-load 'highlight-function
-      (set-face-attribute 'highlight-function-calls-face nil :foreground "#B48E88" :underline nil))
 
-    (with-eval-after-load 'highlight-quoted
-      (set-face-attribute 'highlight-quoted-symbol nil :foreground "#F5C518")
-      (set-face-attribute 'highlight-quoted-quote nil :foreground "#D08770"))
+    (set-face-attribute 'highlight-function-calls-face nil :foreground "#B48E88" :underline nil)
+
+
+    (set-face-attribute 'highlight-quoted-symbol nil :foreground "#F5C518")
+    (set-face-attribute 'highlight-quoted-quote nil :foreground "#D08770")
     
     ;; Transparency: 60% opaque focused / 45% opaque unfocused
     (set-frame-parameter (selected-frame) 'alpha '(60 . 45)))
@@ -5492,7 +5504,8 @@ Tried out Xah-fly-keys and didn't love his command mode but he has some really g
   (message "Xah Lee section loaded")
 #+END_SRC
 
-* Final Loading
+*
+Final Loading
 ** Dashboard
 :PROPERTIES:
 :ID:       0e9bfe60-2dff-459f-9711-1b228e912290
@@ -5539,7 +5552,7 @@ org-agenda-files, and project.el — all of which need to be initialized first.
          "t"
          `(lambda (&rest _)
             (let ((file (get-text-property 0 'dashboard-agenda-file ,el))
-              	(point (get-text-property 0 'dashboard-agenda-loc ,el)))
+                  (point (get-text-property 0 'dashboard-agenda-loc ,el)))
               (funcall dashboard-agenda-action file point)))
          (format "%s" el))))
     
@@ -5556,7 +5569,7 @@ org-agenda-files, and project.el — all of which need to be initialized first.
          "p"
          `(lambda (&rest _)
             (let ((file (get-text-property 0 'dashboard-agenda-file ,el))
-          	(point (get-text-property 0 'dashboard-agenda-loc ,el)))
+              	(point (get-text-property 0 'dashboard-agenda-loc ,el)))
               (funcall dashboard-agenda-action file point)))
          (format "%s" el))))
 
@@ -5564,7 +5577,7 @@ org-agenda-files, and project.el — all of which need to be initialized first.
 
     (defun my/dashboard-filter-goal-by-90-day-deadline ()
       "Include entry if it has a deadline within the next 90 days and is not done.
-          An entry is included if this function returns nil and excluded if returns point."
+              An entry is included if this function returns nil and excluded if returns point."
       (let ((deadline (org-get-deadline-time (point)))
             (cutoff (time-add (current-time) (* 86400 90))))
         (unless (and (not (org-entry-is-done-p))
@@ -5586,7 +5599,7 @@ org-agenda-files, and project.el — all of which need to be initialized first.
          "g"
          `(lambda (&rest _)
             (let ((file (get-text-property 0 'dashboard-agenda-file ,el))
-          	(point (get-text-property 0 'dashboard-agenda-loc ,el)))
+              	(point (get-text-property 0 'dashboard-agenda-loc ,el)))
               (funcall dashboard-agenda-action file point)))
          (format "%s" el))))
 
@@ -5596,8 +5609,8 @@ org-agenda-files, and project.el — all of which need to be initialized first.
         "~/Orgfiles/Productivity/Goals/Goals.org"
         "~/Orgfiles/SEAS.org")
       "Files to fully fontify before dashboard extracts entries.
-      Ensures TODO keyword decorations from org-modern render correctly
-      in the dashboard buffer.")
+          Ensures TODO keyword decorations from org-modern render correctly
+          in the dashboard buffer.")
 
     ;;    (add-hook 'dashboard-before-initialize-hook #'my/dashboard-prefontify-files)
 
@@ -5605,7 +5618,7 @@ org-agenda-files, and project.el — all of which need to be initialized first.
       "Load and fully fontify files in `my/dashboard-prefontify-files'."
       (dolist (file my/dashboard-prefontify-files)
         (when (file-exists-p file)
-      	(with-current-buffer (find-file-noselect file)
+          (with-current-buffer (find-file-noselect file)
             (font-lock-ensure)))))
 
 
@@ -5625,15 +5638,35 @@ org-agenda-files, and project.el — all of which need to be initialized first.
 
   (setq initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
 
+  (defvar my/dashboard-initialized nil
+    "Non-nil once dashboard content has been built for this session.")
+
+  (defun my/build-dashboard ()
+    "Build the dashboard buffer once."
+    (unless my/dashboard-initialized
+      (dashboard-open)
+      (setq my/dashboard-initialized t)))
+
   (defun my/show-dashboard-on-new-frame (&optional frame)
-    "Show the dashboard buffer in FRAME (or the selected frame)."
-    (when frame (select-frame frame))
+    "Show the dashboard buffer in FRAME, refreshing centering on first real frame only."
+    (when frame
+      (run-with-timer 0.1 nil
+                      (lambda ()
+                        (raise-frame frame)
+                        (select-frame-set-input-focus frame))))
     (switch-to-buffer (get-buffer-create "*dashboard*"))
-    (dashboard-open))
+    (if my/dashboard-initialized
+        (dashboard-refresh-buffer)
+      (my/build-dashboard)))
+
+
 
   (if (daemonp)
-      (add-hook 'server-after-make-frame-hook #'my/show-dashboard-on-new-frame)
+      (progn
+        (my/build-dashboard) ;; scan recentf/bookmarks/agenda now, before any client connects
+        (add-hook 'server-after-make-frame-hook #'my/show-dashboard-on-new-frame))
     (my/show-dashboard-on-new-frame))
+
 
 #+END_SRC
 
