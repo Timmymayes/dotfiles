@@ -126,13 +126,44 @@
   (when frame (select-frame frame))
   (load-theme 'nano-dark t)
   (set-face-attribute 'default nil :font "Roboto Mono" :height 140)
-  (set-face-attribute 'font-lock-keyword-face nil :foreground "#81A1C1" :weight 'bold)
-  (set-face-attribute 'font-lock-type-face nil :foreground "#EBCB8B" :weight 'normal)
-  (set-face-attribute 'font-lock-function-name-face nil :foreground "#6dBFB8" :weight 'bold)
+  (set-face-attribute 'font-lock-keyword-face nil :foreground "#88c0D0" :weight 'bold)
+  (set-face-attribute 'font-lock-type-face nil :foreground "#EbCB8B" :weight 'normal)
+  (set-face-attribute 'font-lock-function-name-face nil :foreground "#7FD1ae" :weight 'bold)
   (set-face-attribute 'font-lock-string-face nil :foreground "#A3BE8C")
   (set-face-attribute 'font-lock-comment-face nil :foreground "#616E88" :slant 'italic)
   (set-face-attribute 'font-lock-builtin-face nil :foreground "#B48EAD")
   (set-face-attribute 'font-lock-constant-face nil :foreground "#D08770")
+
+  ;; Org heading fonts — must run AFTER load-theme, since reloading the
+  ;; theme resets these back to nano-theme's own (bold) definitions.
+  (dolist (face '((org-level-1 . 1.2)
+                  (org-level-2 . 1.1)
+                  (org-level-3 . 1.05)
+                  (org-level-4 . 1.0)
+                  (org-level-5 . 1.1)
+                  (org-level-6 . 1.1)
+                  (org-level-7 . 1.1)
+                  (org-level-8 . 1.1)))
+    (set-face-attribute (car face) nil :font "Roboto Mono" :weight 'regular :height (cdr face)))
+  (set-face-attribute 'org-block nil :foreground 'unspecified :inherit 'fixed-pitch)
+  (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-formula nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-code nil :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+  (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+  (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-column nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-column-title nil :inherit 'fixed-pitch)
+
+
+  (with-eval-after-load 'highlight-function
+    (set-face-attribute 'highlight-function-calls-face nil :foreground "#B48E88" :underline nil))
+
+  (with-eval-after-load 'highlight-quoted
+    (set-face-attribute 'highlight-quoted-symbol nil :foreground "#F5C518")
+    (set-face-attribute 'highlight-quoted-quote nil :foreground "#D08770"))
+  
   ;; Transparency: 60% opaque focused / 45% opaque unfocused
   (set-frame-parameter (selected-frame) 'alpha '(60 . 45)))
 
@@ -1899,32 +1930,6 @@
         nil
       next-headline)))
 
-(dolist (face '((org-level-1 . 1.2)
-                (org-level-2 . 1.1)
-                (org-level-3 . 1.05)
-                (org-level-4 . 1.0)
-                (org-level-5 . 1.1)
-                (org-level-6 . 1.1)
-                (org-level-7 . 1.1)
-                (org-level-8 . 1.1)))
-  (set-face-attribute (car face) nil :font "Cantarell" :weight 'regular :height (cdr face)))
-					; keep a few things fixed pitch as they should be for line ups
-
-(set-face-attribute 'org-block nil :foreground 'unspecified :inherit 'fixed-pitch)
-(set-face-attribute 'org-table nil  :inherit 'fixed-pitch)
-(set-face-attribute 'org-formula nil  :inherit 'fixed-pitch)
-(set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
-					;  (set-face-attribute 'org-indent nil :inherit '(org-hide fixed-pitch))
-(set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
-(set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
-(set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
-(set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
-(set-face-attribute 'org-column nil :inherit 'fixed-pitch)
-(set-face-attribute 'org-column-title nil :inherit 'fixed-pitch)
-;;font lock modes
-(require 'font-lock)
-(all-the-icons-completion-mode 1)
-
 (use-package org-modern
   :hook (org-mode . org-modern-mode)
   :config
@@ -3198,11 +3203,20 @@ document.addEventListener('DOMContentLoaded', function() {
   (battle-haxe-yasnippet-completion-expansion t "Keep this if you want yasnippet to expand completions when it's available.")
   (battle-haxe-immediate-completion nil "Toggle this if you want to immediately trigger completion when typing '.' and other relevant prefixes."))
 
+(use-package highlight-function-calls
+  :hook (emacs-lisp-mode . highlight-function-calls-mode))
+
+(use-package highlight-quoted
+  :hook (emacs-lisp-mode . highlight-quoted-mode))
+
+
 (defun my/sexp-newline ()
   "Move to end of current sexp and insert newline."
   (interactive)
   (up-list)
   (newline-and-indent))
+
+
 
 (bind-key "s-<return>" 'my/sexp-newline)
 
@@ -4145,128 +4159,138 @@ Version: 2018-06-04 2021-03-16 2022-03-05"
 (message "Xah Lee section loaded")
 
 (use-package dashboard
-    :ensure t
-    :after (all-the-icons org)
-    :init
-    (setq dashboard-startup-banner "~/EMACS Wordmark-02.png")
-    (setq dashboard-center-content t)
-    (setq dashboard-vertically-center-content t)
-    (setq dashboard-icon-type 'all-the-icons)
-    (setq dashboard-set-heading-icons t)
-    (setq dashboard-set-file-icons t)
-    :config
-    (setq dashboard-footer-messages
-        	'("While any text editor can save your files, only Emacs can save your soul"
-        	  "Vi Vi Vi, the editor of the beast"
-            ))
-    (setq dashboard-banner-logo-title "It's time to work.")
-    
-    (defvar my/dashboard-bookmark-exclusions
-      '("org-capture-last-stored-marker"
-        "org-refile-last-stored"
-        "org-capture-last-stored"))
-    (advice-add 'bookmark-all-names :filter-return
-                (lambda (names)
-                  (seq-remove (lambda (n) (member n my/dashboard-bookmark-exclusions))
-                              names)))
+  :ensure t
+  :after (all-the-icons org)
+  :init
+  (setq dashboard-startup-banner "~/EMACS Wordmark-02.png")
+  (setq dashboard-center-content t)
+  (setq dashboard-vertically-center-content t)
+  (setq dashboard-icon-type 'all-the-icons)
+  (setq dashboard-set-heading-icons t)
+  (setq dashboard-set-file-icons t)
+  :config
+  (setq dashboard-footer-messages
+        '("While any text editor can save your files, only Emacs can save your soul"
+          "Vi Vi Vi, the editor of the beast"
+          ))
+  (setq dashboard-banner-logo-title "It's time to work.")
+  
+  (defvar my/dashboard-bookmark-exclusions
+    '("org-capture-last-stored-marker"
+      "org-refile-last-stored"
+      "org-capture-last-stored"))
+  (advice-add 'bookmark-all-names :filter-return
+              (lambda (names)
+                (seq-remove (lambda (n) (member n my/dashboard-bookmark-exclusions))
+                            names)))
 
-    (defun my/dashboard-insert-tasks (list-size)
-      "Add the list of LIST-SIZE task entries (CATEGORY=\"Task\")."
-      (require 'org-agenda)
-      (let ((dashboard-match-agenda-entry "CATEGORY=\"Task\""))
-        (dashboard-insert-section
-         "Tasks:"
-         (dashboard-agenda--sorted-agenda)
-         list-size
-         'my-tasks
-         "t"
-         `(lambda (&rest _)
-            (let ((file (get-text-property 0 'dashboard-agenda-file ,el))
-          	(point (get-text-property 0 'dashboard-agenda-loc ,el)))
-              (funcall dashboard-agenda-action file point)))
-         (format "%s" el))))
-    
-    (defun my/dashboard-insert-projects (list-size)
-      "Add the list of LIST-SIZE project entries (CATEGORY=\"Proj\")."
-      (require 'org-agenda)
-      (let ((dashboard-match-agenda-entry "CATEGORY=\"Proj\"")
-            (dashboard-filter-agenda-entry 'dashboard-filter-agenda-by-todo))
-        (dashboard-insert-section
-         "Projects:"
-         (dashboard-agenda--sorted-agenda)
-         list-size
-         'my-projects
-         "p"
-         `(lambda (&rest _)
-            (let ((file (get-text-property 0 'dashboard-agenda-file ,el))
-      		(point (get-text-property 0 'dashboard-agenda-loc ,el)))
-              (funcall dashboard-agenda-action file point)))
-         (format "%s" el))))
-
-
-
-    (defun my/dashboard-filter-goal-by-90-day-deadline ()
-      "Include entry if it has a deadline within the next 90 days and is not done.
-      An entry is included if this function returns nil and excluded if returns point."
-      (let ((deadline (org-get-deadline-time (point)))
-            (cutoff (time-add (current-time) (* 86400 90))))
-        (unless (and (not (org-entry-is-done-p))
-                     (not (org-in-archived-heading-p))
-                     deadline
-                     (time-less-p deadline cutoff))
-      	(point))))
-
-    (defun my/dashboard-insert-goals (list-size)
-      "Add the list of LIST-SIZE goal entries with deadlines within 90 days."
-      (require 'org-agenda)
-      (let ((dashboard-match-agenda-entry "CATEGORY=\"Goals\"")
-            (dashboard-filter-agenda-entry 'my/dashboard-filter-goal-by-90-day-deadline))
-        (dashboard-insert-section
-         "Goals (next 90 days):"
-         (dashboard-agenda--sorted-agenda)
-         list-size
-         'my-goals
-         "g"
-         `(lambda (&rest _)
-            (let ((file (get-text-property 0 'dashboard-agenda-file ,el))
-      		(point (get-text-property 0 'dashboard-agenda-loc ,el)))
-              (funcall dashboard-agenda-action file point)))
-         (format "%s" el))))
-
-    (defvar my/dashboard-prefontify-files
-      '("~/Orgfiles/tasks.org"
-        "~/Orgfiles/config.org"
-        "~/Orgfiles/Productivity/Goals/Goals.org"
-        "~/Orgfiles/SEAS.org")
-      "Files to fully fontify before dashboard extracts entries.
-  Ensures TODO keyword decorations from org-modern render correctly
-  in the dashboard buffer.")
-
-;;    (add-hook 'dashboard-before-initialize-hook #'my/dashboard-prefontify-files)
-
-    (defun my/dashboard-prefontify-files ()
-      "Load and fully fontify files in `my/dashboard-prefontify-files'."
-      (dolist (file my/dashboard-prefontify-files)
-        (when (file-exists-p file)
-  	(with-current-buffer (find-file-noselect file)
-            (font-lock-ensure)))))
-
-
-    (add-to-list 'dashboard-item-generators '(my-tasks . my/dashboard-insert-tasks)) 
-    (add-to-list 'dashboard-item-generators '(my-goals . my/dashboard-insert-goals))
-    (add-to-list 'dashboard-item-generators '(my-projects . my/dashboard-insert-projects))
+  (defun my/dashboard-insert-tasks (list-size)
+    "Add the list of LIST-SIZE task entries (CATEGORY=\"Task\")."
+    (require 'org-agenda)
+    (let ((dashboard-match-agenda-entry "CATEGORY=\"Task\""))
+      (dashboard-insert-section
+       "Tasks:"
+       (dashboard-agenda--sorted-agenda)
+       list-size
+       'my-tasks
+       "t"
+       `(lambda (&rest _)
+          (let ((file (get-text-property 0 'dashboard-agenda-file ,el))
+            	(point (get-text-property 0 'dashboard-agenda-loc ,el)))
+            (funcall dashboard-agenda-action file point)))
+       (format "%s" el))))
+  
+  (defun my/dashboard-insert-projects (list-size)
+    "Add the list of LIST-SIZE project entries (CATEGORY=\"Proj\")."
+    (require 'org-agenda)
+    (let ((dashboard-match-agenda-entry "CATEGORY=\"Proj\"")
+          (dashboard-filter-agenda-entry 'dashboard-filter-agenda-by-todo))
+      (dashboard-insert-section
+       "Projects:"
+       (dashboard-agenda--sorted-agenda)
+       list-size
+       'my-projects
+       "p"
+       `(lambda (&rest _)
+          (let ((file (get-text-property 0 'dashboard-agenda-file ,el))
+        	(point (get-text-property 0 'dashboard-agenda-loc ,el)))
+            (funcall dashboard-agenda-action file point)))
+       (format "%s" el))))
 
 
 
+  (defun my/dashboard-filter-goal-by-90-day-deadline ()
+    "Include entry if it has a deadline within the next 90 days and is not done.
+        An entry is included if this function returns nil and excluded if returns point."
+    (let ((deadline (org-get-deadline-time (point)))
+          (cutoff (time-add (current-time) (* 86400 90))))
+      (unless (and (not (org-entry-is-done-p))
+                   (not (org-in-archived-heading-p))
+                   deadline
+                   (time-less-p deadline cutoff))
+        (point))))
 
-    (setq dashboard-items '((recents . 5)
-                            (bookmarks . 5)
-                            (my-goals . 5)  			  
-                            (my-tasks . 5)
-                            (my-projects . 5)))
-    (dashboard-setup-startup-hook))
+  (defun my/dashboard-insert-goals (list-size)
+    "Add the list of LIST-SIZE goal entries with deadlines within 90 days."
+    (require 'org-agenda)
+    (let ((dashboard-match-agenda-entry "CATEGORY=\"Goals\"")
+          (dashboard-filter-agenda-entry 'my/dashboard-filter-goal-by-90-day-deadline))
+      (dashboard-insert-section
+       "Goals (next 90 days):"
+       (dashboard-agenda--sorted-agenda)
+       list-size
+       'my-goals
+       "g"
+       `(lambda (&rest _)
+          (let ((file (get-text-property 0 'dashboard-agenda-file ,el))
+        	(point (get-text-property 0 'dashboard-agenda-loc ,el)))
+            (funcall dashboard-agenda-action file point)))
+       (format "%s" el))))
 
-  (setq initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
+  (defvar my/dashboard-prefontify-files
+    '("~/Orgfiles/tasks.org"
+      "~/Orgfiles/config.org"
+      "~/Orgfiles/Productivity/Goals/Goals.org"
+      "~/Orgfiles/SEAS.org")
+    "Files to fully fontify before dashboard extracts entries.
+    Ensures TODO keyword decorations from org-modern render correctly
+    in the dashboard buffer.")
+
+  ;;    (add-hook 'dashboard-before-initialize-hook #'my/dashboard-prefontify-files)
+
+  (defun my/dashboard-prefontify-files ()
+    "Load and fully fontify files in `my/dashboard-prefontify-files'."
+    (dolist (file my/dashboard-prefontify-files)
+      (when (file-exists-p file)
+    	(with-current-buffer (find-file-noselect file)
+          (font-lock-ensure)))))
+
+
+  (add-to-list 'dashboard-item-generators '(my-tasks . my/dashboard-insert-tasks)) 
+  (add-to-list 'dashboard-item-generators '(my-goals . my/dashboard-insert-goals))
+  (add-to-list 'dashboard-item-generators '(my-projects . my/dashboard-insert-projects))
+
+
+
+
+  (setq dashboard-items '((recents . 5)
+                          (bookmarks . 5)
+                          (my-goals . 5)  			  
+                          (my-tasks . 5)
+                          (my-projects . 5)))
+  (dashboard-setup-startup-hook))
+
+(setq initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
+
+(defun my/show-dashboard-on-new-frame (&optional frame)
+  "Show the dashboard buffer in FRAME (or the selected frame)."
+  (when frame (select-frame frame))
+  (switch-to-buffer (get-buffer-create "*dashboard*"))
+  (dashboard-open))
+
+(if (daemonp)
+    (add-hook 'server-after-make-frame-hook #'my/show-dashboard-on-new-frame)
+  (my/show-dashboard-on-new-frame))
 
 ;;Make org links open in same window
 (setq org-link-frame-setup
