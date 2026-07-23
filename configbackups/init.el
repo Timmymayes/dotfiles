@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 ;(setq debug-on-error t)
 ;another comment
 
@@ -200,23 +202,21 @@
                       :extend t))
 
 (defun my/toggle-transparency ()
-  "Function to toggle transparency"
+  "Toggle transparency across all frames."
   (interactive)
-  (let ((alpha (frame-parameter nil 'alpha)))
-    (set-frame-parameter
-     nil 'alpha
-     (if (eql (cond ((numberp alpha) alpha)
-                    ((numberp (cdr alpha)) (cdr alpha))
-                    ;; Also handle undocumented (<active> <inactive>) form.
-                    ((numberp (cadr alpha)) (cadr alpha)))
-              100)
-         '(80 . 60) '(100 . 100)))))
+  (let* ((alpha (frame-parameter nil 'alpha))
+         (current (cond ((numberp alpha) alpha)
+                        ((numberp (cdr alpha)) (cdr alpha))
+                        ((numberp (cadr alpha)) (cadr alpha))))
+         (new-alpha (if (eql current 100) '(85 . 60) '(100 . 100))))
+    (dolist (frame (frame-list))
+      (set-frame-parameter frame 'alpha new-alpha))))
 
 ;; testing if this works to set transparency to full on startup
 (global-set-key (kbd "M-<f12>") 'my/toggle-transparency)
 
-(add-to-list 'default-frame-alist '(alpha . (80 . 60)))
-(set-frame-parameter nil 'alpha '(80 . 60))
+(add-to-list 'default-frame-alist '(alpha . (85 . 60)))
+(set-frame-parameter nil 'alpha '(85 . 60))
 
 (message "UI Config Section Finished Loading")
 
@@ -698,6 +698,7 @@
 (global-set-key (kbd "C-H-1") (lambda () (interactive) (my/frame-on-slot 1)))
 (global-set-key (kbd "C-H-2") (lambda () (interactive) (my/frame-on-slot 2)))
 (global-set-key (kbd "C-H-3") (lambda () (interactive) (my/frame-on-slot 3)))
+(global-set-key (kbd "C-H-5") 'delete-frame)
 
 (add-to-list 'display-buffer-alist
              `(,(rx string-start "*Calendar*" string-end)
@@ -2485,20 +2486,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 (require 'calfw)
+(setq calfw-render-line-breaker 'calfw-render-line-breaker-none)
 (with-eval-after-load 'calfw
   (require 'calfw-org)
   (require 'calfw-cal)
-  (require 'calfw-gcal)
-
-
-  (defun my/open-calendar ()
-    (interactive)
-    (calfw-open-calendar-buffer
-     :contents-sources
-     (list
-      (calfw-org-create-file-source "SEAS" "~/Orgfiles/SEAS.org" "#a0a0a0")  ; Work orgmode source
-      (calfw-org-create-file-source "PERSONAL" "~/Orgfiles/tasks.org" "Orange") ; Personal orgmode
-      ))))
+  (require 'calfw-gcal))
 
 ;; Remove holidays for calfw
 
@@ -2586,89 +2578,170 @@ document.addEventListener('DOMContentLoaded', function() {
     (set-face-attribute 'calfw-toolbar-button-on-face nil
                         :foreground "#88C0D0" :background "#3B4252" :weight 'bold)))
 
-
+(defun my/calfw-sources ()
+  "Org sources shared across every calfw view (single or quarterly)."
+  (list
+   (calfw-org-create-file-source "SEAS" "~/Orgfiles/SEAS.org" "#a0a0a0")
+   (calfw-org-create-file-source "PERSONAL" "~/Orgfiles/tasks.org" "Orange")))
 
 (global-set-key (kbd "<f17>") 'my/open-calendar)
 (message "calfw loaded")
 
-(with-eval-after-load 'calfw
-  (require 'calfw-org)
-
-  (defun my/cfw-month-offset (month year n)
-    "Return a cfw:date for MONTH/YEAR advanced by N months.
-  Day is fixed at 1 to avoid end-of-month rollover surprises."
-    (let ((total (+ (1- month) n)))
-      (calfw-date (1+ (mod total 12)) 1 (+ year (floor total 12)))))
-
-  (defun my/cfw-quarterly-sources ()
-    "Org sources shared by each panel in the quarterly view."
-    (list
-     (calfw-org-create-file-source "SEAS" "~/Orgfiles/SEAS.org" "#a0a0a0")
-     (calfw-org-create-file-source "PERSONAL" "~/Orgfiles/tasks.org" "Orange")))
-
-  (defun my/open-quarterly-calendar-view ()
-    "Open a 3-panel quarterly calfw view in the current frame.
-
-  Layout:
-    - Left:        current month (wide panel)
-    - Top-right:   current month + 1
-    - Bottom-right current month + 2
-
-  Each panel is an independent cfw: buffer, so navigating one
-  does not move the others."
-    (interactive)
-    (delete-other-windows)
-    (let* ((today (calendar-current-date))
-           (month (nth 0 today))
-           (year (nth 2 today))
-           (sources (my/cfw-quarterly-sources))
-           (left-buf (get-buffer-create "*cal-month-0*"))
-           (tr-buf (get-buffer-create "*cal-month-1*"))
-           (br-buf (get-buffer-create "*cal-month-2*"))
-           (right-window (split-window-right)))
-      ;; Left panel: current month, in the originally selected window
+(defun my/open-calendar ()
+      (interactive)
       (calfw-open-calendar-buffer
-       :buffer left-buf
-       :date today
-       :contents-sources sources)
-      ;; Right column, split top/bottom
-      (select-window right-window)
-      (let ((bottom-window (split-window-below)))
+       :contents-sources (my/calfw-sources)))
+
+(with-eval-after-load 'calfw
+    (require 'calfw-org)
+
+    (defun my/cfw-month-offset (month year n)
+      "Return a cfw:date for MONTH/YEAR advanced by N months.
+     Day is fixed at 1 to avoid end-of-month rollover surprises."
+      (let ((total (+ (1- month) n)))
+        (calfw-date (1+ (mod total 12)) 1 (+ year (floor total 12)))))
+
+
+    (defun my/open-quarterly-calendar-view ()
+      "Open a 3-panel quarterly calfw view in the current frame.
+
+     Layout:
+       - Left:        current month (wide panel)
+       - Top-right:   current month + 1
+       - Bottom-right current month + 2
+
+     Each panel is an independent cfw: buffer, so navigating one
+     does not move the others."
+      (interactive)
+      (delete-other-windows)
+      (let* ((today (calendar-current-date))
+             (month (nth 0 today))
+             (year (nth 2 today))
+             (sources (my/calfw-sources))
+             (left-buf (get-buffer-create "*cal-month-0*"))
+             (tr-buf (get-buffer-create "*cal-month-1*"))
+             (br-buf (get-buffer-create "*cal-month-2*"))
+             (right-window (split-window-right)))
+        ;; Left panel: current month, in the originally selected window
         (calfw-open-calendar-buffer
-         :buffer tr-buf
-         :date (my/cfw-month-offset month year 1)
+         :buffer left-buf
+         :date today
          :contents-sources sources)
-        (select-window bottom-window)
-        (calfw-open-calendar-buffer
-         :buffer br-buf
-         :date (my/cfw-month-offset month year 2)
-         :contents-sources sources))
-      ;; leave focus on the current-month panel
-      (select-window (get-buffer-window left-buf))))
+        ;; Right column, split top/bottom
+        (select-window right-window)
+        (let ((bottom-window (split-window-below)))
+          (calfw-open-calendar-buffer
+           :buffer tr-buf
+           :date (my/cfw-month-offset month year 1)
+           :contents-sources sources)
+          (select-window bottom-window)
+          (calfw-open-calendar-buffer
+           :buffer br-buf
+           :date (my/cfw-month-offset month year 2)
+           :contents-sources sources))
+        ;; leave focus on the current-month panel
+        (select-window (get-buffer-window left-buf))))
 
-  ;; (global-set-key (kbd "C-H-M-q") 'my/open-quarterly-calendar-view)
+    ;; (global-set-key (kbd "C-H-M-q") 'my/open-quarterly-calendar-view)
 
-  (message "calfw-quarterly-view loaded"))
+    (message "calfw-quarterly-view loaded"))
+
+(defun my/find-frame-on-monitor (monitor-name)
+  "Return a live, non-minibuffer-only frame currently displayed on MONITOR-NAME, or nil."
+  (seq-find (lambda (f)
+              (and (not (eq (frame-parameter f 'minibuffer) 'only))
+                   (let ((attrs (frame-monitor-attributes f)))
+                     (and attrs (string= (cdr (assq 'name attrs)) monitor-name)))))
+            (frame-list)))
 
 
-(defun my/refresh-all-calfw-buffers ()
-  "Refresh every live calfw calendar buffer without disturbing
-which window/buffer currently has focus."
+(defun my/get-or-create-maximized-frame-on-slot (slot)
+  "Return a maximized frame on SLOT's monitor, reusing one if it exists."
+  (let* ((machine (system-name))
+         (slots (cdr (assoc machine my/monitor-slots-alist)))
+         (monitor (cdr (assoc slot slots)))
+         (existing (my/find-frame-on-monitor monitor)))
+    (if existing
+        existing
+      (let* ((monitors (display-monitor-attributes-list))
+             (target (seq-find (lambda (m) (string= (cdr (assq 'name m)) monitor))
+                                monitors))
+             (workarea (cdr (assq 'workarea target)))
+             (frame (make-frame
+                     `((left . (+ ,(nth 0 workarea)))
+                       (top . (+ ,(nth 1 workarea)))
+                       (fullscreen . maximized)
+                       (alpha . (60 . 45))))))
+        (my/apply-theme-and-faces frame)
+        frame))))
+
+(defun my/open-quarterly-calendar-dashboard ()
+  "Open the quarterly calendar + agenda dashboard across three monitors."
   (interactive)
-  (let ((current (selected-window))
-        (count 0))
-    (dolist (buf (buffer-list))
-      (with-current-buffer buf
-        (when (eq major-mode 'calfw-calendar-mode)
-          (calfw-refresh-calendar-buffer t)
-          (setq count (1+ count)))))
-    (when (window-live-p current)
-      (select-window current))
-    (message "Refreshed %d calfw buffer%s" count (if (= count 1) "" "s"))))
+  (let* ((today (calendar-current-date))
+         (month (nth 0 today))
+         (year (nth 2 today))
+         (sources (my/calfw-sources))
+         (top-frame (my/get-or-create-maximized-frame-on-slot 3))    ; top Dell
+         (bottom-frame (my/get-or-create-maximized-frame-on-slot 1)) ; bottom Dell
+         (side-frame (my/get-or-create-maximized-frame-on-slot 2))   ; ASUS vertical
+         (org-agenda-window-setup 'current-window))
 
-;; (global-set-key (kbd "C-H-M-r") 'my/refresh-all-calfw-buffers)
+    ;; --- Top ultrawide: scratch | cal-month-0 ---
+    (with-selected-frame top-frame
+      (delete-other-windows)
+      (switch-to-buffer "*scratch*")
+      (select-window (split-window-right))
+      (calfw-open-calendar-buffer
+       :buffer (get-buffer-create "*cal-month-0*")
+       :date today
+       :contents-sources sources))
 
-(message "calfw-quarterly-refresh loaded")
+    ;; --- Bottom ultrawide: cal-month-1 | cal-month-2 ---
+    (with-selected-frame bottom-frame
+      (delete-other-windows)
+      (calfw-open-calendar-buffer
+       :buffer (get-buffer-create "*cal-month-1*")
+       :date (my/cfw-month-offset month year 1)
+       :contents-sources sources)
+      (select-window (split-window-right))
+      (calfw-open-calendar-buffer
+       :buffer (get-buffer-create "*cal-month-2*")
+       :date (my/cfw-month-offset month year 2)
+       :contents-sources sources))
+
+    ;; --- ASUS vertical: Personal (top) / SEAS (bottom) agendas ---
+    (with-selected-frame side-frame
+      (delete-other-windows)
+      (org-agenda nil "P")
+      (select-window (split-window-below))
+      (org-agenda nil "O"))
+
+    (select-frame-set-input-focus top-frame)))
+
+;; (global-set-key (kbd "C-H-M-q") 'my/open-quarterly-calendar-dashboard)
+
+
+
+  
+  (defun my/refresh-all-calfw-buffers ()
+    "Refresh every live calfw calendar buffer without disturbing
+   which window/buffer currently has focus."
+    (interactive)
+    (let ((current (selected-window))
+          (count 0))
+      (dolist (buf (buffer-list))
+        (with-current-buffer buf
+          (when (eq major-mode 'calfw-calendar-mode)
+            (calfw-refresh-calendar-buffer t)
+            (setq count (1+ count)))))
+      (when (window-live-p current)
+        (select-window current))
+      (message "Refreshed %d calfw buffer%s" count (if (= count 1) "" "s"))))
+
+  ;; (global-set-key (kbd "C-H-M-r") 'my/refresh-all-calfw-buffers)
+
+  (message "calfw-quarterly-refresh loaded")
 
 (use-package ledger-mode
   :ensure t
@@ -3156,6 +3229,8 @@ which window/buffer currently has focus."
 (add-hook 'web-mode-hook 'my-web-mode-hook)
 
 (message "IDE Setup Section Loaded")
+
+(global-set-key (kbd "C-x C-b") 'ibuffer)
 
 (defun my/dabbrev-expand-lisp ()
   "dabbrev-expand that sees through ' and #' function prefixes."

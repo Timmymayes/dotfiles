@@ -15,7 +15,14 @@ This is my first run through configuring emacs so there is probably a lot of ine
 - test issue
   
 * Initialization
+:PROPERTIES:
+:ID:       c8dcfaaf-c40c-4d6f-b7dd-f494eff9148c
+:END:
 Initial setup for the core of Emacs. Mostly low level system type elements and package usage. 
+#+BEGIN_SRC emacs-lisp
+;; -*- lexical-binding: t; -*-
+#+END_SRC
+
 ** DEBUG on error
 :PROPERTIES:
 :ID:       fb4825f5-6f61-44f7-8575-e5089a509e5c
@@ -393,28 +400,25 @@ Transparency toggle for when you want to have a cool hacker mode.
 #+BEGIN_SRC emacs-lisp
 
   (defun my/toggle-transparency ()
-    "Function to toggle transparency"
+    "Toggle transparency across all frames."
     (interactive)
-    (let ((alpha (frame-parameter nil 'alpha)))
-      (set-frame-parameter
-       nil 'alpha
-       (if (eql (cond ((numberp alpha) alpha)
-                      ((numberp (cdr alpha)) (cdr alpha))
-                      ;; Also handle undocumented (<active> <inactive>) form.
-                      ((numberp (cadr alpha)) (cadr alpha)))
-                100)
-           '(80 . 60) '(100 . 100)))))
+    (let* ((alpha (frame-parameter nil 'alpha))
+           (current (cond ((numberp alpha) alpha)
+                          ((numberp (cdr alpha)) (cdr alpha))
+                          ((numberp (cadr alpha)) (cadr alpha))))
+           (new-alpha (if (eql current 100) '(85 . 60) '(100 . 100))))
+      (dolist (frame (frame-list))
+        (set-frame-parameter frame 'alpha new-alpha))))
 
   ;; testing if this works to set transparency to full on startup
   (global-set-key (kbd "M-<f12>") 'my/toggle-transparency)
 
-  (add-to-list 'default-frame-alist '(alpha . (80 . 60)))
-  (set-frame-parameter nil 'alpha '(80 . 60))
+  (add-to-list 'default-frame-alist '(alpha . (85 . 60)))
+  (set-frame-parameter nil 'alpha '(85 . 60))
 
 #+END_SRC
 
 #+RESULTS:
-: my/toggle-transparency
 
 ** Section Loaded Msg
 :PROPERTIES:
@@ -1029,12 +1033,13 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
   (global-set-key (kbd "C-H-1") (lambda () (interactive) (my/frame-on-slot 1)))
   (global-set-key (kbd "C-H-2") (lambda () (interactive) (my/frame-on-slot 2)))
   (global-set-key (kbd "C-H-3") (lambda () (interactive) (my/frame-on-slot 3)))
+  (global-set-key (kbd "C-H-5") 'delete-frame)
 
 
 #+END_SRC
 
 #+RESULTS:
-: #[nil ((my/frame-on-slot 3)) nil nil nil nil]
+: delete-frame
 ** Calendar
 *** Put Calendar below capture window
 :PROPERTIES:
@@ -3128,7 +3133,7 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
 #+RESULTS:
 : my/reload-css
 
-* calfw-org
+* CALFW
 :PROPERTIES:
 :ID:       d315bdcb-e930-429e-833a-397fc768c3b6
 :END:
@@ -3140,20 +3145,11 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
 
 
   (require 'calfw)
+  (setq calfw-render-line-breaker 'calfw-render-line-breaker-none)
   (with-eval-after-load 'calfw
     (require 'calfw-org)
     (require 'calfw-cal)
-    (require 'calfw-gcal)
-
-
-    (defun my/open-calendar ()
-      (interactive)
-      (calfw-open-calendar-buffer
-       :contents-sources
-       (list
-        (calfw-org-create-file-source "SEAS" "~/Orgfiles/SEAS.org" "#a0a0a0")  ; Work orgmode source
-        (calfw-org-create-file-source "PERSONAL" "~/Orgfiles/tasks.org" "Orange") ; Personal orgmode
-        ))))
+    (require 'calfw-gcal))
 
   ;; Remove holidays for calfw
 
@@ -3241,54 +3237,64 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
       (set-face-attribute 'calfw-toolbar-button-on-face nil
                           :foreground "#88C0D0" :background "#3B4252" :weight 'bold)))
 
-
+  (defun my/calfw-sources ()
+    "Org sources shared across every calfw view (single or quarterly)."
+    (list
+     (calfw-org-create-file-source "SEAS" "~/Orgfiles/SEAS.org" "#a0a0a0")
+     (calfw-org-create-file-source "PERSONAL" "~/Orgfiles/tasks.org" "Orange")))
 
   (global-set-key (kbd "<f17>") 'my/open-calendar)
   (message "calfw loaded")
 #+END_SRC
 
 #+RESULTS:
+: calfw loaded
+
+* Calfw Single View
+:PROPERTIES:
+:ID:       8bb050d2-d2a2-4f6b-9b30-633fd433adf8
+:END:
+#+BEGIN_SRC emacs-lisp
+(defun my/open-calendar ()
+      (interactive)
+      (calfw-open-calendar-buffer
+       :contents-sources (my/calfw-sources)))
+#+END_SRC
+
+#+RESULTS:
 : my/open-calendar
 
-** Calfw Quarterly View
+* Calfw Quarterly View
 :PROPERTIES:
 :ID:       2d755815-4edc-416a-8cbd-db66018445a8
 :END:
 #+BEGIN_SRC emacs-lisp
-
-
-
   (with-eval-after-load 'calfw
     (require 'calfw-org)
 
     (defun my/cfw-month-offset (month year n)
       "Return a cfw:date for MONTH/YEAR advanced by N months.
-    Day is fixed at 1 to avoid end-of-month rollover surprises."
+     Day is fixed at 1 to avoid end-of-month rollover surprises."
       (let ((total (+ (1- month) n)))
         (calfw-date (1+ (mod total 12)) 1 (+ year (floor total 12)))))
 
-    (defun my/cfw-quarterly-sources ()
-      "Org sources shared by each panel in the quarterly view."
-      (list
-       (calfw-org-create-file-source "SEAS" "~/Orgfiles/SEAS.org" "#a0a0a0")
-       (calfw-org-create-file-source "PERSONAL" "~/Orgfiles/tasks.org" "Orange")))
 
     (defun my/open-quarterly-calendar-view ()
       "Open a 3-panel quarterly calfw view in the current frame.
 
-    Layout:
-      - Left:        current month (wide panel)
-      - Top-right:   current month + 1
-      - Bottom-right current month + 2
+     Layout:
+       - Left:        current month (wide panel)
+       - Top-right:   current month + 1
+       - Bottom-right current month + 2
 
-    Each panel is an independent cfw: buffer, so navigating one
-    does not move the others."
+     Each panel is an independent cfw: buffer, so navigating one
+     does not move the others."
       (interactive)
       (delete-other-windows)
       (let* ((today (calendar-current-date))
              (month (nth 0 today))
              (year (nth 2 today))
-             (sources (my/cfw-quarterly-sources))
+             (sources (my/calfw-sources))
              (left-buf (get-buffer-create "*cal-month-0*"))
              (tr-buf (get-buffer-create "*cal-month-1*"))
              (br-buf (get-buffer-create "*cal-month-2*"))
@@ -3317,10 +3323,87 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
 
     (message "calfw-quarterly-view loaded"))
 
+(defun my/find-frame-on-monitor (monitor-name)
+  "Return a live, non-minibuffer-only frame currently displayed on MONITOR-NAME, or nil."
+  (seq-find (lambda (f)
+              (and (not (eq (frame-parameter f 'minibuffer) 'only))
+                   (let ((attrs (frame-monitor-attributes f)))
+                     (and attrs (string= (cdr (assq 'name attrs)) monitor-name)))))
+            (frame-list)))
 
+
+(defun my/get-or-create-maximized-frame-on-slot (slot)
+  "Return a maximized frame on SLOT's monitor, reusing one if it exists."
+  (let* ((machine (system-name))
+         (slots (cdr (assoc machine my/monitor-slots-alist)))
+         (monitor (cdr (assoc slot slots)))
+         (existing (my/find-frame-on-monitor monitor)))
+    (if existing
+        existing
+      (let* ((monitors (display-monitor-attributes-list))
+             (target (seq-find (lambda (m) (string= (cdr (assq 'name m)) monitor))
+                                monitors))
+             (workarea (cdr (assq 'workarea target)))
+             (frame (make-frame
+                     `((left . (+ ,(nth 0 workarea)))
+                       (top . (+ ,(nth 1 workarea)))
+                       (fullscreen . maximized)
+                       (alpha . (60 . 45))))))
+        (my/apply-theme-and-faces frame)
+        frame))))
+
+(defun my/open-quarterly-calendar-dashboard ()
+  "Open the quarterly calendar + agenda dashboard across three monitors."
+  (interactive)
+  (let* ((today (calendar-current-date))
+         (month (nth 0 today))
+         (year (nth 2 today))
+         (sources (my/calfw-sources))
+         (top-frame (my/get-or-create-maximized-frame-on-slot 3))    ; top Dell
+         (bottom-frame (my/get-or-create-maximized-frame-on-slot 1)) ; bottom Dell
+         (side-frame (my/get-or-create-maximized-frame-on-slot 2))   ; ASUS vertical
+         (org-agenda-window-setup 'current-window))
+
+    ;; --- Top ultrawide: scratch | cal-month-0 ---
+    (with-selected-frame top-frame
+      (delete-other-windows)
+      (switch-to-buffer "*scratch*")
+      (select-window (split-window-right))
+      (calfw-open-calendar-buffer
+       :buffer (get-buffer-create "*cal-month-0*")
+       :date today
+       :contents-sources sources))
+
+    ;; --- Bottom ultrawide: cal-month-1 | cal-month-2 ---
+    (with-selected-frame bottom-frame
+      (delete-other-windows)
+      (calfw-open-calendar-buffer
+       :buffer (get-buffer-create "*cal-month-1*")
+       :date (my/cfw-month-offset month year 1)
+       :contents-sources sources)
+      (select-window (split-window-right))
+      (calfw-open-calendar-buffer
+       :buffer (get-buffer-create "*cal-month-2*")
+       :date (my/cfw-month-offset month year 2)
+       :contents-sources sources))
+
+    ;; --- ASUS vertical: Personal (top) / SEAS (bottom) agendas ---
+    (with-selected-frame side-frame
+      (delete-other-windows)
+      (org-agenda nil "P")
+      (select-window (split-window-below))
+      (org-agenda nil "O"))
+
+    (select-frame-set-input-focus top-frame)))
+
+;; (global-set-key (kbd "C-H-M-q") 'my/open-quarterly-calendar-dashboard)
+
+
+
+  
   (defun my/refresh-all-calfw-buffers ()
     "Refresh every live calfw calendar buffer without disturbing
-  which window/buffer currently has focus."
+   which window/buffer currently has focus."
     (interactive)
     (let ((current (selected-window))
           (count 0))
@@ -4067,7 +4150,14 @@ Dap mode here: https://www.youtube.com/watch?v=0bilcQVSlbM
 #+END_SRC
 
 * Macros, Functions and Keybinds
-A section for my personal macors functions and keybinds  
+A section for my personal macors functions and keybinds
+** Buffer List
+:PROPERTIES:
+:ID:       c18687bf-026b-4ab4-a170-a4abe7cc0331
+:END:
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+#+END_SRC
 ** Dabbrev
 :PROPERTIES:
 :ID:       07e37727-a9d5-4a26-8fb5-b8a8ad78d705
