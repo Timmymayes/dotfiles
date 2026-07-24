@@ -236,7 +236,7 @@
 (with-eval-after-load 'org
   (set-face-attribute 'org-block nil
                       :foreground 'unspecified
-                      :background "#363D4A"
+                      :background "#3b4252"
                       :extend t))
 
 (defun my/toggle-transparency ()
