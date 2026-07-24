@@ -1931,30 +1931,42 @@
         nil
       next-headline)))
 
+(set-fontset-font t '(#x25A0 . #x25FF) "Segoe UI Symbol")
+
 (use-package org-modern
   :hook (org-mode . org-modern-mode)
   :config
   (global-org-modern-mode)
-  (setq 
-   org-modern-table nil    
-   org-modern-list '((?- . "•") (?+ . "◦") (?* . "▸"))
-   org-modern-checkbox nil  ;; keep default checkboxes unless you want to style them
-   org-modern-tag t
-   org-modern-priority t
-   org-modern-todo t
-   org-modern-timestamp t)
+  (setq org-modern-star 'replace
+  	org-modern-cycle-stars nil  ;; level 6+ all reuse the last pair below, not cycle back to pair 1
+	org-modern-replace-stars
+	'(
+	  "◈"    ;; level 1 — white diamond containing black small diamond
+	  "◇"    ;; level 2 — white diamond
+	  "■"    ;; level 3 — black square
+	  "□"    ;; level 4 — white square
+	  "▪"    ;; level 5 — black small square
+	  "◌")  ;; level 6+ — dotted circle (reused for all deeper levels)
+
+	
+	org-modern-table nil    
+	org-modern-list '((?- . "•") (?+ . "◦") (?* . "▸"))
+	org-modern-checkbox nil ;; keep default checkboxes unless you want to style them
+	org-modern-tag t
+	org-modern-priority t
+	org-modern-todo t
+	org-modern-timestamp t)
   (setq org-modern-todo-faces
-  	'(("TODO"      . (:background "#BF616A" :foreground "white"))
-  	  ("NEXT"      . (:background "#81A1C1" :foreground "white"))
-  	  ("DONE"      . (:background "#A3BE8C" :foreground "white"))
-  	  ("WAITING"   . (:background "#D08770" :foreground "white"))
-  	  ("HOLD"      . (:background "#B48EAD" :foreground "white"))
-  	  ("CANCELLED" . (:background "#A3BE8C" :foreground "white"))
-  	  ("MEETING"   . (:background "#A3BE8C" :foreground "white"))
-  	  ("PHONE"     . (:background "#A3BE8C" :foreground "white"))))
+	'(("TODO"      . (:background "#BF616A" :foreground "white"))
+    	  ("NEXT"      . (:background "#81A1C1" :foreground "white"))
+    	  ("DONE"      . (:background "#A3BE8C" :foreground "white"))
+    	  ("WAITING"   . (:background "#D08770" :foreground "white"))
+    	  ("HOLD"      . (:background "#B48EAD" :foreground "white"))
+    	  ("CANCELLED" . (:background "#A3BE8C" :foreground "white"))
+    	  ("MEETING"   . (:background "#A3BE8C" :foreground "white"))
+    	  ("PHONE"     . (:background "#A3BE8C" :foreground "white"))))
   )
 
-(setq org-modern-star '("◉" "○" "●" "○" "●" "○" "●"))
 
 ;; still need to suppress line numbers in org
 (dolist (mode '(org-mode-hook))

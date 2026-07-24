@@ -16,7 +16,8 @@ This is my first run through configuring emacs so there is probably a lot of ine
 
 *** Issue list
 
-  
+
+
 * Initialization
 :PROPERTIES:
 :ID:       c8dcfaaf-c40c-4d6f-b7dd-f494eff9148c
@@ -2390,7 +2391,7 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
 #+end_src
 
 #+RESULTS:
-| #[0 \301\211\207 [imenu-create-index-function org-imenu-get-tree] 2] | org-transclusion-mode | org-mode-visual-fill | #[nil ((add-hook 'after-save-hook #'my/org-babel-tangle-config)) nil] | #[nil ((display-line-numbers-mode 0)) nil] | org-modern-mode | valign-mode | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-fold-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes | org-mode-setup | nano-modeline-org-mode |
+| #[0 \301\211\207 [imenu-create-index-function org-imenu-get-tree] 2] | org-transclusion-mode | org-mode-visual-fill | #[nil ((add-hook 'after-save-hook #'my/org-babel-tangle-config)) nil] | #[nil ((display-line-numbers-mode 0)) nil] | org-mode | valign-mode | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-fold-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes | org-mode-setup | nano-modeline-org-mode |
 
 
 *** Org Modern
@@ -2398,30 +2399,42 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
 :ID:       b4b087a7-adcf-4d21-aa63-7e60a7df3cd4
 :END:
 #+BEGIN_SRC emacs-lisp
+  (set-fontset-font t '(#x25A0 . #x25FF) "Segoe UI Symbol")
+
   (use-package org-modern
     :hook (org-mode . org-modern-mode)
     :config
     (global-org-modern-mode)
-    (setq 
-     org-modern-table nil    
-     org-modern-list '((?- . "•") (?+ . "◦") (?* . "▸"))
-     org-modern-checkbox nil  ;; keep default checkboxes unless you want to style them
-     org-modern-tag t
-     org-modern-priority t
-     org-modern-todo t
-     org-modern-timestamp t)
+    (setq org-modern-star 'replace
+    	org-modern-cycle-stars nil  ;; level 6+ all reuse the last pair below, not cycle back to pair 1
+  	org-modern-replace-stars
+  	'(
+  	  "◈"    ;; level 1 — white diamond containing black small diamond
+  	  "◇"    ;; level 2 — white diamond
+  	  "■"    ;; level 3 — black square
+  	  "□"    ;; level 4 — white square
+  	  "▪"    ;; level 5 — black small square
+  	  "◌")  ;; level 6+ — dotted circle (reused for all deeper levels)
+
+  	
+  	org-modern-table nil    
+  	org-modern-list '((?- . "•") (?+ . "◦") (?* . "▸"))
+  	org-modern-checkbox nil ;; keep default checkboxes unless you want to style them
+  	org-modern-tag t
+  	org-modern-priority t
+  	org-modern-todo t
+  	org-modern-timestamp t)
     (setq org-modern-todo-faces
-    	'(("TODO"      . (:background "#BF616A" :foreground "white"))
-    	  ("NEXT"      . (:background "#81A1C1" :foreground "white"))
-    	  ("DONE"      . (:background "#A3BE8C" :foreground "white"))
-    	  ("WAITING"   . (:background "#D08770" :foreground "white"))
-    	  ("HOLD"      . (:background "#B48EAD" :foreground "white"))
-    	  ("CANCELLED" . (:background "#A3BE8C" :foreground "white"))
-    	  ("MEETING"   . (:background "#A3BE8C" :foreground "white"))
-    	  ("PHONE"     . (:background "#A3BE8C" :foreground "white"))))
+  	'(("TODO"      . (:background "#BF616A" :foreground "white"))
+      	  ("NEXT"      . (:background "#81A1C1" :foreground "white"))
+      	  ("DONE"      . (:background "#A3BE8C" :foreground "white"))
+      	  ("WAITING"   . (:background "#D08770" :foreground "white"))
+      	  ("HOLD"      . (:background "#B48EAD" :foreground "white"))
+      	  ("CANCELLED" . (:background "#A3BE8C" :foreground "white"))
+      	  ("MEETING"   . (:background "#A3BE8C" :foreground "white"))
+      	  ("PHONE"     . (:background "#A3BE8C" :foreground "white"))))
     )
 
-  (setq org-modern-star '("◉" "○" "●" "○" "●" "○" "●"))
 
   ;; still need to suppress line numbers in org
   (dolist (mode '(org-mode-hook))
