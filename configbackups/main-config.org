@@ -432,7 +432,7 @@ Read more about this here: [[https://github.com/rougier/nano-modeline][nano-mode
   (with-eval-after-load 'org
     (set-face-attribute 'org-block nil
                         :foreground 'unspecified
-                        :background "#363D4A"
+                        :background "#3b4252"
                         :extend t))
 
 
@@ -3380,7 +3380,7 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
          (org-agenda-window-setup 'current-window))
 
     ;; --- Top ultrawide: scratch | cal-month-0 ---
-    (with-selected-frame top-frame
+    (with-selected-frame side-frame
       (delete-other-windows)
       (switch-to-buffer "*scratch*")
       (select-window (split-window-right))
@@ -3403,7 +3403,7 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
        :contents-sources sources))
 
     ;; --- ASUS vertical: Personal (top) / SEAS (bottom) agendas ---
-    (with-selected-frame side-frame
+    (with-selected-frame top-frame
       (delete-other-windows)
       (org-agenda nil "P")
       (select-window (split-window-below))
@@ -5168,6 +5168,21 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 #+END_SRC
 
 #+RESULTS:
+
+** Mixed Pitch Mode toggler
+:PROPERTIES:
+:ID:       0f64e0bd-c5ac-4130-b034-c5821c3d98aa
+:END:
+#+BEGIN_SRC emacs-lisp
+  (defun my/toggle-mixed-pitch-mode ()
+    "Function to toggle fixed pitch mode and force a redraw to clear glyphs"
+    (interactive)
+    (mixed-pitch-mode 0)
+    (mixed-pitch-mode 1)
+    (message "Mixed Pitch Mode toggled"))
+
+  (global-set-key (kbd "<f5>") #'my/toggle-mixed-pitch-mode)
+#+END_SRC
 
 ** Section Loaded Message
 :PROPERTIES:
