@@ -152,7 +152,7 @@
                   (org-level-7 . 1.1)
                   (org-level-8 . 1.1)))
     (set-face-attribute (car face) nil :font "Roboto Mono" :weight 'regular :height (cdr face)))
-  (set-face-attribute 'org-block nil :foreground 'unspecified :inherit 'fixed-pitch)
+  (set-face-attribute 'org-block nil :foreground 'unspecified :background "#3b4252" :inherit 'fixed-pitch)
   (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
   (set-face-attribute 'org-formula nil :inherit 'fixed-pitch)
   (set-face-attribute 'org-code nil :inherit '(shadow fixed-pitch))
@@ -232,12 +232,6 @@
       display-time-default-load-average nil
       display-time-24hr-format t)
 (display-time-mode 1)
-
-(with-eval-after-load 'org
-  (set-face-attribute 'org-block nil
-                      :foreground 'unspecified
-                      :background "#3b4252"
-                      :extend t))
 
 (defun my/toggle-transparency ()
   "Toggle transparency across all frames."
