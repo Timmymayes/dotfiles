@@ -3883,6 +3883,15 @@ Right bottom : *Messages* and *Warnings* side by side
 (which-key-add-keymap-based-replacements my/insert-map
   "t" "box drawing")
 
+(defun my/toggle-mixed-pitch-mode ()
+  "Function to toggle fixed pitch mode and force a redraw to clear glyphs"
+  (interactive)
+  (mixed-pitch-mode 0)
+  (mixed-pitch-mode 1)
+  (message "Mixed Pitch Mode toggled"))
+
+(global-set-key (kbd "<f5>") #'my/toggle-mixed-pitch-mode)
+
 (message "Testing section loaded")
 
 (message "Elfeed loading...")
