@@ -2700,7 +2700,7 @@ document.addEventListener('DOMContentLoaded', function() {
          (org-agenda-window-setup 'current-window))
 
     ;; --- Top ultrawide: scratch | cal-month-0 ---
-    (with-selected-frame top-frame
+    (with-selected-frame side-frame
       (delete-other-windows)
       (switch-to-buffer "*scratch*")
       (select-window (split-window-right))
@@ -2723,7 +2723,7 @@ document.addEventListener('DOMContentLoaded', function() {
        :contents-sources sources))
 
     ;; --- ASUS vertical: Personal (top) / SEAS (bottom) agendas ---
-    (with-selected-frame side-frame
+    (with-selected-frame top-frame
       (delete-other-windows)
       (org-agenda nil "P")
       (select-window (split-window-below))
