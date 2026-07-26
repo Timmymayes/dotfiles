@@ -109,6 +109,32 @@
 
 ;; using eshell to run bash script on startup setting up hyper and F keys
 
+(defconst nord0  "#2E3440")  ; dark bg
+(defconst nord1  "#3B4252")
+(defconst nord2  "#434C5E")
+(defconst nord3  "#4C566A")
+(defconst nord4  "#D8DEE9")
+(defconst nord5  "#E5E9F0")
+(defconst nord6  "#ECEFF4")  ; light fg
+(defconst nord7  "#8FBCBB")
+(defconst nord8  "#88C0D0")  ; frost cyan
+(defconst nord9  "#81A1C1")  ; frost blue
+(defconst nord10 "#5E81AC")
+(defconst nord11 "#BF616A")  ; red
+(defconst nord12 "#D08770")  ; orange
+(defconst nord13 "#EBCB8B")  ; yellow
+(defconst nord14 "#A3BE8C")  ; green
+(defconst nord15 "#B48EAD")  ; purple
+
+;; semantic aliases — use these at call sites
+(defconst nord-red    nord11)
+(defconst nord-orange nord12)
+(defconst nord-yellow nord13)
+(defconst nord-green  nord14)
+(defconst nord-purple nord15)
+(defconst nord-cyan   nord8)
+(defconst nord-blue   nord9)
+
 ;; Fix dictionary-mode word-definition face on Windows: DejaVu Serif isn't
 ;; bundled with Windows and isn't guaranteed installed, causing
 ;; dictionary-word-definition-face to fail to resolve *any* glyph
@@ -172,10 +198,10 @@
   (set-face-attribute 'highlight-quoted-quote nil :foreground "#88C0D0")
   
   ;; Transparency: 60% opaque focused / 45% opaque unfocused
-  (set-frame-parameter (selected-frame) 'alpha '(60 . 45)))
+  (set-frame-parameter (selected-frame) 'alpha '(90 . 60)))
 
 ;; Also cover future frames created without the server hook
-(add-to-list 'default-frame-alist '(alpha . (60 . 45)))
+(add-to-list 'default-frame-alist '(alpha . (90 . 60)))
 
 (if (daemonp)
     (add-hook 'server-after-make-frame-hook #'my/apply-theme-and-faces)
@@ -240,15 +266,15 @@
          (current (cond ((numberp alpha) alpha)
                         ((numberp (cdr alpha)) (cdr alpha))
                         ((numberp (cadr alpha)) (cadr alpha))))
-         (new-alpha (if (eql current 100) '(85 . 60) '(100 . 100))))
+         (new-alpha (if (eql current 100) '(90 . 60) '(100 . 100))))
     (dolist (frame (frame-list))
       (set-frame-parameter frame 'alpha new-alpha))))
 
 ;; testing if this works to set transparency to full on startup
 (global-set-key (kbd "M-<f12>") 'my/toggle-transparency)
 
-(add-to-list 'default-frame-alist '(alpha . (85 . 60)))
-(set-frame-parameter nil 'alpha '(85 . 60))
+(add-to-list 'default-frame-alist '(alpha . (90 . 60)))
+(set-frame-parameter nil 'alpha '(90 . 60))
 
 (message "UI Config Section Finished Loading")
 
@@ -2544,23 +2570,25 @@ document.addEventListener('DOMContentLoaded', function() {
     (set-face-attribute 'calfw-title-face nil
                         :foreground "#88C0D0" :weight 'bold)
     (set-face-attribute 'calfw-header-face nil
-                        :foreground "#3B4252" :background "#81A1C1" :weight 'bold)
+                        :foreground nord-green :background nord0 :weight 'bold)
 
     ;; Grid
     (set-face-attribute 'calfw-grid-face nil
                         :foreground "#81A1C1")
 
-    ;; Weekday headers
+    ;; Weekend headers
     (set-face-attribute 'calfw-sunday-face nil
-                        :foreground "#B48E88" :background "#81A1C1" :weight 'bold)
+			:foreground nord-orange :background nord0 :weight 'bold)
+                        
     (set-face-attribute 'calfw-saturday-face nil
-                        :foreground "#B48EAD" :background "#81A1C1" :weight 'bold)
+                        :foreground nord-orange :background nord0 :weight 'bold)
 
+    
     ;; Day cells
     (set-face-attribute 'calfw-day-title-face nil
-                        :background "#3B4252")
+                        :background nord0)
     (set-face-attribute 'calfw-default-day-face nil
-                        :background "#2E3440" :weight 'bold)
+                        :background nord0 :weight 'bold)
 
     ;; Today
     (set-face-attribute 'calfw-today-title-face nil
@@ -2576,7 +2604,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     ;; Holidays and annotations
     (set-face-attribute 'calfw-holiday-face nil
-                        :foreground "#D08770" :weight 'bold)
+                        :foreground nord-red :background nord0 :weight 'bold)
     (set-face-attribute 'calfw-annotation-face nil
                         :foreground "#EBCB8B")
 
