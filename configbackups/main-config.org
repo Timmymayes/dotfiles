@@ -393,6 +393,7 @@ Read more about this here: [[https://github.com/rougier/nano-modeline][nano-mode
     (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
     (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
     (set-face-attribute 'org-column nil :inherit 'fixed-pitch)
+    (set-face-attribute 'org-agenda-clocking nil :foreground nord-green :background 'unspecified)
     (set-face-attribute 'org-column-title nil :inherit 'fixed-pitch)
 
 
@@ -465,7 +466,7 @@ Read more about this here: [[https://github.com/rougier/nano-modeline][nano-mode
         display-time-24hr-format t)
   (display-time-mode 1)
 
-  
+
 
 
 #+END_SRC
@@ -4627,6 +4628,8 @@ Move the cursor
     (mark-sexp) 
     (insert-parentheses))
 
+
+  (global-set-key (kbd "M-<f23>") 'my/shrink-current-window)
 
 #+END_SRC
 

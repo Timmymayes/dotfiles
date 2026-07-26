@@ -3576,6 +3576,9 @@ document.addEventListener('DOMContentLoaded', function() {
   (mark-sexp) 
   (insert-parentheses))
 
+
+(global-set-key (kbd "M-<f23>") 'my/shrink-current-window)
+
 (global-set-key (kbd "M-o") 'my/insert-line-above-and-go)
 ;; move C-j to C-; indent-new-comment-line
 (global-set-key (kbd "C-;") 'indent-new-comment)                      
