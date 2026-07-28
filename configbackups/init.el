@@ -187,6 +187,7 @@
   (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
   (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
   (set-face-attribute 'org-column nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-agenda-clocking nil :foreground nord-green :background 'unspecified)
   (set-face-attribute 'org-column-title nil :inherit 'fixed-pitch)
 
 
@@ -2628,7 +2629,8 @@ document.addEventListener('DOMContentLoaded', function() {
   "Org sources shared across every calfw view (single or quarterly)."
   (list
    (calfw-org-create-file-source "SEAS" "~/Orgfiles/SEAS.org" "#a0a0a0")
-   (calfw-org-create-file-source "PERSONAL" "~/Orgfiles/tasks.org" "Orange")))
+   (calfw-org-create-file-source "PERSONAL" "~/Orgfiles/tasks.org" "Orange")
+   (calfw-org-create-file-source "Moving" "~/Orgfiles/apartment-hunt.org" nord-red)))
 
 (global-set-key (kbd "<f17>") 'my/open-calendar)
 (message "calfw loaded")
