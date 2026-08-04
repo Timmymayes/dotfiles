@@ -473,7 +473,39 @@ Read more about this here: [[https://github.com/rougier/nano-modeline][nano-mode
 
 #+RESULTS:
 : t
+** Cursor Animation
+*** Comet Trail
+:PROPERTIES:
+:ID:       926e3f19-8b48-49b2-bbe4-539bf9e1b3c4
+:END:
+#+BEGIN_SRC emacs-lisp
+  (use-package comet-trail
+    Vc load if needed 
+  ;;  :vc (:url "https://github.com/emacsmirror/comet-trail" :rev :newest)
+    :custom
+    (comet-trail-minimum-distance 5)
+    (comet-trail-tick-interval 0.025)
+    :config
+    (set-face-attribute 'comet-trail-highlight nil :foreground nord-purple) ; Nord frost blue
+    (add-hook 'prog-mode-hook #'comet-trail-mode)
+    (add-hook 'text-mode-hook #'comet-trail-mode))
+#+END_SRC
+*** Beacon
+:PROPERTIES:
+:ID:       e844bdee-9a4b-4709-8193-3d6d43ba4ee7
+:END:
+#+BEGIN_SRC emacs-lisp
+(use-package beacon
+  :ensure t
+  :config
+  (beacon-mode 1))
 
+(setq beacon-color nord-purple)   ; Nord frost blue, to match your theme
+(setq beacon-blink-duration 0.3)
+(setq beacon-blink-delay 0.3)
+(setq beacon-size 40)
+(setq beacon-push-mark 35)      ; also blink when the mark is pushed
+#+END_SRC
 ** Transparency
 :PROPERTIES:
 :ID:       b96cd425-0268-442e-a831-d63de1964916

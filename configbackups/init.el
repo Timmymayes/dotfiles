@@ -260,6 +260,28 @@
       display-time-24hr-format t)
 (display-time-mode 1)
 
+(use-package comet-trail
+  Vc load if needed 
+;;  :vc (:url "https://github.com/emacsmirror/comet-trail" :rev :newest)
+  :custom
+  (comet-trail-minimum-distance 5)
+  (comet-trail-tick-interval 0.025)
+  :config
+  (set-face-attribute 'comet-trail-highlight nil :foreground nord-purple) ; Nord frost blue
+  (add-hook 'prog-mode-hook #'comet-trail-mode)
+  (add-hook 'text-mode-hook #'comet-trail-mode))
+
+(use-package beacon
+  :ensure t
+  :config
+  (beacon-mode 1))
+
+(setq beacon-color nord-purple)   ; Nord frost blue, to match your theme
+(setq beacon-blink-duration 0.3)
+(setq beacon-blink-delay 0.3)
+(setq beacon-size 40)
+(setq beacon-push-mark 35)      ; also blink when the mark is pushed
+
 (defun my/toggle-transparency ()
   "Toggle transparency across all frames."
   (interactive)
