@@ -16,6 +16,7 @@ This is my first run through configuring emacs so there is probably a lot of ine
 
 *** Issue list
 Having issues with magit buffer losing focus
+Seems to go to dashboard
 
 
 
@@ -480,17 +481,25 @@ Read more about this here: [[https://github.com/rougier/nano-modeline][nano-mode
 :ID:       926e3f19-8b48-49b2-bbe4-539bf9e1b3c4
 :END:
 #+BEGIN_SRC emacs-lisp
+  (load "comet-trail")
   (use-package comet-trail
-    Vc load if needed 
-  ;;  :vc (:url "https://github.com/emacsmirror/comet-trail" :rev :newest)
+    ;;  :vc (:url "https://github.com/emacsmirror/comet-trail" :rev :newest)
     :custom
     (comet-trail-minimum-distance 5)
     (comet-trail-tick-interval 0.025)
     :config
-    (set-face-attribute 'comet-trail-highlight nil :foreground nord-purple) ; Nord frost blue
-    (add-hook 'prog-mode-hook #'comet-trail-mode)
-    (add-hook 'text-mode-hook #'comet-trail-mode))
+    (set-face-attribute 'comet-trail-highlight nil :foreground nord-purple))
+
+  (define-globalized-minor-mode global-comet-trail-mode
+    comet-trail-mode
+    (lambda () (comet-trail-mode 1)))
+
+  (global-comet-trail-mode 1)
 #+END_SRC
+
+#+RESULTS:
+: t
+
 *** Beacon
 :PROPERTIES:
 :ID:       e844bdee-9a4b-4709-8193-3d6d43ba4ee7

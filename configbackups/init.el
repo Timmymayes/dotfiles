@@ -260,16 +260,20 @@
       display-time-24hr-format t)
 (display-time-mode 1)
 
+(load "comet-trail")
 (use-package comet-trail
-  Vc load if needed 
-;;  :vc (:url "https://github.com/emacsmirror/comet-trail" :rev :newest)
+  ;;  :vc (:url "https://github.com/emacsmirror/comet-trail" :rev :newest)
   :custom
   (comet-trail-minimum-distance 5)
   (comet-trail-tick-interval 0.025)
   :config
-  (set-face-attribute 'comet-trail-highlight nil :foreground nord-purple) ; Nord frost blue
-  (add-hook 'prog-mode-hook #'comet-trail-mode)
-  (add-hook 'text-mode-hook #'comet-trail-mode))
+  (set-face-attribute 'comet-trail-highlight nil :foreground nord-purple))
+
+(define-globalized-minor-mode global-comet-trail-mode
+  comet-trail-mode
+  (lambda () (comet-trail-mode 1)))
+
+(global-comet-trail-mode 1)
 
 (use-package beacon
   :ensure t
