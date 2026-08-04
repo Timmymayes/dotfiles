@@ -267,7 +267,7 @@
   (comet-trail-minimum-distance 5)
   (comet-trail-tick-interval 0.025)
   :config
-  (set-face-attribute 'comet-trail-highlight nil :foreground nord-purple))
+  (set-face-attribute 'comet-trail-highlight nil :background nord-purple))
 
 (define-globalized-minor-mode global-comet-trail-mode
   comet-trail-mode
