@@ -265,7 +265,7 @@
   ;;  :vc (:url "https://github.com/emacsmirror/comet-trail" :rev :newest)
   :custom
   (comet-trail-minimum-distance 5)
-  (comet-trail-tick-interval 0.025)
+  (comet-trail-tick-interval 0.04)
   :config
   (set-face-attribute 'comet-trail-highlight nil :background nord-purple))
 
@@ -2605,8 +2605,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     ;; Weekend headers
     (set-face-attribute 'calfw-sunday-face nil
-			:foreground nord-orange :background nord0 :weight 'bold)
-                        
+  			:foreground nord-orange :background nord0 :weight 'bold)
+    
     (set-face-attribute 'calfw-saturday-face nil
                         :foreground nord-orange :background nord0 :weight 'bold)
 
@@ -2659,6 +2659,8 @@ document.addEventListener('DOMContentLoaded', function() {
    (calfw-org-create-file-source "Moving" "~/Orgfiles/apartment-hunt.org" nord-red)))
 
 (global-set-key (kbd "<f17>") 'my/open-calendar)
+(define-key calfw-calendar-mode-map (kbd "s") 'org-save-all-org-buffers)
+
 (message "calfw loaded")
 
 (defun my/open-calendar ()

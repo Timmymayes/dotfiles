@@ -486,7 +486,7 @@ Read more about this here: [[https://github.com/rougier/nano-modeline][nano-mode
     ;;  :vc (:url "https://github.com/emacsmirror/comet-trail" :rev :newest)
     :custom
     (comet-trail-minimum-distance 5)
-    (comet-trail-tick-interval 0.025)
+    (comet-trail-tick-interval 0.04)
     :config
     (set-face-attribute 'comet-trail-highlight nil :background nord-purple))
 
@@ -3295,8 +3295,8 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
 
       ;; Weekend headers
       (set-face-attribute 'calfw-sunday-face nil
-  			:foreground nord-orange :background nord0 :weight 'bold)
-                          
+    			:foreground nord-orange :background nord0 :weight 'bold)
+      
       (set-face-attribute 'calfw-saturday-face nil
                           :foreground nord-orange :background nord0 :weight 'bold)
 
@@ -3349,13 +3349,15 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
      (calfw-org-create-file-source "Moving" "~/Orgfiles/apartment-hunt.org" nord-red)))
 
   (global-set-key (kbd "<f17>") 'my/open-calendar)
+  (define-key calfw-calendar-mode-map (kbd "s") 'org-save-all-org-buffers)
+
   (message "calfw loaded")
 #+END_SRC
 
 #+RESULTS:
 : calfw loaded
 
-* Calfw Single View
+** Calfw Single View
 :PROPERTIES:
 :ID:       8bb050d2-d2a2-4f6b-9b30-633fd433adf8
 :END:
@@ -3369,7 +3371,7 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
 #+RESULTS:
 : my/open-calendar
 
-* Calfw Quarterly View
+** Calfw Quarterly View
 :PROPERTIES:
 :ID:       2d755815-4edc-416a-8cbd-db66018445a8
 :END:
