@@ -15,6 +15,7 @@ This is my first run through configuring emacs so there is probably a lot of ine
 ** Make this natiavly installable
 
 *** Issue list
+Having issues with magit buffer losing focus
 
 
 
