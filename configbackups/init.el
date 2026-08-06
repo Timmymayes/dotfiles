@@ -18,10 +18,10 @@
 
   ;; Use PowerShell 7 (pwsh) for interactive M-x shell
   (setq explicit-shell-file-name "pwsh.exe")
-  (setq explicit-pwsh.exe-args '("-NoLogo"))
+  (setq explicit-pwsh.exe-args '("-NoLogo" "-NoExit"))
+  (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
   (add-to-list 'exec-path "C:/git/bin")
   (setenv "PATH" (concat "C:\\git\\bin;" (getenv "PATH")))
-  
   )
 
 (setq default-directory "~/Orgfiles")
@@ -3821,6 +3821,21 @@ Right bottom : *Messages* and *Warnings* side by side
 ; list directories first
 (setq dired-listing-switches "-agho --group-directories-first")
 (setq dired-dwim-target t)
+
+(defun my/dired-cd-to-shell ()
+  "Send a `cd` for the current dired directory to the most recent shell buffer."
+  (interactive)
+  (let ((dir (dired-current-directory))
+        (shell-buf (get-buffer "*shell*")))
+    (if (not shell-buf)
+        (message "No *shell* buffer found — start one with M-x shell first.")
+      (with-current-buffer shell-buf
+        (goto-char (point-max))
+        (insert (format "cd \"%s\"" (directory-file-name dir)))
+        (comint-send-input))
+      (pop-to-buffer shell-buf))))
+
+(define-key dired-mode-map (kbd "C-c o") #'my/dired-cd-to-shell)
 
 ;;  (use-package dired-single)
 
