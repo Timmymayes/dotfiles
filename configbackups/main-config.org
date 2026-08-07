@@ -758,7 +758,7 @@ Turn on Yas global mode
   (yas-global-mode 1)
   (if (eq system-type 'windows-nt)
       (progn
-        (setq yas-snippet-dirs '("c:/Users/Tyler/snippets" "~/.emacs.d/snippets" "~/snippets"))
+        (setq yas-snippet-dirs '("c:/Users/Tyler/snippets" "~/.emacs.d/snippets" "~/Snippets"))
         (yas-reload-all))
     (progn
       (setq yas-snippet-dirs '("~/snippets" "~/.emacs.d/snippets"))     
