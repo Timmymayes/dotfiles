@@ -94,7 +94,7 @@ On the rare occasion utf-8 encoding is lost this is a note for myself on how to 
 :ID:       0288f636-ba07-455d-ace5-43f19f7eef2a
 :END:
 #+BEGIN_SRC emacs-lisp
-  (setq default-directory "~/Orgfiles")
+  (setq-default default-directory "~/")
 #+END_SRC
 ** Load additional Lisp directory
 :PROPERTIES:
