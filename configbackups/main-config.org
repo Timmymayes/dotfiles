@@ -2885,71 +2885,71 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
     (org-roam-node-find t nil 'my/find-games-only))
 
 
-(with-eval-after-load "org-roam"
-  (setq org-roam-capture-templates
-        '(("d" "default" plain
-           "%?"
-           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                               "#+title: ${title}\n#+date: %U\n")
-           :unnarrowed t)
+  (with-eval-after-load "org-roam"
+    (setq org-roam-capture-templates
+          '(("d" "default" plain
+             "%?"
+             :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                                "#+title: ${title}\n#+date: %U\n")
+             :unnarrowed t)
 
-          ("g" "Games")
+            ("g" "Games")
 
-          ("ga" "Add Game" plain
-           "\n* Details\n\nGame Name: ${title}\nDesigner: %^{Designer}\nYear: %^{Year}\nPublisher: %^{Publisher}\nBGG Link: %^{BGG Link}\n\n* Description\n\n* First Impression\n\n%?"
-           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                               "#+title:${title}\n#+filetags: :Game:\n#+date: %U\n")
-           :unnarrowed t)
+            ("ga" "Add Game" plain
+             "\n* Details\n\nGame Name: ${title}\nDesigner: %^{Designer}\nYear: %^{Year}\nPublisher: %^{Publisher}\nBGG Link: %^{BGG Link}\n\n* Description\n\n* First Impression\n\n%?"
+             :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                                "#+title:${title}\n#+filetags: :Game:\n#+date: %U\n")
+             :unnarrowed t)
 
-          ("r" "Recipe" plain
-           "\n* General Info\n\nSource: %^{Source}\nPage #: %^{Page}\n\n* Nutrition\n<macros%?\n\n* Recipe\n** Ingredients\n-\n\n** Instructions\n"
-           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                               "#+title:${title}\n#+filetags: :Recipe:\n#+date: %U\n"))
+            ("r" "Recipe" plain
+             "\n* General Info\n\nSource: %^{Source}\nPage #: %^{Page}\n\n* Nutrition\n<macros%?\n\n* Recipe\n** Ingredients\n-\n\n** Instructions\n"
+             :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                                "#+title:${title}\n#+filetags: :Recipe:\n#+date: %U\n"))
 
-          ("b" "Book Notes" plain
-           "\n* Source\n\nAuthor: %^{Author}\nTitle: ${title}\nYear: %^{Year}\n\n* Summary\n\n%?"
-           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                               "#+title: ${title}\n#+date: %U\n")
-           :unnarrowed t)
+            ("b" "Book Notes" plain
+             "\n* Source\n\nAuthor: %^{Author}\nTitle: ${title}\nYear: %^{Year}\n\n* Summary\n\n%?"
+             :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                                "#+title: ${title}\n#+date: %U\n")
+             :unnarrowed t)
 
-          ("p" "Person")
+            ("p" "Person")
 
-          ("pf" "Family" plain
-           "\n* Relationship\n- Family — %^{Relation, e.g. Mom/Dad/Brother}\n\n* Interactions / Notes\n-\n\n%?"
-           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                               ":PROPERTIES:\n:EMAIL: %^{Email}\n:PHONE: %^{Phone}\n:BIRTHDAY: %^{Birthday}\n:END:\n#+title: ${title}\n#+date: %U\n#+filetags: :family:contact:\n")
-           :unnarrowed t)
+            ("pf" "Family" plain
+             "\n* Relationship\n- Family — %^{Relation, e.g. Mom/Dad/Brother}\n\n* Interactions / Notes\n-\n\n%?"
+             :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                                ":PROPERTIES:\n:EMAIL: %^{Email}\n:PHONE: %^{Phone}\n:BIRTHDAY: %^{Birthday}\n:END:\n#+title: ${title}\n#+date: %U\n#+filetags: :family:contact:\n")
+             :unnarrowed t)
 
-          ("pp" "Personal Friend" plain
-           "\n* Relationship\n- %^{How you know them / category note}\n\n* Interactions / Notes\n-\n\n%?"
-           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                               ":PROPERTIES:\n:EMAIL: %^{Email}\n:PHONE: %^{Phone}\n:END:\n#+title: ${title}\n#+date: %U\n#+filetags: :friend:contact:\n")
-           :unnarrowed t)
+            ("pp" "Personal Friend" plain
+             "\n* Relationship\n- %^{How you know them / category note}\n\n* Interactions / Notes\n-\n\n%?"
+             :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                                ":PROPERTIES:\n:EMAIL: %^{Email}\n:PHONE: %^{Phone}\n:END:\n#+title: ${title}\n#+date: %U\n#+filetags: :friend:contact:\n")
+             :unnarrowed t)
 
-          ("pw" "SEAS Coworker" plain
-           "\n* Relationship\n- SEAS internal — %^{Role/context}\n\n* Interactions / Notes\n-\n\n%?"
-           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                               ":PROPERTIES:\n:EMAIL: %^{Email}\n:PHONE: %^{Phone}\n:ROLE: %^{Role}\n:COMPANY: SEAS Productions\n:END:\n#+title: ${title}\n#+date: %U\n#+filetags: :seas:coworker:contact:\n")
-           :unnarrowed t)
+            ("pw" "SEAS Coworker" plain
+             "\n* Relationship\n- SEAS internal — %^{Role/context}\n\n* Interactions / Notes\n-\n\n%?"
+             :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                                ":PROPERTIES:\n:EMAIL: %^{Email}\n:PHONE: %^{Phone}\n:ROLE: %^{Role}\n:COMPANY: SEAS Productions\n:END:\n#+title: ${title}\n#+date: %U\n#+filetags: :seas:coworker:contact:\n")
+             :unnarrowed t)
 
-          ("pc" "SEAS Client" plain
-           "\n* Relationship\n- Client-side contact for %^{Show/Project}\n\n* Interactions / Notes\n-\n\n* Shows / Projects\n-\n\n%?"
-           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                               ":PROPERTIES:\n:EMAIL: %^{Email}\n:PHONE: %^{Phone}\n:ROLE: %^{Role}\n:COMPANY: %^{Company}\n:END:\n#+title: ${title}\n#+date: %U\n#+filetags: :seas:client:contact:\n")
-           :unnarrowed t)
+            ("pc" "SEAS Client" plain
+             "\n* Relationship\n- Client-side contact for %^{Show/Project}\n\n* Interactions / Notes\n-\n\n* Shows / Projects\n-\n\n%?"
+             :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                                ":PROPERTIES:\n:EMAIL: %^{Email}\n:PHONE: %^{Phone}\n:ROLE: %^{Role}\n:COMPANY: %^{Company}\n:END:\n#+title: ${title}\n#+date: %U\n#+filetags: :seas:client:contact:\n")
+             :unnarrowed t)
 
-          ("pv" "SEAS Vendor" plain
-           "\n* Relationship\n- Vendor/freelancer, engaged per-project — %^{Specialty, e.g. CMP}\n\n* Interactions / Notes\n-\n\n* Shows / Projects\n-\n\n%?"
-           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                               ":PROPERTIES:\n:EMAIL: %^{Email}\n:PHONE: %^{Phone}\n:ROLE: %^{Role}\n:COMPANY: %^{Company}\n:END:\n#+title: ${title}\n#+date: %U\n#+filetags: :seas:vendor:contact:\n")
-           :unnarrowed t)
+            ("pv" "SEAS Vendor" plain
+             "\n* Relationship\n- Vendor/freelancer, engaged per-project — %^{Specialty, e.g. CMP}\n\n* Interactions / Notes\n-\n\n* Shows / Projects\n-\n\n%?"
+             :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                                ":PROPERTIES:\n:EMAIL: %^{Email}\n:PHONE: %^{Phone}\n:ROLE: %^{Role}\n:COMPANY: %^{Company}\n:END:\n#+title: ${title}\n#+date: %U\n#+filetags: :seas:vendor:contact:\n")
+             :unnarrowed t)
 
-          ("pd" "Designer / Reference Figure" plain
-           "\n* Game Designs\n-\n\n%?"
-           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                               ":PROPERTIES:\n:ROAM_REFS: %^{BGG or reference URL}\n:END:\n#+title: ${title}\n#+date: %U\n#+filetags: :Designer:reference:\n")
-           :unnarrowed t))))
-  
+            ("pd" "Designer / Reference Figure" plain
+             "\n* Game Designs\n-\n\n%?"
+             :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                                ":PROPERTIES:\n:ROAM_REFS: %^{BGG or reference URL}\n:END:\n#+title: ${title}\n#+date: %U\n#+filetags: :Designer:reference:\n")
+             :unnarrowed t))))
+
   ;; (setq org-roam-capture-templates
   ;;       '(("d" "default" plain
   ;;          "%?"
