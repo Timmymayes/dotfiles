@@ -483,6 +483,8 @@ Read more about this here: [[https://github.com/rougier/nano-modeline][nano-mode
 :ID:       926e3f19-8b48-49b2-bbe4-539bf9e1b3c4
 :END:
 #+BEGIN_SRC emacs-lisp
+;; disabled for now(note global-trail-mode 0) as it's a little laggy
+
   (load "comet-trail")
   (use-package comet-trail
     ;;  :vc (:url "https://github.com/emacsmirror/comet-trail" :rev :newest)
@@ -496,11 +498,10 @@ Read more about this here: [[https://github.com/rougier/nano-modeline][nano-mode
     comet-trail-mode
     (lambda () (comet-trail-mode 1)))
 
-  (global-comet-trail-mode 1)
+  (global-comet-trail-mode 0)
 #+END_SRC
 
 #+RESULTS:
-: t
 
 *** Beacon
 :PROPERTIES:
