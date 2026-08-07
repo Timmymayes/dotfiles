@@ -4327,6 +4327,21 @@ A section for my personal macors functions and keybinds
 
 #+RESULTS:
 : dabbrev-completion
+** Emdash
+:PROPERTIES:
+:ID:       7581efc3-ee0b-4d7a-9637-f74d7daa4167
+:END:
+#+BEGIN_SRC emacs-lisp
+  (defun my/insert-em-dash ()
+    "Insert an em-dash at point"
+    (interactive)
+    (insert 8212))
+
+  (global-set-key (kbd "H--") #'my/insert-em-dash)
+#+END_SRC
+
+#+RESULTS:
+: my/insert-em-dash
 
 ** next-tag - "C-x t" - Move inside the next tag set in web-mode
 :PROPERTIES:
