@@ -5188,6 +5188,18 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 
 #+RESULTS:
 : consult-dir-projectile-dirs
+** Zone (screensaver)
+:PROPERTIES:
+:ID:       38a06a4b-d396-4bc7-8da5-ad6fcd506314
+:END:
+#+BEGIN_SRC emacs-lisp
+(require 'zone)
+(zone-when-idle 300) ;; seconds of idle time before it kicks in
+#+END_SRC
+
+#+RESULTS:
+: [nil 0 300 0 t zone nil idle 0 nil]
+
 ** Elisp font lock hooks
 :PROPERTIES:
 :ID:       f54c0c9c-0e4f-4ef0-a921-bd102217f318
