@@ -24,7 +24,7 @@
   (setenv "PATH" (concat "C:\\git\\bin;" (getenv "PATH")))
   )
 
-(setq default-directory "~/Orgfiles")
+(setq-default default-directory "~/")
 
 (add-to-list 'load-path "~/.emacs.d/lisp")
 (add-to-list 'load-path (expand-file-name "configbackups/lisp" "~/dotfiles"))
