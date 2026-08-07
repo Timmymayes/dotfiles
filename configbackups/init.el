@@ -2189,99 +2189,101 @@
 (message "Org Config Setup Section Loaded")
 
 (use-package org-roam
-    :ensure t
-    :init
-    (setq org-roam-v2-act t)
-    (setq org-roam-file-exclude-regexp
-  	'("\\.stversions/"
-            "-conflict-"
-            "~[0-9]\\{8\\}-[0-9]\\{6\\}\\.org$"
-            "~$"
-            "\\.git/"))
-    :custom
-    (org-roam-directory "~/RoamNotes")
-    (org-roam-completion-everywhere t)
-    ( org-agenda-todo-list-sublevels nil)        
+  :ensure t
+  :init
+  (setq org-roam-v2-act t)
+  (setq org-roam-file-exclude-regexp
+     	'("\\.stversions/"
+          "-conflict-"
+          "~[0-9]\\{8\\}-[0-9]\\{6\\}\\.org$"
+          "~$"
+          "\\.git/"))
+  :custom
+  (org-roam-directory "~/RoamNotes")
+  (org-roam-completion-everywhere t)
+  ( org-agenda-todo-list-sublevels nil)        
 
-    :bind
-    (("C-c n l" . org-roam-buffer-toggle)
-     ("C-c n f" . org-roam-node-find)
-     ("C-c n i" . org-roam-node-insert)
-     ("C-c n c" . org-id-get-create)
-     ("C-c n a" . org-roam-alias-add)
-     ("C-c n t" . org-roam-tag-add)
-     ("C-c n r" . org-roam-ref-add)
-     ("C-c n s" . consult-org-roam-search)
-     ("C-c n x a" . org-roam-alias-remove)
-     ("C-c n x r" . org-roam-ref-remove)
-     ("C-c n x t" . org-roam-tag-remove)
-     ("C-c n F g" . my/GAME-find)
-     ("C-c n m" . my/MOC-find)
-     ("C-c n I" . org-roam-node-insert-immediate)
-     ("H-i" . org-roam-node-insert-immediate)
-     ("H-]" . 'consult-org-roam-forward-links)
-     ("H-[" . 'consult-org-roam-backlinks)
+  :bind
+  (("C-c n l" . org-roam-buffer-toggle)
+   ("C-c n f" . org-roam-node-find)
+   ("C-c n i" . org-roam-node-insert)
+   ("C-c n c" . org-id-get-create)
+   ("C-c n a" . org-roam-alias-add)
+   ("C-c n t" . org-roam-tag-add)
+   ("C-c n r" . org-roam-ref-add)
+   ("C-c n s" . consult-org-roam-search)
+   ("C-c n x a" . org-roam-alias-remove)
+   ("C-c n x r" . org-roam-ref-remove)
+   ("C-c n x t" . org-roam-tag-remove)
+   ("C-c n F g" . my/GAME-find)
+   ("C-c n m" . my/MOC-find)
+   ("C-c n I" . org-roam-node-insert-immediate)
+   ("C-c n C-o" . citar-open-notes)
+   ("C-c n C-i" . citar-insert-citation)
+   ("H-i" . org-roam-node-insert-immediate)
+   ("H-]" . 'consult-org-roam-forward-links)
+   ("H-[" . 'consult-org-roam-backlinks)
 
-     :map org-mode-map
-     ("C-c n b" . org-mark-ring-goto)
+   :map org-mode-map
+   ("C-c n b" . org-mark-ring-goto)
 
-     :map org-roam-dailies-map
-     ("Y" . org-roam-dailies-capture-yesterday)
-     ("T" . org-roam-dailies-capture-tomorrow))
+   :map org-roam-dailies-map
+   ("Y" . org-roam-dailies-capture-yesterday)
+   ("T" . org-roam-dailies-capture-tomorrow))
 
-    :bind-keymap
-    ("C-c n d" . org-roam-dailies-map)
-    :config
-    (require 'org-roam-dailies)
-    (org-roam-db-autosync-mode))
+  :bind-keymap
+  ("C-c n d" . org-roam-dailies-map)
+  :config
+  (require 'org-roam-dailies)
+  (org-roam-db-autosync-mode))
 
-  (defun case-insensitive-org-roam-node-read (orig-fn &rest args)
-    (let ((completion-ignore-case t))
-      (apply orig-fn args)))
+(defun case-insensitive-org-roam-node-read (orig-fn &rest args)
+  (let ((completion-ignore-case t))
+    (apply orig-fn args)))
 
-  (advice-add 'org-roam-node-read :around #'case-insensitive-org-roam-node-read)
-
-
-  ;; for org-roam-buffer-toggle
-  ;; Recommendation in the official manual
-  (add-to-list 'display-buffer-alist
-               '("\\*org-roam\\*"
-                 (display-buffer-in-direction)
-                 (direction . right)
-                 (window-width . 0.33)
-                 (window-height . fit-window-to-buffer)))
+(advice-add 'org-roam-node-read :around #'case-insensitive-org-roam-node-read)
 
 
-
-  ;;  Bind this to C-c n In
-  (defun org-roam-node-insert-immediate (arg &rest args)
-    (interactive "P")
-    (let ((args (cons arg args))
-          (org-roam-capture-templates (list (append (car org-roam-capture-templates)
-                                                    '(:immediate-finish t)))))
-      (apply #'org-roam-node-insert args)))  
-
-
-  (defun my/find-MOC-only(node)
-    "find Map of Content (MOC) files only"
-    (let ((tags (org-roam-node-tags node)))
-      (member "MOC" tags)))
+;; for org-roam-buffer-toggle
+;; Recommendation in the official manual
+(add-to-list 'display-buffer-alist
+             '("\\*org-roam\\*"
+               (display-buffer-in-direction)
+               (direction . right)
+               (window-width . 0.33)
+               (window-height . fit-window-to-buffer)))
 
 
-  (defun my/MOC-find ()
-    "Find moc files"
-    (interactive)
-    (org-roam-node-find t nil 'my/find-MOC-only))
 
-  (defun my/find-games-only(node)
-    "Find entries tagged as games"
-    (let ((tags (org-roam-node-tags node)))
-      (member "Game" tags)))
+;;  Bind this to C-c n In
+(defun org-roam-node-insert-immediate (arg &rest args)
+  (interactive "P")
+  (let ((args (cons arg args))
+        (org-roam-capture-templates (list (append (car org-roam-capture-templates)
+                                                  '(:immediate-finish t)))))
+    (apply #'org-roam-node-insert args)))  
 
-  (defun my/GAME-find()
-    "Find game files"
-    (interactive)
-    (org-roam-node-find t nil 'my/find-games-only))
+
+(defun my/find-MOC-only(node)
+  "find Map of Content (MOC) files only"
+  (let ((tags (org-roam-node-tags node)))
+    (member "MOC" tags)))
+
+
+(defun my/MOC-find ()
+  "Find moc files"
+  (interactive)
+  (org-roam-node-find t nil 'my/find-MOC-only))
+
+(defun my/find-games-only(node)
+  "Find entries tagged as games"
+  (let ((tags (org-roam-node-tags node)))
+    (member "Game" tags)))
+
+(defun my/GAME-find()
+  "Find game files"
+  (interactive)
+  (org-roam-node-find t nil 'my/find-games-only))
 
 
 (with-eval-after-load "org-roam"
