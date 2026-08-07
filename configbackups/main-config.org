@@ -5078,7 +5078,7 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
           (comint-send-input))
         (pop-to-buffer shell-buf))))
 
-  (define-key dired-mode-map (kbd "C-c o") #'my/dired-cd-to-shell)
+
 
 
 #+END_SRC
@@ -5132,15 +5132,16 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 :END:
 - hotkey: . (dot)
 #+BEGIN_SRC emacs-lisp
-    (defun my-dired-mode-hook ()
-      "My `dired' mode hook."
-      ;; To hide dot-files by default
-      (dired-hide-dotfiles-mode))
+  (defun my-dired-mode-hook ()
+    "My `dired' mode hook."
+    ;; To hide dot-files by default
+    (dired-hide-dotfiles-mode))
 
-    ;; To toggle hiding
+  ;; To toggle hiding
   (with-eval-after-load 'dired
+    (define-key dired-mode-map (kbd "C-c o") #'my/dired-cd-to-shell)
     (define-key dired-mode-map "." #'dired-hide-dotfiles-mode) )
-    ;;  (add-hook 'dired-mode-hook #'my-dired-mode-hook)
+  ;;  (add-hook 'dired-mode-hook #'my-dired-mode-hook)
 
 #+END_SRC
 
