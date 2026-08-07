@@ -2819,6 +2819,8 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
      ("C-c n F g" . my/GAME-find)
      ("C-c n m" . my/MOC-find)
      ("C-c n I" . org-roam-node-insert-immediate)
+     ("C-c n C-o" . citar-open-notes)
+     ("C-c n C-i" . citar-insert-citation)
      ("H-i" . org-roam-node-insert-immediate)
      ("H-]" . 'consult-org-roam-forward-links)
      ("H-[" . 'consult-org-roam-backlinks)
@@ -2989,6 +2991,33 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
 
 #+RESULTS:
 : org-roam-ui-open
+** Citar and citar-org-roam Setup
+:PROPERTIES:
+:ID:       b37c36dc-d6c2-4018-afb0-f034f84f4128
+:END:
+#+BEGIN_SRC emacs-lisp
+  ;; machine: any (shared config)
+  (setq org-cite-insert-processor 'citar
+        org-cite-follow-processor 'citar
+        org-cite-activate-processor 'citar)
+
+    ;; machine: any (shared config)
+    (use-package citar
+      :ensure t  ;; or :ensure t, depending on your package manager
+      :custom
+      (citar-bibliography '("~/Orgfiles/bibliography/library.bib"))
+      (org-cite-global-bibliography '("~/Orgfiles/bibliography/library.bib")))
+
+    (use-package citar-org-roam
+      :ensure t
+      :after (citar org-roam)
+      :config
+      (citar-org-roam-mode))
+#+END_SRC
+
+#+RESULTS:
+: t
+
 ** Section Loaded Message
 :PROPERTIES:
 :ID:       51b97ae6-431c-4eeb-873e-cf9c02f89552
