@@ -155,7 +155,7 @@
 
 (defun my/apply-theme-and-faces (&optional frame)
   "Apply theme, Nord face attributes, and transparency.
-  Safe to call from frame-creation hooks."
+    Safe to call from frame-creation hooks."
   (when frame (select-frame frame))
   (load-theme 'nano-dark t)
   (set-face-attribute 'default nil :font "Roboto Mono" :height 140)
@@ -460,7 +460,7 @@
 (yas-global-mode 1)
 (if (eq system-type 'windows-nt)
     (progn
-      (setq yas-snippet-dirs '("c:/Users/Tyler/snippets" "~/.emacs.d/snippets" "~/snippets"))
+      (setq yas-snippet-dirs '("c:/Users/Tyler/snippets" "~/.emacs.d/snippets" "~/Snippets"))
       (yas-reload-all))
   (progn
     (setq yas-snippet-dirs '("~/snippets" "~/.emacs.d/snippets"))     
@@ -2141,9 +2141,10 @@
 
 
 (use-package olivetti
-  :hook (org-mode . olivetti-mode)
+  :hook ((org-mode . olivetti-mode)
+	 elfeed-show-mode . olivetti-mode)
   :custom
-  (olivetti-body-width 110))
+  (olivetti-body-width 140))
 
 (setq org-clock-sound "~/Orgfiles/Kids_cheering.wav")
 
@@ -2291,7 +2292,7 @@
         '(("d" "default" plain
            "%?"
            :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                               "#+title: ${title}\n#+date: %U\n")
+                              "#+title: ${title}\n#+date: %U\n")
            :unnarrowed t)
 
           ("g" "Games")
@@ -2299,18 +2300,18 @@
           ("ga" "Add Game" plain
            "\n* Details\n\nGame Name: ${title}\nDesigner: %^{Designer}\nYear: %^{Year}\nPublisher: %^{Publisher}\nBGG Link: %^{BGG Link}\n\n* Description\n\n* First Impression\n\n%?"
            :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                               "#+title:${title}\n#+filetags: :Game:\n#+date: %U\n")
+                              "#+title:${title}\n#+filetags: :Game:\n#+date: %U\n")
            :unnarrowed t)
 
           ("r" "Recipe" plain
            "\n* General Info\n\nSource: %^{Source}\nPage #: %^{Page}\n\n* Nutrition\n<macros%?\n\n* Recipe\n** Ingredients\n-\n\n** Instructions\n"
            :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                               "#+title:${title}\n#+filetags: :Recipe:\n#+date: %U\n"))
+                              "#+title:${title}\n#+filetags: :Recipe:\n#+date: %U\n"))
 
           ("b" "Book Notes" plain
            "\n* Source\n\nAuthor: %^{Author}\nTitle: ${title}\nYear: %^{Year}\n\n* Summary\n\n%?"
            :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                               "#+title: ${title}\n#+date: %U\n")
+                              "#+title: ${title}\n#+date: %U\n")
            :unnarrowed t)
 
           ("p" "Person")
@@ -2318,72 +2319,90 @@
           ("pf" "Family" plain
            "\n* Relationship\n- Family — %^{Relation, e.g. Mom/Dad/Brother}\n\n* Interactions / Notes\n-\n\n%?"
            :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                               ":PROPERTIES:\n:EMAIL: %^{Email}\n:PHONE: %^{Phone}\n:BIRTHDAY: %^{Birthday}\n:END:\n#+title: ${title}\n#+date: %U\n#+filetags: :family:contact:\n")
+                              ":PROPERTIES:\n:EMAIL: %^{Email}\n:PHONE: %^{Phone}\n:BIRTHDAY: %^{Birthday}\n:END:\n#+title: ${title}\n#+date: %U\n#+filetags: :family:contact:\n")
            :unnarrowed t)
 
           ("pp" "Personal Friend" plain
            "\n* Relationship\n- %^{How you know them / category note}\n\n* Interactions / Notes\n-\n\n%?"
            :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                               ":PROPERTIES:\n:EMAIL: %^{Email}\n:PHONE: %^{Phone}\n:END:\n#+title: ${title}\n#+date: %U\n#+filetags: :friend:contact:\n")
+                              ":PROPERTIES:\n:EMAIL: %^{Email}\n:PHONE: %^{Phone}\n:END:\n#+title: ${title}\n#+date: %U\n#+filetags: :friend:contact:\n")
            :unnarrowed t)
 
           ("pw" "SEAS Coworker" plain
            "\n* Relationship\n- SEAS internal — %^{Role/context}\n\n* Interactions / Notes\n-\n\n%?"
            :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                               ":PROPERTIES:\n:EMAIL: %^{Email}\n:PHONE: %^{Phone}\n:ROLE: %^{Role}\n:COMPANY: SEAS Productions\n:END:\n#+title: ${title}\n#+date: %U\n#+filetags: :seas:coworker:contact:\n")
+                              ":PROPERTIES:\n:EMAIL: %^{Email}\n:PHONE: %^{Phone}\n:ROLE: %^{Role}\n:COMPANY: SEAS Productions\n:END:\n#+title: ${title}\n#+date: %U\n#+filetags: :seas:coworker:contact:\n")
            :unnarrowed t)
 
           ("pc" "SEAS Client" plain
            "\n* Relationship\n- Client-side contact for %^{Show/Project}\n\n* Interactions / Notes\n-\n\n* Shows / Projects\n-\n\n%?"
            :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                               ":PROPERTIES:\n:EMAIL: %^{Email}\n:PHONE: %^{Phone}\n:ROLE: %^{Role}\n:COMPANY: %^{Company}\n:END:\n#+title: ${title}\n#+date: %U\n#+filetags: :seas:client:contact:\n")
+                              ":PROPERTIES:\n:EMAIL: %^{Email}\n:PHONE: %^{Phone}\n:ROLE: %^{Role}\n:COMPANY: %^{Company}\n:END:\n#+title: ${title}\n#+date: %U\n#+filetags: :seas:client:contact:\n")
            :unnarrowed t)
 
           ("pv" "SEAS Vendor" plain
            "\n* Relationship\n- Vendor/freelancer, engaged per-project — %^{Specialty, e.g. CMP}\n\n* Interactions / Notes\n-\n\n* Shows / Projects\n-\n\n%?"
            :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                               ":PROPERTIES:\n:EMAIL: %^{Email}\n:PHONE: %^{Phone}\n:ROLE: %^{Role}\n:COMPANY: %^{Company}\n:END:\n#+title: ${title}\n#+date: %U\n#+filetags: :seas:vendor:contact:\n")
+                              ":PROPERTIES:\n:EMAIL: %^{Email}\n:PHONE: %^{Phone}\n:ROLE: %^{Role}\n:COMPANY: %^{Company}\n:END:\n#+title: ${title}\n#+date: %U\n#+filetags: :seas:vendor:contact:\n")
            :unnarrowed t)
 
           ("pd" "Designer / Reference Figure" plain
            "\n* Game Designs\n-\n\n%?"
            :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                               ":PROPERTIES:\n:ROAM_REFS: %^{BGG or reference URL}\n:END:\n#+title: ${title}\n#+date: %U\n#+filetags: :Designer:reference:\n")
+                              ":PROPERTIES:\n:ROAM_REFS: %^{BGG or reference URL}\n:END:\n#+title: ${title}\n#+date: %U\n#+filetags: :Designer:reference:\n")
            :unnarrowed t))))
-  
-  ;; (setq org-roam-capture-templates
-  ;;       '(("d" "default" plain
-  ;;          "%?"
-  ;;          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+date: %U\n")
-  ;;          :unnarrowed t)
-  ;;         ("g" "Games")
-  ;;         ("ga" "Add Game" plain
-  ;;          "\n* Details\n\nGame Name: ${title}\nDesigner: %^{Designer}\nYear: %^{Year}\nPublisher: %^{Publisher}\nBGG Link: %^{BGG Link}\n\n* Description\n\n* First Impression\n\n%?"
-  ;;          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title:${title}\n#+filetags: :Game:\n#+date: %U\n")
-  ;;          :unnarrowed t)
-  ;;         ("r" "Recipe" plain
-  ;;          "\n* General Info\n\nSource: %^{Source}\nPage #: %^{Page}\n\n* Nutrition\n<macros%?\n\n* Recipe\n** Ingredients\n-\n\n** Instructions\n"
-  ;; 	   :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title:${title}\n#+filetags: :Recipe:\n#+date: %U\n"               ))
-  ;;         ("b" "Book Notes" plain
-  ;;          "\n* Source\n\nAuthor: %^{Author}\nTitle: ${title}\nYear: %^{Year}\n\n* Summary\n\n%?"
-  ;;          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+date: %U\n")
-  ;;          :unnarrowed t))))
+
+;; (setq org-roam-capture-templates
+;;       '(("d" "default" plain
+;;          "%?"
+;;          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+date: %U\n")
+;;          :unnarrowed t)
+;;         ("g" "Games")
+;;         ("ga" "Add Game" plain
+;;          "\n* Details\n\nGame Name: ${title}\nDesigner: %^{Designer}\nYear: %^{Year}\nPublisher: %^{Publisher}\nBGG Link: %^{BGG Link}\n\n* Description\n\n* First Impression\n\n%?"
+;;          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title:${title}\n#+filetags: :Game:\n#+date: %U\n")
+;;          :unnarrowed t)
+;;         ("r" "Recipe" plain
+;;          "\n* General Info\n\nSource: %^{Source}\nPage #: %^{Page}\n\n* Nutrition\n<macros%?\n\n* Recipe\n** Ingredients\n-\n\n** Instructions\n"
+;; 	   :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title:${title}\n#+filetags: :Recipe:\n#+date: %U\n"               ))
+;;         ("b" "Book Notes" plain
+;;          "\n* Source\n\nAuthor: %^{Author}\nTitle: ${title}\nYear: %^{Year}\n\n* Summary\n\n%?"
+;;          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+date: %U\n")
+;;          :unnarrowed t))))
 
 
-  (setq org-roam-mode-sections
-        (list #'org-roam-backlinks-section
-              #'org-roam-reflinks-section
-              #'org-roam-unlinked-references-section
-              ))
+(setq org-roam-mode-sections
+      (list #'org-roam-backlinks-section
+            #'org-roam-reflinks-section
+            #'org-roam-unlinked-references-section
+            ))
 
 
-  (use-package org-roam-ui
-    :bind ("C-H-4" . org-roam-ui-open)
+(use-package org-roam-ui
+  :bind ("C-H-4" . org-roam-ui-open)
+  :config
+  (setq org-roam-ui-sync-theme t
+        org-roam-ui-follow t
+        org-roam-ui-update-on-save t
+        org-roam-ui-open-on-start t))
+
+;; machine: any (shared config)
+(setq org-cite-insert-processor 'citar
+      org-cite-follow-processor 'citar
+      org-cite-activate-processor 'citar)
+
+  ;; machine: any (shared config)
+  (use-package citar
+    :ensure t  ;; or :ensure t, depending on your package manager
+    :custom
+    (citar-bibliography '("~/Orgfiles/bibliography/library.bib"))
+    (org-cite-global-bibliography '("~/Orgfiles/bibliography/library.bib")))
+
+  (use-package citar-org-roam
+    :ensure t
+    :after (citar org-roam)
     :config
-    (setq org-roam-ui-sync-theme t
-          org-roam-ui-follow t
-          org-roam-ui-update-on-save t
-          org-roam-ui-open-on-start t))
+    (citar-org-roam-mode))
 
 (message "Org-Roam Section Loaded")
 
@@ -3336,6 +3355,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
 (global-set-key (kbd "C-M-=") 'dabbrev-completion)
 
+(defun my/insert-em-dash ()
+  "Insert an em-dash at point"
+  (interactive)
+  (insert 8212))
+
+(global-set-key (kbd "H--") #'my/insert-em-dash)
+
 (defun next-tag()
   (interactive)
   (web-mode-element-next)
@@ -3709,7 +3735,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         (mapcar #'buffer-name scratch-buffers)
                         nil t))))))
 
-(global-set-key (kbd "s-s") #'my/jump-to-scratch)
+(global-set-key (kbd "H-;") #'my/jump-to-scratch)
 
 (defun my/open-config-workspace ()
   "
@@ -3842,8 +3868,6 @@ Right bottom : *Messages* and *Warnings* side by side
         (comint-send-input))
       (pop-to-buffer shell-buf))))
 
-(define-key dired-mode-map (kbd "C-c o") #'my/dired-cd-to-shell)
-
 ;;  (use-package dired-single)
 
 (use-package all-the-icons)
@@ -3870,14 +3894,15 @@ Right bottom : *Messages* and *Warnings* side by side
   :hook (dired-mode . all-the-icons-dired-mode))
 
 (defun my-dired-mode-hook ()
-    "My `dired' mode hook."
-    ;; To hide dot-files by default
-    (dired-hide-dotfiles-mode))
+  "My `dired' mode hook."
+  ;; To hide dot-files by default
+  (dired-hide-dotfiles-mode))
 
-  ;; To toggle hiding
+;; To toggle hiding
 (with-eval-after-load 'dired
+  (define-key dired-mode-map (kbd "C-c o") #'my/dired-cd-to-shell)
   (define-key dired-mode-map "." #'dired-hide-dotfiles-mode) )
-  ;;  (add-hook 'dired-mode-hook #'my-dired-mode-hook)
+;;  (add-hook 'dired-mode-hook #'my-dired-mode-hook)
 
 (message "dired loaded")
 
@@ -3904,6 +3929,9 @@ Right bottom : *Messages* and *Warnings* side by side
          ("C-x C-j" . consult-dir-jump-file)))
 
 (setq consult-dir-project-list-function #'consult-dir-projectile-dirs)
+
+(require 'zone)
+(zone-when-idle 300) ;; seconds of idle time before it kicks in
 
 (defun my/elisp-font-lock-additions ()
   (font-lock-add-keywords nil
