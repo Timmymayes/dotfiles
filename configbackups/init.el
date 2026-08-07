@@ -193,10 +193,13 @@
 
 
   (set-face-attribute 'highlight-function-calls-face nil :foreground "#88C0D0" :underline nil)
-
-
   (set-face-attribute 'highlight-quoted-symbol nil :foreground "#E8CB8B")
   (set-face-attribute 'highlight-quoted-quote nil :foreground "#88C0D0")
+
+  (with-eval-after-load 'nano-modeline
+    (set-face-attribute 'nano-modeline-active nil :background 'unspecified)
+    (set-face-attribute 'nano-modeline-status nil :background 'unspecified)
+    (set-face-attribute 'nano-modeline-button-inactive-face nil :background 'unspecified))
   
   ;; Transparency: 60% opaque focused / 45% opaque unfocused
   (set-frame-parameter (selected-frame) 'alpha '(90 . 60)))
