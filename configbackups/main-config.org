@@ -4846,7 +4846,7 @@ Move the cursor
                           (mapcar #'buffer-name scratch-buffers)
                           nil t))))))
 
-  (global-set-key (kbd "s-s") #'my/jump-to-scratch)
+  (global-set-key (kbd "H-;") #'my/jump-to-scratch)
 #+END_SRC
 
 #+RESULTS:
