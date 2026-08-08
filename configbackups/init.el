@@ -20,9 +20,14 @@
   (setq explicit-shell-file-name "pwsh.exe")
   (setq explicit-pwsh.exe-args '("-NoLogo" "-NoExit"))
   (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
+
+  ;; add git to path
   (add-to-list 'exec-path "C:/git/bin")
   (setenv "PATH" (concat "C:\\git\\bin;" (getenv "PATH")))
-  )
+
+  ;; add scoop shims to path
+  (add-to-list 'exec-path "C:/Users/timmy/scoop/apps/gnupg/current/bin")
+  (setenv "PATH" (concat "C:\\Users\\timmy\\scoop\\apps\\gnupg\\current\\bin;" (getenv "PATH"))))
 
 (setq-default default-directory "~/")
 
@@ -52,8 +57,6 @@
   (setq python-shell-interpreter "python3"))
 
 (setq undo-limit 160000)
-
-(server-start)
 
 (require 'package)
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
@@ -155,7 +158,7 @@
 
 (defun my/apply-theme-and-faces (&optional frame)
   "Apply theme, Nord face attributes, and transparency.
-    Safe to call from frame-creation hooks."
+  Safe to call from frame-creation hooks."
   (when frame (select-frame frame))
   (load-theme 'nano-dark t)
   (set-face-attribute 'default nil :font "Roboto Mono" :height 140)
@@ -475,6 +478,12 @@
 
 (message "Usabiliy Section Finished Loading")
 
+(require 'epa-file)
+(epa-file-enable)
+(setq epa-file-select-keys 'silent)
+(setq epa-file-encrypt-to '("64B7FA4669B10335" "EE16A50B5AFCE6C6"))
+(setq epg-pinentry-mode 'loopback)
+
 (use-package gptel
   :config
   (setq gptel-default-mode 'org-mode)
@@ -486,20 +495,37 @@
                   (review . "You are a code reviewer. Succinctly identify problems, bugs, gotchas, edge cases, and design issues. Use a bullet list. Do not rewrite the code unless asked. Prioritize by severity."))))
 
   
-  ;; OpenAI (existing)
+  ;; ;; OpenAI (existing) OLD
+  ;; (setq gptel-api-key
+  ;;       (auth-source-pick-first-password :host "api.openai.com"))
   (setq gptel-api-key
-        (auth-source-pick-first-password :host "api.openai.com"))
+  	(lambda () (auth-source-pick-first-password :host "api.openai.com")))
+
   ;; make oolama
   (gptel-make-ollama "Ollama"
     :host "localhost:11434"
     :models '(llama3.1
-	      qwen2.5-coder:14b)
+    	      qwen2.5-coder:14b)
     :stream t)
   
+  ;; ;; Claude - store the backend in a variable
+
+  
+  ;; (let ((claude (gptel-make-anthropic "Claude"
+  ;;                 :stream t
+  ;;                 :key (auth-source-pick-first-password :host "api.anthropic.com"))))
+  ;;   ;; Set it as the default backend
+  ;;   (setq gptel-backend claude
+  ;;         gptel-model 'claude-sonnet-4-6))
+
+
+  ;;             :stream t
+  ;;             :key (lambda () (auth-source-pick-first-password :host "api.anthropic.com")))))
+
   ;; Claude - store the backend in a variable
   (let ((claude (gptel-make-anthropic "Claude"
                   :stream t
-                  :key (auth-source-pick-first-password :host "api.anthropic.com"))))
+                  :key (lambda () (auth-source-pick-first-password :host "api.anthropic.com")))))
     ;; Set it as the default backend
     (setq gptel-backend claude
           gptel-model 'claude-sonnet-4-6))
@@ -2194,7 +2220,7 @@
   :init
   (setq org-roam-v2-act t)
   (setq org-roam-file-exclude-regexp
-     	'("\\.stversions/"
+	'("\\.stversions/"
           "-conflict-"
           "~[0-9]\\{8\\}-[0-9]\\{6\\}\\.org$"
           "~$"

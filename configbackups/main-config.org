@@ -80,14 +80,19 @@ On the rare occasion utf-8 encoding is lost this is a note for myself on how to 
     (setq explicit-shell-file-name "pwsh.exe")
     (setq explicit-pwsh.exe-args '("-NoLogo" "-NoExit"))
     (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
+
+    ;; add git to path
     (add-to-list 'exec-path "C:/git/bin")
     (setenv "PATH" (concat "C:\\git\\bin;" (getenv "PATH")))
-    )
+
+    ;; add scoop shims to path
+    (add-to-list 'exec-path "C:/Users/timmy/scoop/apps/gnupg/current/bin")
+    (setenv "PATH" (concat "C:\\Users\\timmy\\scoop\\apps\\gnupg\\current\\bin;" (getenv "PATH"))))
 
 #+END_SRC
 
 #+RESULTS:
-: C:\git\bin;/home/tyler/miniconda3/bin:C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\NVIDIA Corporation\NVIDIA App\NvDLISR;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\Tailscale\;C:\Users\timmy\AppData\Local\Programs\Python\Python313\Scripts\;C:\Users\timmy\AppData\Local\Programs\Python\Python313\;C:\Users\timmy\AppData\Local\Programs\Python\Launcher\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\NVIDIA Corporation\NVIDIA App\NvDLISR;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\Tailscale\;C:\Users\timmy\AppData\Local\Microsoft\WindowsApps;C:\git\cmd;C:\Users\timmy\AppData\Local\Microsoft\WinGet\Links;
+: C:\Users\timmy\scoop\apps\gnupg\current\bin;C:\git\bin;/home/tyler/miniconda3/bin:C:\git\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\NVIDIA Corporation\NVIDIA App\NvDLISR;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\Tailscale\;C:\Program Files\dotnet\;C:\Users\timmy\AppData\Local\Programs\Python\Python310\Scripts\;C:\Users\timmy\AppData\Local\Programs\Python\Python310\;C:\Users\timmy\scoop\apps\miniconda3\current\scripts;C:\Users\timmy\scoop\apps\miniconda3\current\Library\bin;C:\Users\timmy\scoop\apps\mpv\current;C:\Users\timmy\scoop\shims;C:\Users\timmy\AppData\Local\Programs\Python\Python313\Scripts\;C:\Users\timmy\AppData\Local\Programs\Python\Python313\;C:\Users\timmy\AppData\Local\Programs\Python\Launcher\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\NVIDIA Corporation\NVIDIA App\NvDLISR;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\Tailscale\;C:\Users\timmy\AppData\Local\Microsoft\WindowsApps;C:\git\cmd;C:\Users\timmy\AppData\Local\Microsoft\WinGet\Links;C:\Users\timmy\AppData\Local\Programs\Ollama
 
 ** Set default directory for find-file
 :PROPERTIES:
@@ -173,9 +178,6 @@ Then setup your client using emacsclient in programfiles with
 :PROPERTIES:
 :ID:       5921305d-d6fa-4c30-aa55-2843ffcb3839
 :END:
-#+BEGIN_SRC emacs-lisp
-  (server-start)
-#+END_SRC
 
 ** Package Setup
 :PROPERTIES:
@@ -791,6 +793,21 @@ Turn on Yas global mode
   (message "Usabiliy Section Finished Loading")
 #+END_SRC
 
+* GPG Setup
+:PROPERTIES:
+:ID:       d9a71869-7a02-4345-bf70-db3615cb5b69
+:END:
+#+BEGIN_SRC emacs-lisp
+  (require 'epa-file)
+  (epa-file-enable)
+  (setq epa-file-select-keys 'silent)
+  (setq epa-file-encrypt-to '("64B7FA4669B10335" "EE16A50B5AFCE6C6"))
+  (setq epg-pinentry-mode 'loopback)
+#+END_SRC
+
+#+RESULTS:
+: loopback
+
 * LLM Tooling
 
 * LLM Setup
@@ -811,20 +828,37 @@ Turn on Yas global mode
                     (review . "You are a code reviewer. Succinctly identify problems, bugs, gotchas, edge cases, and design issues. Use a bullet list. Do not rewrite the code unless asked. Prioritize by severity."))))
 
     
-    ;; OpenAI (existing)
+    ;; ;; OpenAI (existing) OLD
+    ;; (setq gptel-api-key
+    ;;       (auth-source-pick-first-password :host "api.openai.com"))
     (setq gptel-api-key
-          (auth-source-pick-first-password :host "api.openai.com"))
+    	(lambda () (auth-source-pick-first-password :host "api.openai.com")))
+
     ;; make oolama
     (gptel-make-ollama "Ollama"
       :host "localhost:11434"
       :models '(llama3.1
-  	      qwen2.5-coder:14b)
+      	      qwen2.5-coder:14b)
       :stream t)
     
+    ;; ;; Claude - store the backend in a variable
+
+    
+    ;; (let ((claude (gptel-make-anthropic "Claude"
+    ;;                 :stream t
+    ;;                 :key (auth-source-pick-first-password :host "api.anthropic.com"))))
+    ;;   ;; Set it as the default backend
+    ;;   (setq gptel-backend claude
+    ;;         gptel-model 'claude-sonnet-4-6))
+
+
+    ;;             :stream t
+    ;;             :key (lambda () (auth-source-pick-first-password :host "api.anthropic.com")))))
+
     ;; Claude - store the backend in a variable
     (let ((claude (gptel-make-anthropic "Claude"
                     :stream t
-                    :key (auth-source-pick-first-password :host "api.anthropic.com"))))
+                    :key (lambda () (auth-source-pick-first-password :host "api.anthropic.com")))))
       ;; Set it as the default backend
       (setq gptel-backend claude
             gptel-model 'claude-sonnet-4-6))
@@ -972,7 +1006,7 @@ Turn on Yas global mode
 
 
 
-  
+
 
 
 
