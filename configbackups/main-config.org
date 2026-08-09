@@ -2735,7 +2735,7 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
 
   (use-package olivetti
     :hook ((org-mode . olivetti-mode)
-  	 elfeed-show-mode . olivetti-mode)
+  	 (elfeed-show-mode . olivetti-mode))
     :custom
     (olivetti-body-width 140))
 

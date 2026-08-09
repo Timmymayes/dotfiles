@@ -2168,7 +2168,7 @@
 
 (use-package olivetti
   :hook ((org-mode . olivetti-mode)
-	 elfeed-show-mode . olivetti-mode)
+	 (elfeed-show-mode . olivetti-mode))
   :custom
   (olivetti-body-width 140))
 
