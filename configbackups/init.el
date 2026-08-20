@@ -9,12 +9,8 @@
 (defconst my/linux-p (eq system-type 'gnu/linux))
 
 (when my/windows-p
-  ;; Grep and fd on win - via powershell
-  ;; winget install BurntSushi.ripgrep.MSVC
-  ;; winget install sharkdp.fd
+  ;; define grep to be rg (download via scoop on first install)
   (setq grep-program "rg")
-  ;; only needed if you went the GNU findutils route:
-  ;; (setq find-program "C:/Users/tyler/scoop/apps/findutils/current/bin/find.exe")
 
   ;; Use PowerShell 7 (pwsh) for interactive M-x shell
   (setq explicit-shell-file-name "pwsh.exe")
@@ -169,6 +165,7 @@
   (set-face-attribute 'font-lock-comment-face nil :foreground "#616E88" :slant 'italic)
   (set-face-attribute 'font-lock-builtin-face nil :foreground "#5E81AC")
   (set-face-attribute 'font-lock-constant-face nil :foreground "#D08770")
+  (set-face-attribute 'italic nil :inherit nil :foreground 'unspecified :slant 'italic)
 
   ;; Org heading fonts — must run AFTER load-theme, since reloading the
   ;; theme resets these back to nano-theme's own (bold) definitions.
@@ -238,11 +235,7 @@
   (set-face-attribute 'org-link nil
                       :foreground "#81A1C1"   ;; light blue (Nord9)
                       :underline t
-                      :weight 'normal)
-  (set-face-attribute 'italic nil
-                      :inherit 'unspecified
-                      :foreground 'unspecified
-                      :slant 'italic))
+                      :weight 'normal))
 
 ;; load magit correctly
 (with-eval-after-load 'magit
@@ -846,8 +839,8 @@
          ("C-H-e" . org-narrow-to-block)
          ("H-o" . consult-org-heading)
          ("M-s o" . my/org-occur)
-	 ("H-," . 'org-promote-subtree)
-	 ("H-." . 'org-demote-subtree)
+         ("H-," . 'org-promote-subtree)
+         ("H-." . 'org-demote-subtree)
          ("s-b" . 'org-tree-to-indirect-buffer)
          ("C-M-<right>" . org-demote-subtree)
          ("C-M-<left>" . org-promote-subtree)
@@ -855,7 +848,7 @@
          ("M-n" . org-next-visible-heading)
          ("C-c C-x l" . my/toggle-logbook)
          ("C-c M-a" . org-attach-screenshot)
-  	 ("C-M-i" . org-indent-block)
+         ("C-M-i" . org-indent-block)
          ("C-t". org-toggle-checkbox))
   :config
 
@@ -869,7 +862,7 @@
                 )))
 
   (setq org-agenda-clockreport-parameter-plist
-	'(:link t :maxlevel 2 :fileskip0 t))
+        '(:link t :maxlevel 2 :fileskip0 t))
   
   (setq org-attach-method 'cp)
 
@@ -954,7 +947,7 @@
   (setq org-global-properties
         '(("Effort_All" . "0 0:10 0:15 0:30 0:45 1:00 1:15 1:30 1:45  2:00 2:30  3:00 3:30 4:00")))
 
-  					; org capture
+    					; org capture
 
   (set-face-attribute 'org-agenda-clocking nil
                       :background 'unspecified
@@ -1028,6 +1021,14 @@
            (file+headline "~/Orgfiles/config.org" "Logs")
            "** Installs\n*** %^{Title}\n[%<%Y-%m-%d %a %H:%M>]\n:CONTEXT:\n- Package/Tool: %^{Package or Tool}\n- Version: %^{Version}\n- Installed via: %^{apt/pip/cargo/etc}\n- Reason: %^{Reason}\n:END:\n\n%?\n"
            :empty-lines 1)
+          ("c" "Cooking")
+          ("cr" "Recipe" entry
+           (file+headline "~/Orgfiles/recipes.org" "New Recipes to File" )
+  	   (function my/recipe-capture-template)
+           :empty-lines 1)
+
+
+
           ("l" "Lexicon" )
           (
            "ln" ; key
@@ -1044,7 +1045,30 @@
 
           )))
 
-;; setup org mode map
+;; recipe category scrape + add new if not found
+(defun my/recipe-capture-template ()
+  (concat
+   "*** %^{Recipe Name} %^g\n"
+   ":PROPERTIES:\n"
+   ":ID:              %(org-id-new)\n"
+   ":AUTHOR:          %^{Author}\n"
+   ":LINK:            %^{Link}\n"
+   ":SERVINGS:        %^{Servings}\n"
+   ":SERVING_SIZE:    %^{Serving Size}\n"
+   ":CALORIES:\n"
+   ":FAT:\n"
+   ":SATURATED_FAT:\n"
+   ":SODIUM:\n"
+   ":CARBS:\n"
+   ":FIBER:\n"
+   ":SUGAR:\n"
+   ":PROTEIN:\n"
+   ":END:\n"
+   "**** Overview\n"
+   "%?\n"
+   "**** Ingredients\n"
+   "**** Instructions\n"
+   "**** Notes\n"))
 
 ; hotkey bindings
 (define-key global-map (kbd "C-c c")
@@ -1065,24 +1089,24 @@
 (global-set-key (kbd "<f18>") 'org-toggle-inline-images)  
 
 
-					; refile targets
+  					; refile targets
 
 (setq org-refile-targets (quote ((nil :maxlevel . 9)
                                  (org-agenda-files :maxlevel . 9))))
 
-					; Use full outline paths for refile targets - we file directly with IDO
+  					; Use full outline paths for refile targets - we file directly with IDO
 (setq org-refile-use-outline-path t)
 
-					; Targets complete directly with IDO
+  					; Targets complete directly with IDO
 (setq org-outline-path-complete-in-steps nil)
 
-					; Allow refile to create parent tasks with confirmation
+  					; Allow refile to create parent tasks with confirmation
 (setq org-refile-allow-creating-parent-nodes (quote confirm))
 
-					; Use IDO for both buffer and file completion and ido-everywhere to t
+  					; Use IDO for both buffer and file completion and ido-everywhere to t
 
-                                     ;;;; Refile settings
-					; Exclude DONE state tasks from refile targets
+                                       ;;;; Refile settings
+  					; Exclude DONE state tasks from refile targets
 (defun bh/verify-refile-target ()
   "Exclude todo keywords with a done state from refile targets"
   (not (member (nth 2 (org-heading-components)) org-done-keywords)))
@@ -1093,15 +1117,20 @@
 (setq org-habit-graph-column 50)
 (setq org-habit-preceding-days 53)
 
+
+;; lang modes
 (add-to-list  'org-src-lang-modes '("plantuml" . plantuml))
+(add-to-list 'org-src-lang-modes '("jsx" . js))
+
+
 (setq org-plantuml-jar-path "C:/Users/tyler/AppData/Roaming")
 (global-set-key (kbd "C-c b") 'org-switchb)
 (global-set-key (kbd "C-c l") 'org-store-link)
 (global-set-key (kbd "C-c H-$") 'org-archive-subtree)
 
-                                           ;;;;; end org mode setup ;;;;;
+                                             ;;;;; end org mode setup ;;;;;
 
-                                           ;;;;;;; Org  Setup ;;;;;;;;;
+                                             ;;;;;;; Org  Setup ;;;;;;;;;
 ;; Do not dim blocked tasks
 (setq org-agenda-dim-blocked-tasks nil)
 (add-hook 'org-agenda-finalize-hook #'hl-line-mode)
@@ -2066,6 +2095,7 @@
 (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
 (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp")) 
 (add-to-list 'org-structure-template-alist '("py" . "src python"))
+(add-to-list 'org-structure-template-alist '("jsx" . "src jsx"))
 
 (load "org-agenda-category-icons")
 (org-agenda-category-icons!
