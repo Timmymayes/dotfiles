@@ -3949,6 +3949,43 @@ Right bottom : *Messages* and *Warnings* side by side
 (use-package all-the-icons-dired
   :hook (dired-mode . all-the-icons-dired-mode))
 
+(defvar my/dired-tree-ignore-regexp
+  (regexp-opt '("node_modules" ".git" "__pycache__" ".venv" "dist" "build"))
+  "Directory names to skip when building a tree listing.")
+
+(defun my/dired-tree--walk (dir prefix out)
+  (let* ((entries (directory-files dir nil "^[^.]" t))
+         (entries (sort entries #'string-lessp))
+         (n (length entries)))
+    (cl-loop for entry in entries
+             for i from 1
+             for full = (expand-file-name entry dir)
+             for last = (= i n)
+             for connector = (if last "└── " "├── ")
+             for child-prefix = (concat prefix (if last "    " "│   "))
+             do
+             (unless (and (file-directory-p full)
+                          (string-match-p my/dired-tree-ignore-regexp entry))
+               (push (concat prefix connector entry) (car out))
+               (when (file-directory-p full)
+                 (my/dired-tree--walk full child-prefix out))))))
+
+(defun my/dired-tree-to-buffer ()
+  "Build a plain-text nested tree of the current dired directory and put it in a buffer, ready to copy into an AI client."
+  (interactive)
+  (let* ((dir (dired-current-directory))
+         (out (list nil))
+         (buf (get-buffer-create "*dired-tree*")))
+    (my/dired-tree--walk dir "" out)
+    (with-current-buffer buf
+      (erase-buffer)
+      (insert (format "%s\n" (file-name-nondirectory (directory-file-name dir))))
+      (insert (mapconcat #'identity (nreverse (car out)) "\n"))
+      (goto-char (point-min)))
+    (pop-to-buffer buf)
+    (kill-new (with-current-buffer buf (buffer-string)))
+    (message "Tree copied to kill-ring")))
+
 (defun my-dired-mode-hook ()
   "My `dired' mode hook."
   ;; To hide dot-files by default
