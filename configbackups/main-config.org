@@ -3445,7 +3445,7 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
     (list
      (calfw-org-create-file-source "SEAS" "~/Orgfiles/SEAS.org" "#a0a0a0")
      (calfw-org-create-file-source "PERSONAL" "~/Orgfiles/tasks.org" "Orange")
-     (calfw-org-create-file-source "Moving" "~/Orgfiles/apartment-hunt.org" nord-red)))
+     (calfw-org-create-file-source "Moving" "~/Orgfiles/Moving.org" nord-red)))
 
   (global-set-key (kbd "<f17>") 'my/open-calendar)
   (define-key calfw-calendar-mode-map (kbd "s") 'org-save-all-org-buffers)
