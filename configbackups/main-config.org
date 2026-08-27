@@ -2651,6 +2651,7 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
    (star Goals)
    (star Goal)
    (gift Reward)
+   (folder-open Refile)
    (map-marker Review)
    (archive Archive))
 

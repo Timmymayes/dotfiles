@@ -2130,6 +2130,7 @@
  (star Goals)
  (star Goal)
  (gift Reward)
+ (folder-open Refile)
  (map-marker Review)
  (archive Archive))
 
