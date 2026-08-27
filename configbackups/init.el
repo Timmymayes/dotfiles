@@ -294,15 +294,15 @@
          (current (cond ((numberp alpha) alpha)
                         ((numberp (cdr alpha)) (cdr alpha))
                         ((numberp (cadr alpha)) (cadr alpha))))
-         (new-alpha (if (eql current 100) '(90 . 60) '(100 . 100))))
+         (new-alpha (if (eql current 100) '(85 . 60) '(100 . 100))))
     (dolist (frame (frame-list))
       (set-frame-parameter frame 'alpha new-alpha))))
 
 ;; testing if this works to set transparency to full on startup
 (global-set-key (kbd "M-<f12>") 'my/toggle-transparency)
 
-(add-to-list 'default-frame-alist '(alpha . (90 . 60)))
-(set-frame-parameter nil 'alpha '(90 . 60))
+(add-to-list 'default-frame-alist '(alpha . (85 . 60)))
+(set-frame-parameter nil 'alpha '(85 . 60))
 
 (message "UI Config Section Finished Loading")
 
