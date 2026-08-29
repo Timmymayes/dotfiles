@@ -245,6 +245,9 @@ Move all backup files into a single directory. Another option is to turn off bac
   (message "Initilization finished")
 #+END_SRC
 * UI Config
+:PROPERTIES:
+:ID:       b8f49388-2a31-40d7-a7dd-d95cf48e40df
+:END:
 ** Basic UI Config
 :PROPERTIES:
 :ID:       97718043-db39-4f3f-b6a6-4ea4540afb70
@@ -2862,11 +2865,12 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
     :init
     (setq org-roam-v2-act t)
     (setq org-roam-file-exclude-regexp
-  	'("\\.stversions/"
+    	'("\\.stversions/"
             "-conflict-"
             "~[0-9]\\{8\\}-[0-9]\\{6\\}\\.org$"
             "~$"
             "\\.git/"))
+    (setq org-roam-node-display-template "${title:*} ${tags:60}")
     :custom
     (org-roam-directory "~/RoamNotes")
     (org-roam-completion-everywhere t)
@@ -2943,6 +2947,16 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
     "Find moc files"
     (interactive)
     (org-roam-node-find t nil 'my/find-MOC-only))
+
+  (defun my/find-fix()
+    "Find troubleshooting and fixes for common problems"
+    (interactive)
+    (org-roam-node-find t nil 'my/find-FIX-only))
+
+  (defun my/find-FIX-only(node)
+    "Find entries tagged as troubleshooting"
+    (let ((tags(org-roam-node-tags node)))
+      (member "troubleshooting" tags)))
 
   (defun my/find-games-only(node)
     "Find entries tagged as games"

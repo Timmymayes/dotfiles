@@ -2251,11 +2251,12 @@
   :init
   (setq org-roam-v2-act t)
   (setq org-roam-file-exclude-regexp
-	'("\\.stversions/"
+  	'("\\.stversions/"
           "-conflict-"
           "~[0-9]\\{8\\}-[0-9]\\{6\\}\\.org$"
           "~$"
           "\\.git/"))
+  (setq org-roam-node-display-template "${title:*} ${tags:60}")
   :custom
   (org-roam-directory "~/RoamNotes")
   (org-roam-completion-everywhere t)
@@ -2332,6 +2333,16 @@
   "Find moc files"
   (interactive)
   (org-roam-node-find t nil 'my/find-MOC-only))
+
+(defun my/find-fix()
+  "Find troubleshooting and fixes for common problems"
+  (interactive)
+  (org-roam-node-find t nil 'my/find-FIX-only))
+
+(defun my/find-FIX-only(node)
+  "Find entries tagged as troubleshooting"
+  (let ((tags(org-roam-node-tags node)))
+    (member "troubleshooting" tags)))
 
 (defun my/find-games-only(node)
   "Find entries tagged as games"
