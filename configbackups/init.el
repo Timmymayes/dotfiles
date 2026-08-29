@@ -2258,6 +2258,7 @@
           "~[0-9]\\{8\\}-[0-9]\\{6\\}\\.org$"
           "~$"
           "\\.git/"))
+  (setq consult-org-roam-grep-func #'consult-ripgrep)
   (setq org-roam-node-display-template "${title:*} ${tags:60}")
   :custom
   (org-roam-directory "~/RoamNotes")
