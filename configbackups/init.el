@@ -154,7 +154,7 @@
 
 (defun my/apply-theme-and-faces (&optional frame)
   "Apply theme, Nord face attributes, and transparency.
-  Safe to call from frame-creation hooks."
+      Safe to call from frame-creation hooks."
   (when frame (select-frame frame))
   (load-theme 'nano-dark t)
   (set-face-attribute 'default nil :font "Roboto Mono" :height 140)
@@ -189,6 +189,8 @@
   (set-face-attribute 'org-column nil :inherit 'fixed-pitch)
   (set-face-attribute 'org-agenda-clocking nil :foreground nord-green :background 'unspecified)
   (set-face-attribute 'org-column-title nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-verbatim nil :foreground nord-green :background 'unspecified)
+  (set-face-attribute 'org-code nil :foreground nord-orange :background 'unspecified)
 
 
 
