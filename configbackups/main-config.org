@@ -2981,12 +2981,12 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
                                 "#+title: ${title}\n#+date: %U\n")
              :unnarrowed t)
     	  
-  	  ("t" "troubleshooting" plain
+  	  
+      	  ("t" "troubleshooting" plain
   	   "* Symptom\n%?\n\n* Root Cause\n\n\n* Ruled Out\n\n\n* Fix                                                              :UNCONFIRMED:\n# Tags: VERIFIED | PARTIAL | WORKAROUND | UNCONFIRMED\n\n\n* Related\n\n"
   	   :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                                "#+title: ${title}\n#+date: %<[%Y-%m-%d %a %H:%M]>\n#+filetags: :troubleshooting:\n")
+  			      "#+title: ${title}\n#+date: %<[%Y-%m-%d %a %H:%M]>\n#+filetags: :troubleshooting:\n#+TAGS: { :startgroup: } VERIFIED(v) PARTIAL(p) WORKAROUND(w) UNCONFIRMED(u) { :endgroup: }\n")
   	   :unnarrowed t)
-      	  
             ("g" "Games")
 
             ("ga" "Add Game" plain
