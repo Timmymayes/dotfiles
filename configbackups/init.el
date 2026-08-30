@@ -2253,7 +2253,7 @@
   :init
   (setq org-roam-v2-act t)
   (setq org-roam-file-exclude-regexp
-  	'("\\.stversions/"
+      	'("\\.stversions/"
           "-conflict-"
           "~[0-9]\\{8\\}-[0-9]\\{6\\}\\.org$"
           "~$"
@@ -2366,7 +2366,13 @@
            :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
                               "#+title: ${title}\n#+date: %U\n")
            :unnarrowed t)
-
+  	  
+	  ("t" "troubleshooting" plain
+	   "* Symptom\n%?\n\n* Root Cause\n\n\n* Ruled Out\n\n\n* Fix                                                              :UNCONFIRMED:\n# Tags: VERIFIED | PARTIAL | WORKAROUND | UNCONFIRMED\n\n\n* Related\n\n"
+	   :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                              "#+title: ${title}\n#+date: %<[%Y-%m-%d %a %H:%M]>\n#+filetags: :troubleshooting:\n")
+	   :unnarrowed t)
+    	  
           ("g" "Games")
 
           ("ga" "Add Game" plain
