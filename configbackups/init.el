@@ -1749,6 +1749,20 @@
 
 ;; start norang helpers
 
+(defun my/agenda-entry-date ()
+  "Return a YYYY-MM-DD string for the entry at point, or blank padding."
+  (let ((ts (or (org-entry-get nil "CREATED")
+                (org-entry-get nil "SCHEDULED")
+                (org-entry-get nil "DEADLINE")
+                (org-entry-get nil "TIMESTAMP")      ; first active timestamp
+                (org-entry-get nil "TIMESTAMP_IA")))) ; first inactive timestamp
+    (if ts
+        (format-time-string "%Y-%m-%d" (org-time-string-to-time ts))
+      "          ")))
+
+(setf (alist-get 'tags org-agenda-prefix-format)
+      " %i %-12:c %(my/agenda-entry-date) ")
+
 (defun my/project-prefix ()
   "create a prefix of pipes, slahses and dashes to visualies projects an their subprojects"
   (let ((level (org-current-level)))
@@ -1811,7 +1825,7 @@
 
 (defun bh/is-project-subtree-p ()
   "Any task with a todo keyword that is in a project subtree.
-             Callers of this function already widen the buffer view."
+               Callers of this function already widen the buffer view."
   (let ((task (save-excursion (org-back-to-heading 'invisible-ok)
                               (point))))
     (save-excursion
@@ -1848,7 +1862,7 @@
 
 (defun bh/list-sublevels-for-projects-indented ()
   "Set org-tags-match-list-sublevels so when restricted to a subtree we list all subtasks.
-               This is normally used  skipping functions where this variable is already local to the agenda."
+                 This is normally used  skipping functions where this variable is already local to the agenda."
   (if (marker-buffer org-agenda-restrict-begin)
       (setq org-tags-match-list-sublevels 'indented)
     (setq org-tags-match-list-sublevels nil))
@@ -1856,7 +1870,7 @@
 
 (defun bh/list-sublevels-for-projects ()
   "Set org-tags-match-list-sublevels so when restricted to a subtree we list all subtasks.
-               This is normally used by skipping functions where this variable is already local to the agenda."
+                 This is normally used by skipping functions where this variable is already local to the agenda."
   (if (marker-buffer org-agenda-restrict-begin)
       (setq org-tags-match-list-sublevels t)
     (setq org-tags-match-list-sublevels nil))
@@ -1926,7 +1940,7 @@
 
 (defun bh/skip-non-tasks ()
   "Show non-project tasks.
-             Skip project and sub-project tasks, habits, and project related tasks."
+               Skip project and sub-project tasks, habits, and project related tasks."
   (save-restriction
     (widen)
     (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
@@ -1969,8 +1983,8 @@
 
 (defun bh/skip-project-tasks-maybe ()
   "Show tasks related to the current restriction.
-             When restricted to a project, skip project and sub project tasks, habits, NEXT tasks, and loose tasks.
-             When not restricted, skip project and sub-project tasks, habits, and project related tasks."
+               When restricted to a project, skip project and sub project tasks, habits, NEXT tasks, and loose tasks.
+               When not restricted, skip project and sub-project tasks, habits, and project related tasks."
   (save-restriction
     (widen)
     (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
@@ -1993,7 +2007,7 @@
 
 (defun bh/skip-project-tasks ()
   "Show non-project tasks.
-             Skip project and sub-project tasks, habits, and project related tasks."
+               Skip project and sub-project tasks, habits, and project related tasks."
   (save-restriction
     (widen)
     (let* ((subtree-end (save-excursion (org-end-of-subtree t))))
@@ -2009,7 +2023,7 @@
 
 (defun bh/skip-non-project-tasks ()
   "Show project tasks.
-             Skip project and sub-project tasks, habits, and loose non-project tasks."
+               Skip project and sub-project tasks, habits, and loose non-project tasks."
   (save-restriction
     (widen)
     (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
@@ -2049,7 +2063,7 @@
 
 (set-fontset-font t '(#x25A0 . #x25FF) "Segoe UI Symbol")
 
-(use-package org-modern
+(use-package modern
   :hook (org-mode . org-modern-mode)
   :config
   (global-org-modern-mode)
