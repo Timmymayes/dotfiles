@@ -191,6 +191,7 @@
   (set-face-attribute 'org-column-title nil :inherit 'fixed-pitch)
   (set-face-attribute 'org-verbatim nil :foreground nord-green :background 'unspecified)
   (set-face-attribute 'org-code nil :foreground nord-orange :background 'unspecified)
+  (set-face-attribute 'org-hide nil :foreground nord0 :background 'unspecified)
 
 
 
@@ -3918,7 +3919,7 @@ Right bottom : *Messages* and *Warnings* side by side
     (org-todo "TODO")
     (let ((context (org-entry-get (point) "CONTEXT" t)))
       (when context
-	(insert "[" context "] "))))
+	(insert "[" context "] - "))))
 
   (define-key org-mode-map (kbd "C-c i t") #'my/insert-meeting-todo)
   (define-key org-mode-map (kbd "C-c C-x m") #'my/set-meeting-context))
@@ -4046,7 +4047,7 @@ Right bottom : *Messages* and *Warnings* side by side
 (setq consult-dir-project-list-function #'consult-dir-projectile-dirs)
 
 (require 'zone)
-(zone-when-idle 300) ;; seconds of idle time before it kicks in
+(zone-when-idle 3000) ;; seconds of idle time before it kicks in
 
 (defun my/elisp-font-lock-additions ()
   (font-lock-add-keywords nil

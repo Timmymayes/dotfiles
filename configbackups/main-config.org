@@ -400,6 +400,7 @@ Read more about this here: [[https://github.com/rougier/nano-modeline][nano-mode
     (set-face-attribute 'org-column-title nil :inherit 'fixed-pitch)
     (set-face-attribute 'org-verbatim nil :foreground nord-green :background 'unspecified)
     (set-face-attribute 'org-code nil :foreground nord-orange :background 'unspecified)
+    (set-face-attribute 'org-hide nil :foreground nord0 :background 'unspecified)
 
 
 
@@ -5117,7 +5118,7 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
       (org-todo "TODO")
       (let ((context (org-entry-get (point) "CONTEXT" t)))
         (when context
-  	(insert "[" context "] "))))
+  	(insert "[" context "] - "))))
 
     (define-key org-mode-map (kbd "C-c i t") #'my/insert-meeting-todo)
     (define-key org-mode-map (kbd "C-c C-x m") #'my/set-meeting-context))
@@ -5345,11 +5346,11 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 :END:
 #+BEGIN_SRC emacs-lisp
 (require 'zone)
-(zone-when-idle 300) ;; seconds of idle time before it kicks in
+(zone-when-idle 3000) ;; seconds of idle time before it kicks in
 #+END_SRC
 
 #+RESULTS:
-: [nil 0 300 0 t zone nil idle 0 nil]
+: [nil 0 3000 0 t zone nil idle 0 nil]
 
 ** Elisp font lock hooks
 :PROPERTIES:
