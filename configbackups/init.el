@@ -102,7 +102,9 @@
 					;  (load-theme 'tango-dark)
 
 (set-face-attribute
- 'default nil :font "Roboto Mono" :height 140)
+ 'default nil :family "Roboto Mono" :weight 'regular :height 140)
+
+
 
 (use-package hydra)
 
@@ -147,7 +149,7 @@
   ;; org-block's fixed-pitch face is an org 9.0+ addition; mixed-pitch's
   ;; own default list may not include it depending on version, and it's
   ;; a face you're explicitly styling already — include it to be safe.
-  (add-to-list 'mixed-pitch-fixed-pitch-faces 'org-block))
+  (add-to-list 'fixed-pitch-faces 'org-block))
 
 (use-package nano-theme
   :defer t)
@@ -157,6 +159,7 @@
       Safe to call from frame-creation hooks."
   (when frame (select-frame frame))
   (load-theme 'nano-dark t)
+  (set-face-attribute 'default nil :family "Roboto Mono" :weight 'regular :height 140)
   (set-face-attribute 'default nil :font "Roboto Mono" :height 140)
   (set-face-attribute 'font-lock-keyword-face nil :foreground "#B48EAD" :weight 'bold)
   (set-face-attribute 'font-lock-type-face nil :foreground "#F5C518" :weight 'normal)
@@ -829,7 +832,6 @@
 
 (defun org-mode-setup()
   (org-indent-mode)
-  (mixed-pitch-mode 1) 
   (auto-fill-mode 0)
   (visual-line-mode 1))
 
@@ -1751,11 +1753,12 @@
 
 (defun my/agenda-entry-date ()
   "Return a YYYY-MM-DD string for the entry at point, or blank padding."
-  (let ((ts (or (org-entry-get nil "CREATED")
-                (org-entry-get nil "SCHEDULED")
-                (org-entry-get nil "DEADLINE")
+  (let ((ts (or (org-entry-get nil "DEADLINE")
+		(org-entry-get nil "SCHEDULED")
+		(org-entry-get nil "CREATED")
                 (org-entry-get nil "TIMESTAMP")      ; first active timestamp
-                (org-entry-get nil "TIMESTAMP_IA")))) ; first inactive timestamp
+                (org-entry-get nil "TIMESTAMP_IA")
+		(org-entry-get nil "CLOSED")))) ; first inactive timestamp
     (if ts
         (format-time-string "%Y-%m-%d" (org-time-string-to-time ts))
       "          ")))
@@ -2063,7 +2066,7 @@
 
 (set-fontset-font t '(#x25A0 . #x25FF) "Segoe UI Symbol")
 
-(use-package modern
+(use-package org-modern
   :hook (org-mode . org-modern-mode)
   :config
   (global-org-modern-mode)
@@ -2883,7 +2886,7 @@ document.addEventListener('DOMContentLoaded', function() {
          (org-agenda-window-setup 'current-window))
 
     ;; --- Top ultrawide: scratch | cal-month-0 ---
-    (with-selected-frame side-frame
+    (with-selected-frame top-frame
       (delete-other-windows)
       (switch-to-buffer "*scratch*")
       (select-window (split-window-right))
@@ -2906,7 +2909,7 @@ document.addEventListener('DOMContentLoaded', function() {
        :contents-sources sources))
 
     ;; --- ASUS vertical: Personal (top) / SEAS (bottom) agendas ---
-    (with-selected-frame top-frame
+    (with-selected-frame side-frame
       (delete-other-windows)
       (org-agenda nil "P")
       (select-window (split-window-below))
@@ -4131,13 +4134,16 @@ Right bottom : *Messages* and *Warnings* side by side
   "t" "box drawing")
 
 (defun my/toggle-mixed-pitch-mode ()
-  "Function to toggle fixed pitch mode and force a redraw to clear glyphs"
+  "Toggle `mixed-pitch-mode' in the current buffer."
   (interactive)
-  (mixed-pitch-mode 0)
-  (mixed-pitch-mode 1)
-  (message "Mixed Pitch Mode toggled"))
+  (mixed-pitch-mode 'toggle)
+  (message "Mixed Pitch Mode %s" (if mixed-pitch-mode "on" "off")))
 
 (global-set-key (kbd "<f5>") #'my/toggle-mixed-pitch-mode)
+
+(use-package org-retroclock
+  :ensure nil
+  :after org-clock)
 
 (message "Testing section loaded")
 
@@ -4383,7 +4389,7 @@ URL `http://xahlee.info/emacs/emacs/emacs_keybinding_design_beginning-of-line-or
 Version: 2018-06-04 2021-03-16 2022-03-30 2022-07-03 2022-07-06"
   (interactive)
   (let (($p (point)))
-    (if (or (equal (point) (line-beginning-position))
+    (if (or (l (point) (line-beginning-position))
             (eq last-command this-command))
         (when
             (re-search-backward "\n[\t\n ]*\n+" nil 1)
