@@ -2979,6 +2979,20 @@ document.addEventListener('DOMContentLoaded', function() {
         (concat "-o ControlMaster=auto "
                 "-o ControlPath='~/.ssh/tramp.%%r@%%h:%%p' "
                 "-o ControlPersist=yes"))
+
+  ;; Windows OpenSSH has no ControlMaster; multiplexing options stall ssh.exe
+  (when (eq system-type 'windows-nt)
+    (setq tramp-default-method "sshx")
+    (setq tramp-use-connection-share nil)        ; Emacs 29+
+    (setq tramp-ssh-controlmaster-options ""))
+
+  ;; roadbox01 (Alpine, busybox ash, key-only, no root ssh)
+  ;; plain:  /sshx:roadbox01:/home/seas/   root:  /doas:roadbox01:/etc/
+  (add-to-list 'tramp-default-proxies-alist
+               '("\\`roadbox01\\'" "\\`root\\'" "/sshx:seas@roadbox01:"))
+  (add-to-list 'tramp-connection-properties
+               (list (regexp-quote "roadbox01") "remote-shell" "/bin/sh"))
+
   ;; Synology setup
   (add-to-list 'tramp-connection-properties
                (list (regexp-quote "100.85.137.126") "login-args"
@@ -3019,7 +3033,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
   (connection-local-set-profiles
    '(:application tramp)
-   'remote-bash-profile))
+   'remote-bash-profile)
+
+  (connection-local-set-profile-variables
+   'remote-ash-profile
+   '((explicit-shell-file-name . "/bin/ash")
+     (explicit-ash-args . ("-i"))
+     (shell-file-name . "/bin/ash")))
+  (connection-local-set-profiles
+   '(:application tramp :machine "roadbox01")
+   'remote-ash-profile))
 
 
 (defun my/remote-buffer-setup ()
@@ -3047,6 +3070,15 @@ document.addEventListener('DOMContentLoaded', function() {
   (interactive)
   (tramp-dump-connection-properties)
   (tramp-cleanup-all-connections))
+
+(defun my/open-roadbox ()
+  "roadbox01 home (seas) in dired via TRAMP"
+  (interactive)
+  (dired "/sshx:roadbox01:/home/seas/"))
+(defun my/open-roadbox-etc ()
+  "roadbox01 /etc as root (sshx as seas, then doas)"
+  (interactive)
+  (dired "/doas:roadbox01:/etc/"))
 
 (global-set-key (kbd "C-c t c") #'my/tramp-cleanup-all-connections)
 
