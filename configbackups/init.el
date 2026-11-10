@@ -83,6 +83,22 @@
 (setq auto-save-file-name-transforms
       '((".*" "~/.emacs.d/tmp/auto-saves/" t)))
 
+(global-auto-revert-mode 1)
+(setq auto-revert-verbose nil)
+
+(defun my/revert-org-buffers-quietly ()
+  "Revert unmodified org buffers whose files changed on disk."
+  (dolist (buf (buffer-list))
+    (with-current-buffer buf
+      (when (and (derived-mode-p 'org-mode)
+                 buffer-file-name
+                 (not (buffer-modified-p))
+                 (not (verify-visited-file-modtime buf)))
+        (revert-buffer :ignore-auto :noconfirm)))))
+
+;; depth -90 so this runs before the dashboard hook rebuilds from agenda files
+(add-hook 'server-after-make-frame-hook #'my/revert-org-buffers-quietly -90)
+
 (message "Initilization finished")
 
 (setq inhibit-startup-message t) ;inhibit start up
@@ -2944,21 +2960,254 @@ document.addEventListener('DOMContentLoaded', function() {
 (use-package ledger-mode
   :ensure t
   :init
-  (setq ledger-clear-whole-transactions 1)
+  (setq ledger-reconcile-default-commodity "$"
+  	ledger-clear-whole-transactions 1)
   :bind (
          :map ledger-mode-map
          ("C-M-n" . ledger-navigate-next-uncleared)
          ("C-M-p" . ledger-navigate-previous-uncleared))
-  :mode "\\.dat\\'")
+  :mode ("\\.dat\\'" "\\.journal\\'" "\\.ledger\\'")
+  :config
+  (message "ledger-mode loaded"))
 
 (setq ledger-reports
-      '(("bal"            "%(binary) -f %(ledger-file) bal")
-        ("bal this month" "%(binary) -f %(ledger-file) bal -p %(month) -S amount")
-        ("bal this year"  "%(binary) -f %(ledger-file) bal -p 'this year'")
-        ("net worth"      "%(binary) -f %(ledger-file) bal Assets Liabilities")
-        ("account"        "%(binary) -f %(ledger-file) reg %(account)")))
+      '(("bal"            "%(binary) -f %(ledger-file) bal --real")
+        ("funds"          "%(binary) -f %(ledger-file) bal Funds")
+        ("bal this month" "%(binary) -f %(ledger-file) bal --real -p %(month) -S amount")
+        ("bal this year"  "%(binary) -f %(ledger-file) bal --real -p \"this year\"")
+        ("net worth"      "%(binary) -f %(ledger-file) bal --real Assets Liabilities")
+        ("account"        "%(binary) -f %(ledger-file) reg %(account)")
+	("equity" "%(binary) -f %(ledger-file) equity Assets Liabilities Funds")
+        ("tag"            "%(binary) -f %(ledger-file) reg %%(tagname)")))
 
-(message "ledger-mode loaded")
+
+
+(let ((tools (expand-file-name "~/dotfiles/tools")))
+  (add-to-list 'exec-path tools)
+  (setenv "PATH" (concat (replace-regexp-in-string "/" "\\\\" tools) ";" (getenv "PATH"))))
+
+;; helper function for 'current year'
+(defun my/ledger-journal ()
+"Path to this year's ledger file."
+(expand-file-name (format-time-string "~/finance/%Y.ledger")))
+
+(defvar my/ledger-dir (expand-file-name "~/Orgfiles/Ledgers/")
+  "Directory holding the yearly ledger files (<year>.ledger).")
+
+(defun my/ledger-journal ()
+  "Path to this year's ledger file."
+  (expand-file-name (format-time-string "%Y.ledger") my/ledger-dir))
+
+(defun my/ledger-files ()
+  "Every yearly ledger file in `my/ledger-dir'."
+  (directory-files my/ledger-dir t "\\`[0-9]\\{4\\}\\.ledger\\'"))
+
+
+(defvar my/ledger-fund-map
+  '(("Expenses:Food:Groceries"       . "Funds:Groceries")
+    ("Expenses:Food:Snacks"          . "Funds:Groceries")
+    ("Expenses:Household:Toiletries" . "Funds:Household")
+    ("Expenses:Subscriptions"        . "Funds:Subscriptions"))
+  "Map each expense account to the fund it draws from.")
+
+
+(defun my/ledger-read-account (prompt accts regexp &optional default)
+  "Pick an account from ACCTS matching REGEXP, offering DEFAULT if it is one of them."
+  (let ((choices (seq-filter (lambda (a) (string-match-p regexp a)) accts)))
+    (unless choices
+      (user-error "No declared accounts match %s" regexp))
+    (completing-read prompt choices nil t nil nil
+                     (and default (member default choices) default))))
+
+
+
+(defun my/ledger-read-amount (prompt)
+  "Read a positive dollar amount like 16 or 16.00; return it as a string like \"16.00\"."
+  (let (amt)
+    (while (not amt)
+      (let ((s (string-trim (read-string prompt))))
+        (if (and (string-match-p "\\`[0-9]+\\(\\.[0-9]\\{1,2\\}\\)?\\'" s)
+                 (> (string-to-number s) 0))
+            (setq amt (format "%.2f" (string-to-number s)))
+          (message "Enter a plain amount like 16 or 16.00 (no $ or commas)")
+          (sit-for 1.5))))
+    amt))
+
+(defun my/ledger-query (&rest args)
+  "Run ledger over all yearly journals with ARGS; return output lines, or nil on error."
+  (condition-case nil
+      (apply #'process-lines "ledger"
+             (append (mapcan (lambda (f) (list "-f" f)) (my/ledger-files))
+                     args))
+    (error nil)))
+
+(defun my/ledger-last-expense (payee)
+  "Return the expense account most recently used with PAYEE, or nil."
+  (car (last (seq-filter
+              (lambda (a) (string-prefix-p "Expenses:" a))
+              (my/ledger-query "reg" "--format" "%(account)\\n"
+                               (format "@^%s$" (regexp-quote payee)))))))
+
+(defun my/ledger-cents-str (cents)
+  "Format integer CENTS as dollars, e.g. 1641 -> \"$16.41\"."
+  (format "$%d.%02d" (/ cents 100) (% cents 100)))
+
+(defun my/ledger-read-cents (prompt max)
+  "Read a dollar amount; blank means MAX. Return integer cents from 1 to MAX."
+  (let (cents)
+    (while (not cents)
+      (let* ((s (string-trim
+                 (read-string (format "%s (RET = %s): " prompt (my/ledger-cents-str max)))))
+             (n (cond ((string-empty-p s) max)
+                      ((string-match-p "\\`[0-9]+\\(\\.[0-9]\\{1,2\\}\\)?\\'" s)
+                       (round (* 100 (string-to-number s)))))))
+        (if (and n (> n 0) (<= n max))
+            (setq cents n)
+          (message "Enter an amount from 0.01 up to %s" (my/ledger-cents-str max))
+          (sit-for 1.5))))
+    cents))
+
+(defun my/ledger-year-file (date)
+  "Path of the ledger file for DATE (\"YYYY/MM/DD\"); error if it doesn't exist."
+  (let ((file (expand-file-name (concat (substring date 0 4) ".ledger") my/ledger-dir)))
+    (unless (file-exists-p file)
+      (user-error "No journal for %s: create %s first" (substring date 0 4) file))
+    file))
+
+(defun my/ledger-declared-accounts (file)
+  "Account names from the `account' lines in FILE."
+  (with-temp-buffer
+    (insert-file-contents file)
+    (goto-char (point-min))
+    (let (accts)
+      (while (re-search-forward
+              "^account[ \t]+\\([^ \t;\n][^;\n]*?\\)[ \t\r]*\\(?:;.*\\)?$" nil t)
+        (push (match-string 1) accts))
+      (nreverse accts))))
+
+(defvar vertico-preselect)
+
+(defun my/ledger-read-tag (prompt tags)
+  "Ask for an optional tag from TAGS; RET on empty input means no tag.
+Spaces in the answer become hyphens, since Ledger tags can't contain them."
+  (let ((vertico-preselect 'prompt))
+    (replace-regexp-in-string
+     "[ \t]+" "-" (string-trim (completing-read prompt tags)))))
+
+
+(defvar my/ledger-ignored-payee-regexp "\\`\\(Opening Balances\\|Budget:\\)"
+  "Payees matching this are left out of the payee autocomplete.")
+
+(defun my/ledger-collect ()
+  "Ask every question for one transaction and return a plist. Writes nothing."
+  (let* ((date   (replace-regexp-in-string
+                  "-" "/" (org-read-date nil nil nil "Transaction date: ")))
+         (file   (my/ledger-year-file date))
+         (accts  (my/ledger-declared-accounts file))
+         (payees (seq-remove (lambda (p) (string-match-p my/ledger-ignored-payee-regexp p))
+                             (my/ledger-query "payees")))
+         (tags   (my/ledger-query "tags"))
+         (typed  (completing-read "Payee (type to search, new names are fine): " payees))
+         (payee  (progn
+                   (when (string-empty-p typed) (user-error "A payee is required"))
+                   (or (seq-find (lambda (p) (string-equal-ignore-case p typed)) payees)
+                       typed)))
+         (last-acct (my/ledger-last-expense payee))
+         (source (my/ledger-read-account "Paid from which account? " accts
+                                         "\\`\\(Assets\\|Liabilities\\):"))
+         (total  (round (* 100 (string-to-number
+                                (my/ledger-read-amount
+                                 "Receipt total in dollars (e.g. 94.41): ")))))
+         (remaining total)
+         (split  (y-or-n-p (format "Split %s across categories? "
+                                   (my/ledger-cents-str total))))
+         (lines nil))
+    (if (not split)
+        (push (list (my/ledger-read-account "Expense category: " accts
+                                            "\\`Expenses:" last-acct)
+                    total
+                    (my/ledger-read-tag "Optional tag, RET for none (e.g. maple-syrup): " tags))
+              lines)
+      (let ((n 0))
+        (while (> remaining 0)
+          (setq n (1+ n))
+          (let* ((acct (my/ledger-read-account
+                        (format "Line %d, category (%s left): " n (my/ledger-cents-str remaining))
+                        accts "\\`Expenses:" (and (= n 1) last-acct)))
+                 (amt  (my/ledger-read-cents
+                        (format "Line %d, amount for %s" n (car (last (split-string acct ":"))))
+                        remaining))
+                 (tag  (my/ledger-read-tag
+                        (format "Line %d, optional tag, RET for none: " n) tags)))
+            (push (list acct amt tag) lines)
+            (setq remaining (- remaining amt))))))
+    (list :date date :file file :payee payee :source source :total total
+          :lines (nreverse lines))))
+
+
+(defun my/ledger-fund-for (acct)
+  "Return the fund expense account ACCT draws from, or Funds:Uncategorized if unmapped."
+  (or (cdr (assoc acct my/ledger-fund-map)) "Funds:Uncategorized"))
+
+(defun my/ledger-build-text (entry)
+  "Turn the plist ENTRY from `my/ledger-collect' into Ledger transaction text."
+  (let (rows)
+    (dolist (l (plist-get entry :lines))
+      (let ((acct  (nth 0 l))
+            (cents (nth 1 l))
+            (tag   (nth 2 l)))
+        (push (format "    %-38s  %s%s" acct (my/ledger-cents-str cents)
+                      (if (string-empty-p tag) "" (format "  ; :%s:" tag)))
+              rows)
+        (push (format "    %-38s  -%s"
+                      (format "(%s)" (my/ledger-fund-for acct))
+                      (my/ledger-cents-str cents))
+              rows)))
+    (concat (plist-get entry :date) " " (plist-get entry :payee) "\n"
+            (mapconcat #'identity (nreverse rows) "\n") "\n"
+	    "    ; ---------------------------------------\n"   
+            (format "    %-38s  -%s\n" (plist-get entry :source)
+                    (my/ledger-cents-str (plist-get entry :total))))))
+
+
+
+(defun my/ledger-append (file text)
+  "Append TEXT to FILE as a new transaction, via the visiting buffer if there is one."
+  (let ((buf (find-buffer-visiting file)))
+    (if buf
+        (with-current-buffer buf
+          (when (buffer-modified-p)
+            (user-error "Save %s first, it has unsaved changes" (buffer-name)))
+          (save-excursion
+            (goto-char (point-max))
+            (unless (bolp) (insert "\n"))
+            (insert "\n" text))
+          (save-buffer))
+      (with-temp-buffer
+        (insert-file-contents file)
+        (goto-char (point-max))
+        (unless (bolp) (insert "\n"))
+        (insert "\n" text)
+        (write-region nil nil file nil 'silent)))))
+
+(defun my/ledger-add ()
+  "Capture one expense: ask the questions, show a summary, write only after you confirm."
+  (interactive)
+  (let* ((entry    (my/ledger-collect))
+         (text     (my/ledger-build-text entry))
+         (file     (plist-get entry :file))
+         (unmapped (seq-uniq
+                    (seq-remove (lambda (a) (assoc a my/ledger-fund-map))
+                                (mapcar #'car (plist-get entry :lines)))))
+         (note     (if unmapped
+                       (format "\nNo fund mapped for: %s (goes to Funds:Uncategorized)\n"
+                               (string-join unmapped ", "))
+                     "")))
+    (if (y-or-n-p (format "%s%s\nSave to %s? " text note (file-name-nondirectory file)))
+        (progn
+          (my/ledger-append file text)
+          (message "Saved to %s" (file-name-nondirectory file)))
+      (message "Cancelled, nothing written."))))
 
 ;; TRAMP Configuration
 (use-package tramp

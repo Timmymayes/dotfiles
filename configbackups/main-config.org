@@ -234,6 +234,33 @@ Move all backup files into a single directory. Another option is to turn off bac
 
 #+RESULTS:
 : ((. . ~/.emacs.d/tmp/backups/))
+
+** Auto-Revert (Syncthing)
+:PROPERTIES:
+:ID:       57a69217-f3ac-4edf-96d1-fe2eec0edfb2
+:END:
+Reload buffers when Syncthing changes files on disk. Daemon hook also catches anything stale when a new client frame opens.
+#+BEGIN_SRC emacs-lisp
+  (global-auto-revert-mode 1)
+  (setq auto-revert-verbose nil)
+
+  (defun my/revert-org-buffers-quietly ()
+    "Revert unmodified org buffers whose files changed on disk."
+    (dolist (buf (buffer-list))
+      (with-current-buffer buf
+        (when (and (derived-mode-p 'org-mode)
+                   buffer-file-name
+                   (not (buffer-modified-p))
+                   (not (verify-visited-file-modtime buf)))
+          (revert-buffer :ignore-auto :noconfirm)))))
+
+  ;; depth -90 so this runs before the dashboard hook rebuilds from agenda files
+  (add-hook 'server-after-make-frame-hook #'my/revert-org-buffers-quietly -90)
+#+END_SRC
+
+#+RESULTS:
+| my/revert-org-buffers-quietly | my/show-dashboard-on-new-frame | my/apply-theme-and-faces |
+
 ** Section Loaded Msg
 :PROPERTIES:
 :ID:       0b4f8c88-316f-43e7-9d9d-8cb586ae8bab
