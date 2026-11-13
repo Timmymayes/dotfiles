@@ -1163,7 +1163,7 @@
 ;; variable setup
 
 ;; disable value goals from being inherited
-(setq org-tags-exclude-from-inheritance '("VALUE" "NOTE" "Q1" "Q2" "Q3" "Q4" "MEETING"))
+(setq org-tags-exclude-from-inheritance '("VALUE" "NOTE" "Q1" "Q2" "Q3" "Q4" "MEETING" "MILESTONE"))
 ;;reverse note order disabled
 (setq org-reverse-note-order nil)
 ;; Leading 0 for military time
@@ -2376,6 +2376,39 @@ on every redisplay, so it follows window splits and resizes."
 ;; depth 90: run after org-modern has styled the tags, so we measure the boxes
 (add-hook 'org-agenda-finalize-hook #'my/agenda-align-tags-right 90)
 
+(defvar my/agenda-milestone-whole-line nil
+  "When non-nil, extend the milestone text face to end of line (tags included).")
+
+(defvar my/agenda-milestone-prefix-face `(:foreground ,nord-green :weight bold)
+  "Face for the icon and category label of Milestone agenda lines.")
+
+(defvar my/agenda-milestone-face `(:foreground ,nord-orange :weight bold)
+  "Face for the rest of Milestone agenda lines (heading text onward).")
+
+(defun my/agenda-color-milestones ()
+  "Color Milestone agenda lines: prefix (icon, category) and the rest separately."
+  (save-excursion
+    (goto-char (point-min))
+    (let ((inhibit-read-only t))
+      (while (not (eobp))
+        (when (equal (get-text-property (point) 'org-category) "Milestone")
+          (let* ((bol (line-beginning-position))
+                 (eol (line-end-position))
+                 (marker (org-get-at-bol 'org-hd-marker))
+                 (text (and marker
+                            (org-with-point-at marker
+                              (substring-no-properties (org-get-heading t t t t))))))
+            (if (and text (search-forward text eol t))
+                (progn
+                  (add-face-text-property bol (match-beginning 0) my/agenda-milestone-prefix-face)
+                  (add-face-text-property (match-beginning 0)
+                                          (if my/agenda-milestone-whole-line eol (match-end 0))
+                                          my/agenda-milestone-face))
+              (add-face-text-property bol eol my/agenda-milestone-face))))
+        (forward-line 1)))))
+
+(add-hook 'org-agenda-finalize-hook #'my/agenda-color-milestones)
+
 (set-fontset-font t '(#x25A0 . #x25FF) "Segoe UI Symbol")
 
 (use-package org-modern
@@ -2444,6 +2477,7 @@ on every redisplay, so it follows window splits and resizes."
 
  :octicon
  (tools Habit)
+ (milestone Milestone)
 
  :faicon
  (cogs Config)
