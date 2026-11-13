@@ -2351,6 +2351,111 @@ Replaces the norang month-string check with a context-aware, day-based rule."
 (with-eval-after-load 'org
   (my/context-registry-load))
 
+;;;; Context capture: register a new context in seas-contexts.org
+;; Prompts: group (existing or new), tag, NAME, STATUS. Files the context as
+;; the last H2 under its group, then saves the registry file (which reloads
+;; `my/context-registry' via the save hook).
+
+(defvar my/context-capture-key "tc"
+  "Key for the new-context capture template.")
+
+(defvar my/context--capture-group nil
+  "Group chosen during the current context capture.")
+
+(defun my/context--group-names ()
+  "Registered group (H1) tags, sorted."
+  (let (groups)
+    (maphash (lambda (tag plist)
+               (when (eq (plist-get plist :kind) 'group)
+                 (push tag groups)))
+             my/context-registry)
+    (sort groups #'string<)))
+
+(defun my/context--read-tag (group-type)
+  "Read and validate a new context tag. GROUP-TYPE is \"client\" or \"area\"."
+  (let (tag done)
+    (while (not done)
+      (setq tag (upcase (string-trim (read-string "Context tag (e.g. PXTA27): " tag))))
+      (cond
+       ((not (string-match-p "\\`[A-Z0-9_]+\\'" tag))
+        (message "Use only letters, digits and _ (no hyphens or spaces)") (sit-for 1.5))
+       ((gethash tag my/context-registry)
+        (message "%s is already registered" tag) (sit-for 1.5))
+       ((and (equal group-type "client")
+             (not (string-match-p "[0-9][0-9]\\'" tag))
+             (not (y-or-n-p (format "%s has no 2-digit year suffix (shows usually do, e.g. PXTA27). Keep it? " tag)))))
+       ((and (string-match-p "[0-9][0-9]\\'" tag)
+             (string-match-p "[0-9]_?[0-9][0-9]\\'" tag)
+             (not (string-match-p "_[0-9][0-9]\\'" tag))
+             (not (y-or-n-p (format "%s: code ends in a digit before the year; convention is CODE_YY (e.g. R810_27). Keep it? " tag)))))
+       (t (setq done t))))
+    tag))
+
+(defun my/context-capture-template ()
+  "Prompt for the new context and return its capture template."
+  (let* ((group (upcase (string-trim
+                         (completing-read "Group (client/area, or a new one): "
+                                          (my/context--group-names)))))
+         (existing (gethash group my/context-registry))
+         (group-type (or (plist-get existing :type)
+                         (completing-read (format "New group %s type: " group)
+                                          '("client" "area") nil t)))
+         (group-name (unless existing
+                       (read-string (format "Full name for %s: " group))))
+         (tag (my/context--read-tag group-type))
+         (name (read-string (format "NAME for %s: " tag)))
+         (status (completing-read "STATUS: " my/context-valid-statuses nil t nil nil "active")))
+    (unless (string-match-p "\\`[A-Z0-9_]+\\'" group)
+      (user-error "Group tag %s: use only letters, digits and _" group))
+    (setq my/context--capture-group (list group group-type group-name))
+    (format "* %s\n:PROPERTIES:\n:NAME:     %s\n:STATUS:   %s\n:END:\n" tag name status)))
+
+(defvar my/context--capture-had-columns nil
+  "Non-nil when column view was on in the registry buffer before capture.")
+
+(defun my/context-capture-target ()
+  "Move point to the chosen group's H1, creating the group if needed.
+Column view overlays make the buffer read-only, so turn them off first
+\(`my/context-capture-save' turns them back on)."
+  (setq my/context--capture-had-columns (bound-and-true-p org-columns-overlays))
+  (when my/context--capture-had-columns
+    (org-columns-remove-overlays))
+  (pcase-let ((`(,group ,type ,name) my/context--capture-group))
+    (goto-char (point-min))
+    (unless (re-search-forward (format "^\\* %s[ \t]*$" (regexp-quote group)) nil t)
+      (goto-char (point-max))
+      (skip-chars-backward " \t\n")
+      (delete-region (point) (point-max))
+      (insert (format "\n\n* %s\n:PROPERTIES:\n:TYPE:     %s\n:NAME:     %s\n:END:\n"
+                      group type (or name ""))))
+    (goto-char (point-min))
+    (re-search-forward (format "^\\* %s[ \t]*$" (regexp-quote group)))
+    (beginning-of-line)))
+
+(defun my/context-capture-save ()
+  "Save the registry file after a context capture (triggers registry reload).
+Restores column view if it was on before the capture."
+  (let ((buf (find-buffer-visiting (expand-file-name (car my/context-registry-files)))))
+    (when buf
+      (with-current-buffer buf
+        (when (buffer-modified-p) (save-buffer))
+        (when my/context--capture-had-columns
+          (setq my/context--capture-had-columns nil)
+          (save-excursion (org-columns t)))))))
+
+(with-eval-after-load 'org-capture
+  (setq org-capture-templates
+        (cl-remove my/context-capture-key org-capture-templates
+                   :key #'car :test #'equal))
+  (add-to-list 'org-capture-templates
+               `(,my/context-capture-key "New context (registry)" entry
+					 (file+function ,(car my/context-registry-files) my/context-capture-target)
+					 (function my/context-capture-template)
+					 :immediate-finish t
+					 :empty-lines-after 1
+					 :after-finalize my/context-capture-save)
+               t))
+
 (remove-hook 'org-agenda-finalize-hook #'my/agenda-align-tags-right)
 
 (defvar my/agenda-tags-right-margin 2
@@ -2961,6 +3066,79 @@ on every redisplay, so it follows window splits and resizes."
                                         ;      (tags "GAMEDESIGN")))
 
 (message "org-ql loaded")
+
+;;;; Show dashboard (org-ql + super-agenda)
+;; One command for any registered context: milestones, meetings, projects
+;; and the show card, grouped. Prompts with registry completion (active and
+;; planning first); defaults to the context at point in an Org buffer.
+
+(defun my/agenda-prepend-active-ts (item)
+  "Prefix agenda ITEM string with the first active timestamp in its entry."
+  (let* ((marker (or (get-text-property 0 'org-hd-marker item)
+                     (get-text-property 0 'org-marker item)))
+         (date (and marker
+                    (org-with-point-at marker
+                      (when (re-search-forward org-ts-regexp (org-entry-end-position) t)
+                        (format-time-string "%Y-%m-%d %a"
+                                            (org-time-string-to-time (match-string 0))))))))
+    (if date
+        (let ((prefix (apply #'propertize (concat "  " date "  ")
+                             (text-properties-at 0 item))))
+          (add-face-text-property 0 (length prefix) 'org-date nil prefix)
+          (concat prefix (string-trim-left item)))
+      item)))
+
+(defvar my/show-dashboard-groups
+  '((:name "Milestones" :tag "MILESTONE" :transformer my/agenda-prepend-active-ts)
+    (:name "Meetings" :todo "MEETING" :transformer my/agenda-prepend-active-ts)
+    (:name "Projects & Tasks" :todo t)
+    (:name "Show card" :anything t))
+  "org-super-agenda groups for `my/show-dashboard'. First match wins.")
+
+(defun my/context--dashboard-candidates ()
+  "Registered contexts, active/planning first, then wrapped; alphabetical within."
+  (let (rows)
+    (maphash (lambda (tag plist)
+               (when (eq (plist-get plist :kind) 'context)
+                 (push (cons tag plist) rows)))
+             my/context-registry)
+    (mapcar #'car
+            (sort rows
+                  (lambda (a b)
+                    (let ((wa (equal (plist-get (cdr a) :status) "wrapped"))
+                          (wb (equal (plist-get (cdr b) :status) "wrapped")))
+                      (if (eq wa wb) (string< (car a) (car b)) wb)))))))
+
+(defun my/context--dashboard-annotate (tag)
+  "Completion annotation: status and NAME from the registry."
+  (let ((plist (gethash tag my/context-registry)))
+    (format "  %-9s %s"
+            (or (plist-get plist :status) "")
+            (or (plist-get plist :name) ""))))
+
+(defun my/show-dashboard (tag)
+  "Open the grouped org-ql dashboard for context TAG."
+  (interactive
+   (let* ((here (and (derived-mode-p 'org-mode)
+                     (ignore-errors (plist-get (my/context-at-point) :tag))))
+          (completion-extra-properties
+           '(:annotation-function my/context--dashboard-annotate)))
+     (list (completing-read (if here (format "Show (default %s): " here) "Show: ")
+                            (my/context--dashboard-candidates)
+                            nil t nil nil here))))
+  (org-ql-search (org-agenda-files)
+    `(and (tags ,tag) (or (todo) (ts-active) (tags-local ,tag)))
+    :sort '(date)
+    :title (format "%s: %s" tag
+                   (or (plist-get (gethash tag my/context-registry) :name) ""))
+    :super-groups my/show-dashboard-groups))
+
+;; Reach it from the agenda dispatcher: C-c a w
+(with-eval-after-load 'org-agenda
+  (add-to-list 'org-agenda-custom-commands
+               '("D" "Show dashboard"
+                 (lambda (&rest _) (call-interactively #'my/show-dashboard)))
+               t))
 
 (with-eval-after-load 'ox-html
 

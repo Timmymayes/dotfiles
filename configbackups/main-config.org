@@ -1,6 +1,6 @@
 ﻿#+STARTUP: content
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el
-
+#+PROPERTY: header-args:emacs-lisp+ :results silent
 
 * Config Overview
 This config is my personal config and is evolving over time. You can find the updated version here: [[https://github.com/Timmymayes/emacsone/blob/main/OrgFiles/emacsconf.org][Emacsone]].
@@ -56,9 +56,6 @@ On the rare occasion utf-8 encoding is lost this is a note for myself on how to 
 (defconst my/linux-p (eq system-type 'gnu/linux))
 #+END_SRC
 
-#+RESULTS:
-: my/linux-p
-
 ** Linux Tools on Windows
 :PROPERTIES:
 :ID:       a2ad5430-adaf-4a74-81b7-4aa8e9e79cf8
@@ -82,9 +79,6 @@ On the rare occasion utf-8 encoding is lost this is a note for myself on how to 
     (setenv "PATH" (concat "C:\\Users\\timmy\\scoop\\apps\\gnupg\\current\\bin;" (getenv "PATH"))))
 
 #+END_SRC
-
-#+RESULTS:
-: C:\Users\timmy\scoop\apps\gnupg\current\bin;C:\git\bin;/home/tyler/miniconda3/bin:C:\git\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\NVIDIA Corporation\NVIDIA App\NvDLISR;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\Tailscale\;C:\Program Files\dotnet\;C:\Users\timmy\AppData\Local\Programs\Python\Python310\Scripts\;C:\Users\timmy\AppData\Local\Programs\Python\Python310\;C:\Users\timmy\scoop\apps\miniconda3\current\scripts;C:\Users\timmy\scoop\apps\miniconda3\current\Library\bin;C:\Users\timmy\scoop\apps\mpv\current;C:\Users\timmy\scoop\shims;C:\Users\timmy\AppData\Local\Programs\Python\Python313\Scripts\;C:\Users\timmy\AppData\Local\Programs\Python\Python313\;C:\Users\timmy\AppData\Local\Programs\Python\Launcher\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\NVIDIA Corporation\NVIDIA App\NvDLISR;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\Tailscale\;C:\Users\timmy\AppData\Local\Microsoft\WindowsApps;C:\git\cmd;C:\Users\timmy\AppData\Local\Microsoft\WinGet\Links;C:\Users\timmy\AppData\Local\Programs\Ollama
 
 ** Set default directory for find-file
 :PROPERTIES:
@@ -127,8 +121,7 @@ On the rare occasion utf-8 encoding is lost this is a note for myself on how to 
   (setq w32-rwindow-modifier 'super)
 #+END_SRC
 
-#+RESULTS:
-: super
+
 ** Set python to path per system
 :PROPERTIES:
 :ID:       07f9e20d-b5aa-4b59-9722-2ca9fa4fa8b1
@@ -143,8 +136,6 @@ On the rare occasion utf-8 encoding is lost this is a note for myself on how to 
 
 #+END_SRC
 
-#+RESULTS:
-
 ** Undo Limit
 :PROPERTIES:
 :ID:       60921ee6-6ba8-4555-a770-6b17e8665513
@@ -154,9 +145,6 @@ On the rare occasion utf-8 encoding is lost this is a note for myself on how to 
 
 
 #+END_SRC
-
-#+RESULTS:
-: 50
 
 ** Server Setup
 :PROPERTIES:
@@ -196,8 +184,6 @@ Require package and setup all package archives. Note changes to mode repositorie
   (message "Package contents loaded and refreshed")
 #+END_SRC
 
-#+RESULTS:
-
 ** Use Package Setup
 :PROPERTIES:
 :ID:       6c530129-7efe-4484-a3eb-c43b473bee3a
@@ -231,9 +217,6 @@ Move all backup files into a single directory. Another option is to turn off bac
 
 #+END_SRC
 
-#+RESULTS:
-: ((. . ~/.emacs.d/tmp/backups/))
-
 ** Auto-Revert (Syncthing)
 :PROPERTIES:
 :ID:       57a69217-f3ac-4edf-96d1-fe2eec0edfb2
@@ -256,9 +239,6 @@ Reload buffers when Syncthing changes files on disk. Daemon hook also catches an
   ;; depth -90 so this runs before the dashboard hook rebuilds from agenda files
   (add-hook 'server-after-make-frame-hook #'my/revert-org-buffers-quietly -90)
 #+END_SRC
-
-#+RESULTS:
-| my/revert-org-buffers-quietly | my/show-dashboard-on-new-frame | my/apply-theme-and-faces |
 
 ** Section Loaded Msg
 :PROPERTIES:
@@ -307,8 +287,6 @@ Basic setup for cleaning up the ui.
 
 
 #+end_src
-
-#+RESULTS:
 ** Nord Theme Color Vars
 :PROPERTIES:
 :ID:       0d456fde-e97e-4515-861b-e13cb58943c4
@@ -342,9 +320,6 @@ Basic setup for cleaning up the ui.
 
 #+END_SRC
 
-#+RESULTS:
-: nord-blue
-
 ** Dictionary fix
 :PROPERTIES:
 :ID:       0b1e0a50-b184-493d-bea5-931790f92629
@@ -373,8 +348,6 @@ loses to any explicit :family the theme already set on that face.
     ;; a face you're explicitly styling already — include it to be safe.
     (add-to-list 'mixed-pitch-fixed-faces 'org-block))
 #+end_src
-#+RESULTS:
-: t
 
 ** Themes
 :PROPERTIES:
@@ -501,9 +474,6 @@ Read more about this here: [[https://github.com/rougier/nano-modeline][-modeline
 
 
 #+END_SRC
-
-#+RESULTS:
-: t
 ** Cursor Animation
 *** Comet Trail
 :PROPERTIES:
@@ -527,8 +497,6 @@ Read more about this here: [[https://github.com/rougier/nano-modeline][-modeline
 
   (global-comet-trail-mode 0)
 #+END_SRC
-
-#+RESULTS:
 
 *** Beacon
 :PROPERTIES:
@@ -572,8 +540,6 @@ Transparency toggle for when you want to have a cool hacker mode.
 
 #+END_SRC
 
-#+RESULTS:
-
 ** Section Loaded Msg
 :PROPERTIES:
 :ID:       ee3bb1c4-7e59-4bdb-9b01-9519fb8eb78e
@@ -597,9 +563,6 @@ Packages that make emacs a little easiler to use. Finding out more about command
     ([remap describe-key] . helpful-key))
 #+end_src
 
-#+RESULTS:
-: helpful-key
-
 ** Whichkey
 :PROPERTIES:
 :ID:       3e2e354f-c866-430b-8e3c-9b388eae68f3
@@ -612,9 +575,6 @@ Packages that make emacs a little easiler to use. Finding out more about command
     (setq which-key-idle-delay 1))
 
 #+end_src
-
-#+RESULTS:
-: t
 
 ** Completion
 :PROPERTIES:
@@ -756,9 +716,6 @@ Packages that make emacs a little easiler to use. Finding out more about command
 
 #+end_src
 
-#+RESULTS:
-: my/star-rating
-
 ** Expand Region
 :PROPERTIES:
 :ID:       378673df-df5b-4406-a475-bc87ac311195
@@ -769,9 +726,6 @@ Packages that make emacs a little easiler to use. Finding out more about command
   	 ("H-]" . er/expand-region)
            ("H-[" . er/contract-region)))
 #+end_src
-
-#+RESULTS:
-: er/contract-region
 
 ** Yas Mode
 :PROPERTIES:
@@ -793,9 +747,6 @@ Turn on Yas global mode
 
     )
 #+END_SRC
-
-#+RESULTS:
-: [yas] Prepared just-in-time loading of snippets successfully.
 ** Scale Text Hydra
 :PROPERTIES:
 :ID:       8638752e-9cb0-479e-a130-6589aa01983d
@@ -807,9 +758,6 @@ Turn on Yas global mode
     ("=" text-scale-decrease))
 
 #+END_SRC
-
-#+RESULTS:
-: hydra-zoom/body
 ** Section Loaded Message
 :PROPERTIES:
 :ID:       b4915a56-e059-4192-a1dd-6dfe33c8821e
@@ -829,9 +777,6 @@ Turn on Yas global mode
   (setq epa-file-encrypt-to '("64B7FA4669B10335" "EE16A50B5AFCE6C6"))
   (setq epg-pinentry-mode 'loopback)
 #+END_SRC
-
-#+RESULTS:
-: loopback
 
 * LLM Tooling
 
@@ -1036,9 +981,6 @@ Turn on Yas global mode
 
 
 #+END_SRC
-
-#+RESULTS:
-| :eval | (format  [%s:%s] (my/gptel-model-short-name) (my/gptel-directive-short-name)) |
 ** Misc bindings for now
 :PROPERTIES:
 :ID:       01bcd447-67c4-4355-b771-5b6187ca904f
@@ -1164,9 +1106,6 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
 
 #+END_SRC
 
-#+RESULTS:
-: smartscan-symbol-go-forward
-
 #+RESULTS:[]
 : counsel-ibuffer
 ** Frame Control
@@ -1223,9 +1162,6 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
 
 
 #+END_SRC
-
-#+RESULTS:
-: delete-frame
 ** Calendar
 *** Put Calendar below capture window
 :PROPERTIES:
@@ -1248,9 +1184,6 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
   (setq calendar-location-name "Vista, CA")
   (message "Finished loading block 4")
 #+END_SRC
-
-#+RESULTS:
-: Vista, CA
 ** Section Loaded Message
 :PROPERTIES:
 :ID:       013701dd-bfc9-4e0f-9c68-e881eb0125ff
@@ -1277,8 +1210,6 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
 
 #+end_src
 
-#+RESULTS:
-: org-mode-setup
 
 
 #+begin_src emacs-lisp
@@ -1527,9 +1458,6 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
 
 #+END_SRC
 
-#+RESULTS:
-: my/recipe-capture-template
-
 *** Bindings  
 :PROPERTIES:
 :ID:       e9be5709-f9a3-48d1-8d2b-6887877242fe
@@ -1661,9 +1589,6 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
 
 
 #+end_src
-
-#+RESULTS:
-: my/org-auto-exclude-function
 *** Goal Link Inserter
 :PROPERTIES:
 :ID:       5c6002cb-cb2e-46bf-af89-2c14d6070bab
@@ -1704,9 +1629,6 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
 
   (global-set-key (kbd "C-c i g") #'my/goals-insert-link)  
 #+END_SRC
-
-#+RESULTS:
-: my/goals-insert-link
 
 ** Org Agenda Custom Functions & Macros
 :PROPERTIES:
@@ -1791,9 +1713,6 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
 
 
 #+END_SRC
-
-#+RESULTS:
-: #[256 "\301\242\302\305\300\306#\210\301\240*\207" [[32 24 111 16777317 24 111] (0) "%d" kmacro-counter-format-start kmacro-counter execute-kbd-macro kmacro-loop-setup-function] 5 kmacro]
 *** Custom habit hider
 #+BEGIN_SRC emacs-lisp
 ;; ---- selective habit hiding support (local to agenda views) -------------
@@ -2256,15 +2175,6 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
 
 
 #+END_SRC
-
-#+RESULTS:
-| n | Notes                 | tags                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | NOTE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | ((org-agenda-overriding-header Notes) (org-tags-match-list-sublevels t))                                         |                                                                                                              |
-| h | Habits                | tags-todo                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | STYLE="habit"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | ((org-agenda-overriding-header Habits) (org-agenda-sorting-strategy '(todo-state-down effort-up category-keep))) |                                                                                                              |
-| r | Weekly Review Rollup  | tags                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | Accomplishment                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | Disappointment                                                                                                   | ((org-agenda-overriding-header Accomplishments & Disappointments) (org-tags-match-list-sublevels 'indented)) |
-| d | Daily Agenda          | ((agenda  ((org-agenda-span 1))))                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                                                                  |                                                                                                              |
-| w | Weekly Agenda         | ((agenda  ((org-agenda-span 7))))                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                                                                  |                                                                                                              |
-| p | Personal Agenda       | ((agenda  nil) (tags-todo -CANCELLED/! ((org-agenda-overriding-header Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -HOLD-CANCELLED/! ((org-agenda-overriding-header Projects) (org-agenda-skip-function 'bh/skip-non-projects) (org-tags-match-list-sublevels t) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -CANCELLED/!NEXT ((org-agenda-overriding-header (concat Project Next Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function 'bh/skip-projects-and-habits-and-single-tasks) (org-tags-match-list-sublevels t) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(todo-state-down effort-up category-keep)))) (tags-todo -REFILE-CANCELLED-WAITING-HOLD/! ((org-agenda-overriding-header (my/agenda-subtasks-header)) (org-agenda-skip-function 'my/skip-non-project-tasks-unless-locked) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -REFILE-CANCELLED-WAITING-HOLD/! ((org-agenda-overriding-header (concat Standalone Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function 'bh/skip-project-tasks) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -CANCELLED+WAITING | HOLD/! ((org-agenda-overriding-header (concat Waiting and Postponed Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function 'bh/skip-non-tasks) (org-tags-match-list-sublevels nil) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks))) (tags -REFILE/ ((org-agenda-overriding-header Tasks to Archive) (org-agenda-skip-function 'bh/skip-non-archivable-tasks) (org-tags-match-list-sublevels nil)))) | ((org-agenda-tag-filter-preset '(+PERSONAL)))                                                                    |                                                                                                              |
-| P | Personal Project List | ((tags-todo -CANCELLED/! ((org-agenda-overriding-header Personal Project List                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                                                                  |                                                                                                              |
 -----
 Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -HOLD-CANCELLED/! ((org-agenda-overriding-header Projects) (org-agenda-skip-function 'bh/skip-non-projects) (org-tags-match-list-sublevels t) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -CANCELLED/!NEXT ((org-agenda-overriding-header (concat Project Next Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function 'bh/skip-projects-and-habits-and-single-tasks) (org-tags-match-list-sublevels t) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(todo-state-down effort-up category-keep)))) (tags-todo -REFILE-CANCELLED-WAITING-HOLD/! ((org-agenda-overriding-header (my/agenda-subtasks-header)) (org-agenda-skip-function 'my/skip-non-project-tasks-unless-locked) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -REFILE-CANCELLED-WAITING-HOLD/! ((org-agenda-overriding-header (concat Standalone Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function 'bh/skip-project-tasks) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -CANCELLED+WAITING|HOLD/! ((org-agenda-overriding-header (concat Waiting and Postponed Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-tags-match-list-sublevels nil) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks))) (tags -REFILE/ ((org-agenda-overriding-header Tasks to Archive) (org-agenda-skip-function 'bh/skip-non-archivable-tasks) (org-tags-match-list-sublevels nil)))) |((org-agenda-tag-filter-preset '(+PERSONAL))) |
 | C | Config Project List | ((tags-todo -CANCELLED/! ((org-agenda-overriding-header Config Project List |
@@ -2627,9 +2537,6 @@ Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agen
 
 #+end_src
 
-#+RESULTS:
-: bh/skip-non-subprojects
-
 *** Lock-Aware Agenda Blocks
 :PROPERTIES:
 :ID:       1e9a80b9-ccff-4510-982a-ca6519850416
@@ -2688,15 +2595,16 @@ after the locked project); Standalone Tasks hides while locked.
       (bh/skip-project-tasks)))
 #+END_SRC
 
-#+RESULTS:
-: my/skip-project-tasks-unless-unlocked
-
 *** Context Registry & Archive Rule
 :PROPERTIES:
 :ID:       0edbcfd7-6a7d-403c-a1e2-5c02a4caa6ce
 :END:
 Registry of clients/areas (H1) and shows/projects (H2) from seas-contexts.org.
 Drives the agenda context column and the Tasks to Archive hold rules.
+**** Registry and archive rules
+:PROPERTIES:
+:ID:       4ca4b531-3979-47f8-ba14-f44bb1abc3d5
+:END:
 #+BEGIN_SRC emacs-lisp
   ;;;; Context registry
   ;; Reads seasq-contexts.org (and any other registry files) into a lookup
@@ -2915,9 +2823,344 @@ Drives the agenda context column and the Tasks to Archive hold rules.
   (with-eval-after-load 'org
     (my/context-registry-load))
 #+END_SRC
+**** Insert new context via capture
+:PROPERTIES:
+:ID:       8a4ba232-a83f-416e-949c-617b2d2e4092
+:END:
+#+BEGIN_SRC emacs-lisp
+  ;;;; Context capture: register a new context in seas-contexts.org
+  ;; Prompts: group (existing or new), tag, NAME, STATUS. Files the context as
+  ;; the last H2 under its group, then saves the registry file (which reloads
+  ;; `my/context-registry' via the save hook).
 
-#+RESULTS:
-: Context registry: 41 entries loaded
+  (defvar my/context-capture-key "tc"
+    "Key for the new-context capture template.")
+
+  (defvar my/context--capture-group nil
+    "Group chosen during the current context capture.")
+
+  (defun my/context--group-names ()
+    "Registered group (H1) tags, sorted."
+    (let (groups)
+      (maphash (lambda (tag plist)
+                 (when (eq (plist-get plist :kind) 'group)
+                   (push tag groups)))
+               my/context-registry)
+      (sort groups #'string<)))
+
+  (defun my/context--read-tag (group-type)
+    "Read and validate a new context tag. GROUP-TYPE is \"client\" or \"area\"."
+    (let (tag done)
+      (while (not done)
+        (setq tag (upcase (string-trim (read-string "Context tag (e.g. PXTA27): " tag))))
+        (cond
+         ((not (string-match-p "\\`[A-Z0-9_]+\\'" tag))
+          (message "Use only letters, digits and _ (no hyphens or spaces)") (sit-for 1.5))
+         ((gethash tag my/context-registry)
+          (message "%s is already registered" tag) (sit-for 1.5))
+         ((and (equal group-type "client")
+               (not (string-match-p "[0-9][0-9]\\'" tag))
+               (not (y-or-n-p (format "%s has no 2-digit year suffix (shows usually do, e.g. PXTA27). Keep it? " tag)))))
+         ((and (string-match-p "[0-9][0-9]\\'" tag)
+               (string-match-p "[0-9]_?[0-9][0-9]\\'" tag)
+               (not (string-match-p "_[0-9][0-9]\\'" tag))
+               (not (y-or-n-p (format "%s: code ends in a digit before the year; convention is CODE_YY (e.g. R810_27). Keep it? " tag)))))
+         (t (setq done t))))
+      tag))
+
+  (defun my/context-capture-template ()
+    "Prompt for the new context and return its capture template."
+    (let* ((group (upcase (string-trim
+                           (completing-read "Group (client/area, or a new one): "
+                                            (my/context--group-names)))))
+           (existing (gethash group my/context-registry))
+           (group-type (or (plist-get existing :type)
+                           (completing-read (format "New group %s type: " group)
+                                            '("client" "area") nil t)))
+           (group-name (unless existing
+                         (read-string (format "Full name for %s: " group))))
+           (tag (my/context--read-tag group-type))
+           (name (read-string (format "NAME for %s: " tag)))
+           (status (completing-read "STATUS: " my/context-valid-statuses nil t nil nil "active")))
+      (unless (string-match-p "\\`[A-Z0-9_]+\\'" group)
+        (user-error "Group tag %s: use only letters, digits and _" group))
+      (setq my/context--capture-group (list group group-type group-name))
+      (format "* %s\n:PROPERTIES:\n:NAME:     %s\n:STATUS:   %s\n:END:\n" tag name status)))
+
+  (defvar my/context--capture-had-columns nil
+    "Non-nil when column view was on in the registry buffer before capture.")
+
+  (defun my/context-capture-target ()
+    "Move point to the chosen group's H1, creating the group if needed.
+  Column view overlays make the buffer read-only, so turn them off first
+  \(`my/context-capture-save' turns them back on)."
+    (setq my/context--capture-had-columns (bound-and-true-p org-columns-overlays))
+    (when my/context--capture-had-columns
+      (org-columns-remove-overlays))
+    (pcase-let ((`(,group ,type ,name) my/context--capture-group))
+      (goto-char (point-min))
+      (unless (re-search-forward (format "^\\* %s[ \t]*$" (regexp-quote group)) nil t)
+        (goto-char (point-max))
+        (skip-chars-backward " \t\n")
+        (delete-region (point) (point-max))
+        (insert (format "\n\n* %s\n:PROPERTIES:\n:TYPE:     %s\n:NAME:     %s\n:END:\n"
+                        group type (or name ""))))
+      (goto-char (point-min))
+      (re-search-forward (format "^\\* %s[ \t]*$" (regexp-quote group)))
+      (beginning-of-line)))
+
+  (defun my/context-capture-save ()
+    "Save the registry file after a context capture (triggers registry reload).
+  Restores column view if it was on before the capture."
+    (let ((buf (find-buffer-visiting (expand-file-name (car my/context-registry-files)))))
+      (when buf
+        (with-current-buffer buf
+          (when (buffer-modified-p) (save-buffer))
+          (when my/context--capture-had-columns
+            (setq my/context--capture-had-columns nil)
+            (save-excursion (org-columns t)))))))
+
+  (with-eval-after-load 'org-capture
+    (setq org-capture-templates
+          (cl-remove my/context-capture-key org-capture-templates
+                     :key #'car :test #'equal))
+    (add-to-list 'org-capture-templates
+                 `(,my/context-capture-key "New context (registry)" entry
+  					 (file+function ,(car my/context-registry-files) my/context-capture-target)
+  					 (function my/context-capture-template)
+  					 :immediate-finish t
+  					 :empty-lines-after 1
+  					 :after-finalize my/context-capture-save)
+                 t))
+#+END_SRC
+:PROPERTIES:
+:CATEGORY: Task
+:END:
+%U
+%a
+%i  |:empty-lines |1 |
+| tp | Project | entry | (file ~/Orgfiles/refile.org) | * TODO %? |
+:PROPERTIES:
+:CATEGORY: Proj
+:END:
+%U
+%a
+%i  |:empty-lines |1 |
+| m | Meeting | entry | (file ~/Orgfiles/refile.org) | * MEETING re: %? :MEETING: |
+%U
+* Attendees
+- 
+* Meetings Notes :NOTE:
+- 
+* Next Steps
+
+| :clock-in | t          | :clock-resume | t                            | :jump-to-captured  | t |
+| p         | Phone call | entry         | (file ~/Orgfiles/refile.org) | * PHONE %? :PHONE: |   |
+%U |:clock-in |t |:clock-resume |t |:jump-to-captured |t |
+| n | note | entry | (file ~/Orgfiles/refile.org) | * %? :NOTE: |
+%u
+%a
+ %i |:empty-lines |1 |
+| r  | Reminders         |       |                              |      |
+| r1 | One Time Reminder | entry | (file ~/Orgfiles/refile.org) | * %? |
+ %^T 
+ %U
+ %a
+%i |:empty-lines |1 |
+| r! | Recurring Reminder | entry | (file ~/Orgfiles/refile.org) | * %? |
+ %U
+ <%\%(memq (calendar-day-of-week date) '(1 2 3 4 5))>  
+%a
+%i |:empty-lines |1 |
+| d  | Daily Metrics     |            |                                                          |                         |         |            |                 |            |                |              |          |   |              |   |
+| dm | Morning Metrics   | table-line | (file+headline ~/Orgfiles/metrics.org Morning)           |                         | %^{Day} | %^{Weight} | %^{BP SYS}      | %^{BP DIA} | %^{Sleep Time} | %^{AHI}      | %^{Mood} |   | :kill-buffer | t |
+| de | Evening Metrics   | table-line | (file+headline ~/Orgfiles/metrics.org Evening)           |                         | %^{Day} | %^{Output} | %^{On Schedule} | %^{Mood}   |                | :kill-buffer | t        |   |              |   |
+| di | Daily Improvement | entry      | (file+headline ~/Orgfiles/metrics.org Improvements List) | *** %^{Day Of The Week} |         |            |                 |            |                |              |          |   |              |   |
+- %? |
+| df | Food Log        | entry | (file+datetree ~/Orgfiles/FoodLog.org)         | * %?          |
+| ds | Symptom Tracker | entry | (file+datetree ~/Orgfiles/Symptom-Tracker.org) | * %?          |
+| h  | Habit           | entry | (file ~/Orgfiles/habits.org)                   | * TODO %? %^g |
+%U
+ %a
+%i %^{STYLE|habit}p |:empty-lines |1 |
+| g  | Goal |       |                              |                      |
+| gv | Goal | entry | (file ~/Orgfiles/refile.org) | * ~%^{Goal}~ :VALUE: |
+:PROPERTIES:
+:created: %u
+:END:
+:LINKS:
+:END: %^{custom_id} |:prepend |t |:created |t |
+| go | Outcome | entry | (file ~/Orgfiles/refile.org) | * %^{Goal} [/] :OUTCOME: |
+:PROPERTIES:
+:created: %u
+:END:
+:LINKS:
+:goal:
+:habit:
+:project:
+:END: %^{timeline}p %^{custom_id}p |:prepend |t |:created |t |
+| s  | System     |       |                                            |            |
+| sl | System Log | entry | (file+headline ~/Orgfiles/config.org Logs) | ** Changes |
+** %^{Title}
+[%<%Y-%m-%d %a %H:%M>]
+:CONTEXT:
+- File/Location: %^{File or Location}
+- Reason: %^{Reason}
+:END:
+
+%?
+| :empty-lines |          1 |       |                                            |          |
+| sf           | System Fix | entry | (file+headline ~/Orgfiles/config.org Logs) | ** Fixes |
+** %^{Title}
+[%<%Y-%m-%d %a %H:%M>]
+:CONTEXT:
+- File/Location: %^{File or Location}
+- Problem: %^{Problem}
+- Solution: %^{Solution}
+:END:
+
+%?
+| :empty-lines |              1 |       |                                            |             |
+| si           | System Install | entry | (file+headline ~/Orgfiles/config.org Logs) | ** Installs |
+** %^{Title}
+[%<%Y-%m-%d %a %H:%M>]
+:CONTEXT:
+- Package/Tool: %^{Package or Tool}
+- Version: %^{Version}
+- Installed via: %^{apt/pip/cargo/etc}
+- Reason: %^{Reason}
+:END:
+
+%?
+| :empty-lines | 1        |       |                                                            |                              |              |   |
+| c            | Cooking  |       |                                                            |                              |              |   |
+| cr           | Recipe   | entry | (file+headline ~/Orgfiles/recipes.org New Recipes to File) | #'my/recipe-capture-template | :empty-lines | 1 |
+| l            | Lexicon  |       |                                                            |                              |              |   |
+| ln           | New Word | entry | (file+headline ~/Orgfiles/Lexicon.org New Words)           | ** %^{Word}  :drill:         |              |   |
+*Pronunciation:*
+
+*Definition:*
+[%?]
+
+Ex:
+** Synonyms
+- |
+| lm | Use More               | entry | (file+headline ~/Orgfiles/Lexicon.org Words To Use More)               | ** %^{Word}                   |                   |   |                    |   |                 |                         |
+| tc | New context (registry) | entry | (file+function ~/Orgfiles/seas-contexts.org my/context-capture-target) | #'my/context-capture-template | :immediate-finish | t | :empty-lines-after | 1 | :after-finalize | my/context-capture-save |
+:PROPERTIES:
+:CATEGORY: Task
+:END:
+%U
+%a
+%i  |:empty-lines |1 |
+| tp | Project | entry | (file ~/Orgfiles/refile.org) | * TODO %? |
+:PROPERTIES:
+:CATEGORY: Proj
+:END:
+%U
+%a
+%i  |:empty-lines |1 |
+| m | Meeting | entry | (file ~/Orgfiles/refile.org) | * MEETING re: %? :MEETING: |
+%U
+* Attendees
+- 
+* Meetings Notes :NOTE:
+- 
+* Next Steps
+
+| :clock-in | t          | :clock-resume | t                            | :jump-to-captured  | t |
+| p         | Phone call | entry         | (file ~/Orgfiles/refile.org) | * PHONE %? :PHONE: |   |
+%U |:clock-in |t |:clock-resume |t |:jump-to-captured |t |
+| n | note | entry | (file ~/Orgfiles/refile.org) | * %? :NOTE: |
+%u
+%a
+ %i |:empty-lines |1 |
+| r  | Reminders         |       |                              |      |
+| r1 | One Time Reminder | entry | (file ~/Orgfiles/refile.org) | * %? |
+ %^T 
+ %U
+ %a
+%i |:empty-lines |1 |
+| r! | Recurring Reminder | entry | (file ~/Orgfiles/refile.org) | * %? |
+ %U
+ <%\%(memq (calendar-day-of-week date) '(1 2 3 4 5))>  
+%a
+%i |:empty-lines |1 |
+| d  | Daily Metrics     |            |                                                          |                         |         |            |                 |            |                |              |          |   |              |   |
+| dm | Morning Metrics   | table-line | (file+headline ~/Orgfiles/metrics.org Morning)           |                         | %^{Day} | %^{Weight} | %^{BP SYS}      | %^{BP DIA} | %^{Sleep Time} | %^{AHI}      | %^{Mood} |   | :kill-buffer | t |
+| de | Evening Metrics   | table-line | (file+headline ~/Orgfiles/metrics.org Evening)           |                         | %^{Day} | %^{Output} | %^{On Schedule} | %^{Mood}   |                | :kill-buffer | t        |   |              |   |
+| di | Daily Improvement | entry      | (file+headline ~/Orgfiles/metrics.org Improvements List) | *** %^{Day Of The Week} |         |            |                 |            |                |              |          |   |              |   |
+- %? |
+| df | Food Log        | entry | (file+datetree ~/Orgfiles/FoodLog.org)         | * %?          |
+| ds | Symptom Tracker | entry | (file+datetree ~/Orgfiles/Symptom-Tracker.org) | * %?          |
+| h  | Habit           | entry | (file ~/Orgfiles/habits.org)                   | * TODO %? %^g |
+%U
+ %a
+%i %^{STYLE|habit}p |:empty-lines |1 |
+| g  | Goal |       |                              |                      |
+| gv | Goal | entry | (file ~/Orgfiles/refile.org) | * ~%^{Goal}~ :VALUE: |
+:PROPERTIES:
+:created: %u
+:END:
+:LINKS:
+:END: %^{custom_id} |:prepend |t |:created |t |
+| go | Outcome | entry | (file ~/Orgfiles/refile.org) | * %^{Goal} [/] :OUTCOME: |
+:PROPERTIES:
+:created: %u
+:END:
+:LINKS:
+:goal:
+:habit:
+:project:
+:END: %^{timeline}p %^{custom_id}p |:prepend |t |:created |t |
+| s  | System     |       |                                            |            |
+| sl | System Log | entry | (file+headline ~/Orgfiles/config.org Logs) | ** Changes |
+** %^{Title}
+[%<%Y-%m-%d %a %H:%M>]
+:CONTEXT:
+- File/Location: %^{File or Location}
+- Reason: %^{Reason}
+:END:
+
+%?
+| :empty-lines |          1 |       |                                            |          |
+| sf           | System Fix | entry | (file+headline ~/Orgfiles/config.org Logs) | ** Fixes |
+** %^{Title}
+[%<%Y-%m-%d %a %H:%M>]
+:CONTEXT:
+- File/Location: %^{File or Location}
+- Problem: %^{Problem}
+- Solution: %^{Solution}
+:END:
+
+%?
+| :empty-lines |              1 |       |                                            |             |
+| si           | System Install | entry | (file+headline ~/Orgfiles/config.org Logs) | ** Installs |
+** %^{Title}
+[%<%Y-%m-%d %a %H:%M>]
+:CONTEXT:
+- Package/Tool: %^{Package or Tool}
+- Version: %^{Version}
+- Installed via: %^{apt/pip/cargo/etc}
+- Reason: %^{Reason}
+:END:
+
+%?
+| :empty-lines | 1        |       |                                                            |                              |              |   |
+| c            | Cooking  |       |                                                            |                              |              |   |
+| cr           | Recipe   | entry | (file+headline ~/Orgfiles/recipes.org New Recipes to File) | #'my/recipe-capture-template | :empty-lines | 1 |
+| l            | Lexicon  |       |                                                            |                              |              |   |
+| ln           | New Word | entry | (file+headline ~/Orgfiles/Lexicon.org New Words)           | ** %^{Word}  :drill:         |              |   |
+*Pronunciation:*
+
+*Definition:*
+[%?]
+
+Ex:
+** Synonyms
+- |
+| lm | Use More               | entry | (file+headline ~/Orgfiles/Lexicon.org Words To Use More)               | ** %^{Word}                   |                   |   |                    |   |                 |                         |
+| tc | New context (registry) | entry | (file+function ~/Orgfiles/seas-contexts.org my/context-capture-target) | #'my/context-capture-template | :immediate-finish | t | :empty-lines-after | 1 | :after-finalize | my/context-capture-save |
 
 *** Agenda Tag Alignment
 :PROPERTIES:
@@ -2990,9 +3233,6 @@ For now just hitting agenda-milestones but color them to stand out
 (add-hook 'org-agenda-finalize-hook #'my/agenda-color-milestones)
 #+END_SRC
 
-#+RESULTS:
-| my/agenda-color-milestones | org-modern-agenda | hl-line-mode | my/agenda-align-tags-right |
-
 *** Org Modern
 :PROPERTIES:
 :ID:       b4b087a7-adcf-4d21-aa63-7e60a7df3cd4
@@ -3040,8 +3280,6 @@ For now just hitting agenda-milestones but color them to stand out
     (add-hook mode (lambda () (display-line-numbers-mode 0))))
 #+END_SRC
 
-#+RESULTS:
-
 *** Structure Templates
 :PROPERTIES:
 :ID:       383633db-e515-4f5b-84ad-dafe8fa2cee8
@@ -3059,9 +3297,6 @@ For now just hitting agenda-milestones but color them to stand out
   (add-to-list 'org-structure-template-alist '("py" . "src python"))
   (add-to-list 'org-structure-template-alist '("jsx" . "src jsx"))
 #+end_src
-
-#+RESULTS:
-: ((jsx . src jsx) (py . src python) (el . src emacs-lisp) (sh . src shell) (a . export ascii) (c . center) (C . comment) (e . example) (E . export) (h . export html) (l . export latex) (q . quote) (s . src) (v . verse))
 
 
 
@@ -3111,8 +3346,6 @@ For now just hitting agenda-milestones but color them to stand out
 
 #+END_SRC
 
-#+RESULTS:
-
 
 
 #+RESULTS:
@@ -3133,8 +3366,6 @@ For now just hitting agenda-milestones but color them to stand out
      (python .t)))
 
 #+end_src
-
-#+RESULTS:
 
 
 *** Auto-Tangle Config Files
@@ -3187,9 +3418,6 @@ For now just hitting agenda-milestones but color them to stand out
   ;; (message "Tangling enabled")
 #+end_src
 
-#+RESULTS:
-: Tangling enabled
-
   ;;auto tangle my emacs config file
   (defun my/org-babel-tangle-config()
     (when (string-equal (buffer-file-name)
@@ -3229,8 +3457,6 @@ For now just hitting agenda-milestones but color them to stand out
 
 #+end_src
 
-#+RESULTS:
-
 *** Pomodoro
 :PROPERTIES:
 :APPT_WARNTIME: 1
@@ -3239,9 +3465,6 @@ For now just hitting agenda-milestones but color them to stand out
 #+BEGIN_SRC emacs-lisp 
   (setq org-clock-sound "~/Orgfiles/Kids_cheering.wav")
 #+END_SRC
-
-#+RESULTS:
-: ~/Orgfiles/Kids_cheering.wav
 
 #+RESULTS:
 : org-agenda-remove-restriction-lock
@@ -3292,9 +3515,6 @@ For now just hitting agenda-milestones but color them to stand out
 
 
 #+END_SRC
-
-#+RESULTS:
-: my/agenda-jump-to-last-note
 
 ** Section Loaded Message
 :PROPERTIES:
@@ -3528,9 +3748,6 @@ For now just hitting agenda-milestones but color them to stand out
 
 
 #+END_SRC
-
-#+RESULTS:
-: org-roam-ui-open
 ** Citar and citar-org-roam Setup
 :PROPERTIES:
 :ID:       b37c36dc-d6c2-4018-afb0-f034f84f4128
@@ -3554,9 +3771,6 @@ For now just hitting agenda-milestones but color them to stand out
       :config
       (citar-org-roam-mode))
 #+END_SRC
-
-#+RESULTS:
-: t
 
 ** Section Loaded Message
 :PROPERTIES:
@@ -3629,9 +3843,6 @@ For now just hitting agenda-milestones but color them to stand out
 
 #+END_SRC
 
-#+RESULTS:
-: :auto-delete
-
 ** Section Loaded Message
 :PROPERTIES:
 :ID:       495eb7e5-77b1-4d99-8ad8-1708116055df
@@ -3664,9 +3875,6 @@ For now just hitting agenda-milestones but color them to stand out
 
 
 #+END_SRC
-
-#+RESULTS:
-: #[256 "\301\242\302\305\300\306#\210\301\240*\207" [[67108896 3 14 134217847 16 25 3 16 3 16 134217848 111 114 103 45 116 114 97 110 115 99 108 117 115 105 111 110 45 100 101 97 tab return 16 11] (0) "%d" kmacro-counter-format-start kmacro-counter execute-kbd-macro kmacro-loop-setup-function] 5 kmacro]
 
 
 #+END_SRC
@@ -3711,12 +3919,6 @@ For now just hitting agenda-milestones but color them to stand out
   (message "Org-present Loaded")
 #+END_SRC
 
-#+RESULTS:
-| lambda | nil | (org-present-small) | (org-remove-inline-images) | (hl-line-mode)            |                          |
-| lambda | nil | (org-present-small) | (org-remove-inline-images) | (hl-line-mode)            | (org-present-read-write) |
-| lambda | nil | (org-present-small) | (org-remove-inline-images) | (org-present-read-write)  |                          |
-| lambda | nil | (org-present-small) | (org-remove-inline-images) | (org-present-show-cursor) | (org-present-read-write) |
-
 * Org-ql
 :PROPERTIES:
 :ID:       e3609623-8b92-4762-bb34-0f7ae237cea9
@@ -3736,8 +3938,112 @@ For now just hitting agenda-milestones but color them to stand out
   (message "org-ql loaded")
 #+END_SRC
 
-#+RESULTS:
-: 1
+** Dashboards
+
+*** SEAS Show Dashboard
+:PROPERTIES:
+:ID:       96b409ec-cb7c-404a-8216-68eb046081e8
+:END:
+#+BEGIN_SRC emacs-lisp
+;;;; Show dashboard (org-ql + super-agenda)
+;; One command for any registered context: milestones, meetings, projects
+;; and the show card, grouped. Prompts with registry completion (active and
+;; planning first); defaults to the context at point in an Org buffer.
+
+(defun my/agenda-prepend-active-ts (item)
+  "Prefix agenda ITEM string with the first active timestamp in its entry."
+  (let* ((marker (or (get-text-property 0 'org-hd-marker item)
+                     (get-text-property 0 'org-marker item)))
+         (date (and marker
+                    (org-with-point-at marker
+                      (when (re-search-forward org-ts-regexp (org-entry-end-position) t)
+                        (format-time-string "%Y-%m-%d %a"
+                                            (org-time-string-to-time (match-string 0))))))))
+    (if date
+        (let ((prefix (apply #'propertize (concat "  " date "  ")
+                             (text-properties-at 0 item))))
+          (add-face-text-property 0 (length prefix) 'org-date nil prefix)
+          (concat prefix (string-trim-left item)))
+      item)))
+
+(defvar my/show-dashboard-groups
+  '((:name "Milestones" :tag "MILESTONE" :transformer my/agenda-prepend-active-ts)
+    (:name "Meetings" :todo "MEETING" :transformer my/agenda-prepend-active-ts)
+    (:name "Projects & Tasks" :todo t)
+    (:name "Show card" :anything t))
+  "org-super-agenda groups for `my/show-dashboard'. First match wins.")
+
+(defun my/context--dashboard-candidates ()
+  "Registered contexts, active/planning first, then wrapped; alphabetical within."
+  (let (rows)
+    (maphash (lambda (tag plist)
+               (when (eq (plist-get plist :kind) 'context)
+                 (push (cons tag plist) rows)))
+             my/context-registry)
+    (mapcar #'car
+            (sort rows
+                  (lambda (a b)
+                    (let ((wa (equal (plist-get (cdr a) :status) "wrapped"))
+                          (wb (equal (plist-get (cdr b) :status) "wrapped")))
+                      (if (eq wa wb) (string< (car a) (car b)) wb)))))))
+
+(defun my/context--dashboard-annotate (tag)
+  "Completion annotation: status and NAME from the registry."
+  (let ((plist (gethash tag my/context-registry)))
+    (format "  %-9s %s"
+            (or (plist-get plist :status) "")
+            (or (plist-get plist :name) ""))))
+
+(defun my/show-dashboard (tag)
+  "Open the grouped org-ql dashboard for context TAG."
+  (interactive
+   (let* ((here (and (derived-mode-p 'org-mode)
+                     (ignore-errors (plist-get (my/context-at-point) :tag))))
+          (completion-extra-properties
+           '(:annotation-function my/context--dashboard-annotate)))
+     (list (completing-read (if here (format "Show (default %s): " here) "Show: ")
+                            (my/context--dashboard-candidates)
+                            nil t nil nil here))))
+  (org-ql-search (org-agenda-files)
+    `(and (tags ,tag) (or (todo) (ts-active) (tags-local ,tag)))
+    :sort '(date)
+    :title (format "%s: %s" tag
+                   (or (plist-get (gethash tag my/context-registry) :name) ""))
+    :super-groups my/show-dashboard-groups))
+
+;; Reach it from the agenda dispatcher: C-c a w
+(with-eval-after-load 'org-agenda
+  (add-to-list 'org-agenda-custom-commands
+               '("D" "Show dashboard"
+                 (lambda (&rest _) (call-interactively #'my/show-dashboard)))
+               t))
+#+END_SRC
+-----
+Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -HOLD-CANCELLED/! ((org-agenda-overriding-header Projects) (org-agenda-skip-function 'bh/skip-non-projects) (org-tags-match-list-sublevels t) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -CANCELLED/!NEXT ((org-agenda-overriding-header (concat Project Next Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function 'bh/skip-projects-and-habits-and-single-tasks) (org-tags-match-list-sublevels t) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(todo-state-down effort-up category-keep)))) (tags-todo -REFILE-CANCELLED-WAITING-HOLD/! ((org-agenda-overriding-header (my/agenda-subtasks-header)) (org-agenda-skip-function 'my/skip-non-project-tasks-unless-locked) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -REFILE-CANCELLED-WAITING-HOLD/! ((org-agenda-overriding-header (concat Standalone Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function 'bh/skip-project-tasks) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -CANCELLED+WAITING|HOLD/! ((org-agenda-overriding-header (concat Waiting and Postponed Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-tags-match-list-sublevels nil) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks))) (tags -REFILE/ ((org-agenda-overriding-header Tasks to Archive) (org-agenda-skip-function 'bh/skip-non-archivable-tasks) (org-tags-match-list-sublevels nil)))) |((org-agenda-tag-filter-preset '(+PERSONAL))) |
+| C | Config Project List | ((tags-todo -CANCELLED/! ((org-agenda-overriding-header Config Project List |
+-----
+Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -HOLD-CANCELLED/! ((org-agenda-overriding-header Projects) (org-agenda-skip-function 'bh/skip-non-projects) (org-tags-match-list-sublevels t) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -CANCELLED/!NEXT ((org-agenda-overriding-header (concat Project Next Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function 'bh/skip-projects-and-habits-and-single-tasks) (org-tags-match-list-sublevels t) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(todo-state-down effort-up category-keep)))) (tags-todo -REFILE-CANCELLED-WAITING-HOLD/! ((org-agenda-overriding-header (my/agenda-subtasks-header)) (org-agenda-skip-function 'my/skip-non-project-tasks-unless-locked) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -REFILE-CANCELLED-WAITING-HOLD/! ((org-agenda-overriding-header (concat Standalone Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function 'bh/skip-project-tasks) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -CANCELLED+WAITING|HOLD/! ((org-agenda-overriding-header (concat Waiting and Postponed Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function 'bh/skip-non-tasks) (org-tags-match-list-sublevels nil) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks))) (tags -REFILE/ ((org-agenda-overriding-header Tasks to Archive) (org-agenda-skip-function 'bh/skip-non-archivable-tasks) (org-tags-match-list-sublevels nil)))) |((org-agenda-tag-filter-preset '(+CONFIG))) |
+| c | Config Agenda       | ((agenda  nil) (tags-todo -CANCELLED/! ((org-agenda-overriding-header Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -HOLD-CANCELLED/! ((org-agenda-overriding-header Projects) (org-agenda-skip-function 'bh/skip-non-projects) (org-tags-match-list-sublevels t) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -CANCELLED/!NEXT ((org-agenda-overriding-header (concat Project Next Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function 'bh/skip-projects-and-habits-and-single-tasks) (org-tags-match-list-sublevels t) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(todo-state-down effort-up category-keep)))) (tags-todo -REFILE-CANCELLED-WAITING-HOLD/! ((org-agenda-overriding-header (my/agenda-subtasks-header)) (org-agenda-skip-function 'my/skip-non-project-tasks-unless-locked) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -REFILE-CANCELLED-WAITING-HOLD/! ((org-agenda-overriding-header (concat Standalone Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function 'bh/skip-project-tasks) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -CANCELLED+WAITING  | HOLD/! ((org-agenda-overriding-header (concat Waiting and Postponed Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function 'bh/skip-non-tasks) (org-tags-match-list-sublevels nil) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks))) (tags -REFILE/ ((org-agenda-overriding-header Tasks to Archive) (org-agenda-skip-function 'bh/skip-non-archivable-tasks) (org-tags-match-list-sublevels nil)))) | ((org-agenda-tag-filter-preset '(+CONFIG))) |
+| o | Office Agenda       | ((agenda  nil) (tags-todo -CANCELLED/! ((org-agenda-overriding-header Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -HOLD-CANCELLED/! ((org-agenda-overriding-header Projects) (org-agenda-skip-function 'bh/skip-non-projects) (org-tags-match-list-sublevels 't) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -CANCELLED/!NEXT ((org-agenda-overriding-header (concat Project Next Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function 'bh/skip-projects-and-habits-and-single-tasks) (org-tags-match-list-sublevels t) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(todo-state-down effort-up category-keep)))) (tags-todo -REFILE-CANCELLED-WAITING-HOLD/! ((org-agenda-overriding-header (my/agenda-subtasks-header)) (org-agenda-skip-function 'my/skip-non-project-tasks-unless-locked) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -REFILE-CANCELLED-WAITING-HOLD/! ((org-agenda-overriding-header (concat Standalone Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function 'bh/skip-project-tasks) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -CANCELLED+WAITING | HOLD/! ((org-agenda-overriding-header (concat Waiting and Postponed Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function 'bh/skip-non-tasks) (org-tags-match-list-sublevels nil) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks))) (tags -REFILE/ ((org-agenda-overriding-header Tasks to Archive) (org-agenda-skip-function 'bh/skip-non-archivable-tasks) (org-tags-match-list-sublevels nil)))) | ((org-agenda-tag-filter-preset '(+SEAS)))   |
+| O | Office Project List | ((tags-todo -CANCELLED/! ((org-agenda-overriding-header Office Project List                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |                                             |
+-----
+Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -HOLD-CANCELLED/! ((org-agenda-overriding-header Projects) (org-agenda-skip-function 'bh/skip-non-projects) (org-tags-match-list-sublevels t) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -CANCELLED/!NEXT ((org-agenda-overriding-header (concat Project Next Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function 'bh/skip-projects-and-habits-and-single-tasks) (org-tags-match-list-sublevels t) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(todo-state-down effort-up category-keep)))) (tags-todo -REFILE-CANCELLED-WAITING-HOLD/! ((org-agenda-overriding-header (my/agenda-subtasks-header)) (org-agenda-skip-function 'my/skip-non-project-tasks-unless-locked) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -REFILE-CANCELLED-WAITING-HOLD/! ((org-agenda-overriding-header (my/agenda-standalone-header)) (org-agenda-skip-function 'my/skip-project-tasks-unless-unlocked) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -CANCELLED+WAITING|HOLD/! ((org-agenda-overriding-header (concat Waiting and Postponed Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function 'bh/skip-non-tasks) (org-tags-match-list-sublevels nil) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks))) (tags -REFILE/ ((org-agenda-overriding-header Tasks to Archive) (org-agenda-skip-function 'bh/skip-non-archivable-tasks) (org-tags-match-list-sublevels nil)))) |((org-agenda-tag-filter-preset '(+SEAS))) |
+|   | Agenda         | ((agenda  nil) (tags REFILE ((org-agenda-overriding-header Tasks to Refile) (org-tags-match-list-sublevels nil))) (tags-todo -CANCELLED/! ((org-agenda-overriding-header Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -HOLD-CANCELLED/! ((org-agenda-overriding-header Projects) (org-agenda-skip-function 'bh/skip-non-projects) (org-tags-match-list-sublevels t) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -CANCELLED/!NEXT ((org-agenda-overriding-header (concat Project Next Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function 'bh/skip-projects-and-habits-and-single-tasks) (org-tags-match-list-sublevels t) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(todo-state-down effort-up category-keep)))) (tags-todo -REFILE-CANCELLED-WAITING-HOLD/! ((org-agenda-overriding-header (my/agenda-standalone-header)) (org-agenda-skip-function 'my/skip-project-tasks-unless-unlocked) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -REFILE-CANCELLED-WAITING-HOLD/! ((org-agenda-overriding-header (concat Standalone Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function 'bh/skip-project-tasks) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -CANCELLED+WAITING | HOLD/! ((org-agenda-overriding-header (concat Waiting and Postponed Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function 'bh/skip-non-tasks) (org-tags-match-list-sublevels nil) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks))) (tags -REFILE/ ((org-agenda-overriding-header Tasks to Archive) (org-agenda-skip-function 'bh/skip-non-archivable-tasks) (org-tags-match-list-sublevels nil)))) | nil |
+| W | Show dashboard | (lambda (&rest _) (call-interactively #'my/show-dashboard))                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |     |
+| D | Show dashboard | (lambda (&rest _) (call-interactively #'my/show-dashboard))                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |     |
+-----
+Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -HOLD-CANCELLED/! ((org-agenda-overriding-header Projects) (org-agenda-skip-function 'bh/skip-non-projects) (org-tags-match-list-sublevels t) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -CANCELLED/!NEXT ((org-agenda-overriding-header (concat Project Next Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function 'bh/skip-projects-and-habits-and-single-tasks) (org-tags-match-list-sublevels t) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(todo-state-down effort-up category-keep)))) (tags-todo -REFILE-CANCELLED-WAITING-HOLD/! ((org-agenda-overriding-header (my/agenda-subtasks-header)) (org-agenda-skip-function 'my/skip-non-project-tasks-unless-locked) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -REFILE-CANCELLED-WAITING-HOLD/! ((org-agenda-overriding-header (concat Standalone Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function 'bh/skip-project-tasks) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -CANCELLED+WAITING|HOLD/! ((org-agenda-overriding-header (concat Waiting and Postponed Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-tags-match-list-sublevels nil) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks))) (tags -REFILE/ ((org-agenda-overriding-header Tasks to Archive) (org-agenda-skip-function 'bh/skip-non-archivable-tasks) (org-tags-match-list-sublevels nil)))) |((org-agenda-tag-filter-preset '(+PERSONAL))) |
+| C | Config Project List | ((tags-todo -CANCELLED/! ((org-agenda-overriding-header Config Project List |
+-----
+Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -HOLD-CANCELLED/! ((org-agenda-overriding-header Projects) (org-agenda-skip-function 'bh/skip-non-projects) (org-tags-match-list-sublevels t) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -CANCELLED/!NEXT ((org-agenda-overriding-header (concat Project Next Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function 'bh/skip-projects-and-habits-and-single-tasks) (org-tags-match-list-sublevels t) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(todo-state-down effort-up category-keep)))) (tags-todo -REFILE-CANCELLED-WAITING-HOLD/! ((org-agenda-overriding-header (my/agenda-subtasks-header)) (org-agenda-skip-function 'my/skip-non-project-tasks-unless-locked) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -REFILE-CANCELLED-WAITING-HOLD/! ((org-agenda-overriding-header (concat Standalone Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function 'bh/skip-project-tasks) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -CANCELLED+WAITING|HOLD/! ((org-agenda-overriding-header (concat Waiting and Postponed Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function 'bh/skip-non-tasks) (org-tags-match-list-sublevels nil) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks))) (tags -REFILE/ ((org-agenda-overriding-header Tasks to Archive) (org-agenda-skip-function 'bh/skip-non-archivable-tasks) (org-tags-match-list-sublevels nil)))) |((org-agenda-tag-filter-preset '(+CONFIG))) |
+| c | Config Agenda       | ((agenda  nil) (tags-todo -CANCELLED/! ((org-agenda-overriding-header Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -HOLD-CANCELLED/! ((org-agenda-overriding-header Projects) (org-agenda-skip-function 'bh/skip-non-projects) (org-tags-match-list-sublevels t) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -CANCELLED/!NEXT ((org-agenda-overriding-header (concat Project Next Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function 'bh/skip-projects-and-habits-and-single-tasks) (org-tags-match-list-sublevels t) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(todo-state-down effort-up category-keep)))) (tags-todo -REFILE-CANCELLED-WAITING-HOLD/! ((org-agenda-overriding-header (my/agenda-subtasks-header)) (org-agenda-skip-function 'my/skip-non-project-tasks-unless-locked) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -REFILE-CANCELLED-WAITING-HOLD/! ((org-agenda-overriding-header (concat Standalone Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function 'bh/skip-project-tasks) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -CANCELLED+WAITING  | HOLD/! ((org-agenda-overriding-header (concat Waiting and Postponed Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function 'bh/skip-non-tasks) (org-tags-match-list-sublevels nil) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks))) (tags -REFILE/ ((org-agenda-overriding-header Tasks to Archive) (org-agenda-skip-function 'bh/skip-non-archivable-tasks) (org-tags-match-list-sublevels nil)))) | ((org-agenda-tag-filter-preset '(+CONFIG))) |
+| o | Office Agenda       | ((agenda  nil) (tags-todo -CANCELLED/! ((org-agenda-overriding-header Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -HOLD-CANCELLED/! ((org-agenda-overriding-header Projects) (org-agenda-skip-function 'bh/skip-non-projects) (org-tags-match-list-sublevels 't) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -CANCELLED/!NEXT ((org-agenda-overriding-header (concat Project Next Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function 'bh/skip-projects-and-habits-and-single-tasks) (org-tags-match-list-sublevels t) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(todo-state-down effort-up category-keep)))) (tags-todo -REFILE-CANCELLED-WAITING-HOLD/! ((org-agenda-overriding-header (my/agenda-subtasks-header)) (org-agenda-skip-function 'my/skip-non-project-tasks-unless-locked) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -REFILE-CANCELLED-WAITING-HOLD/! ((org-agenda-overriding-header (concat Standalone Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function 'bh/skip-project-tasks) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -CANCELLED+WAITING | HOLD/! ((org-agenda-overriding-header (concat Waiting and Postponed Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function 'bh/skip-non-tasks) (org-tags-match-list-sublevels nil) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks))) (tags -REFILE/ ((org-agenda-overriding-header Tasks to Archive) (org-agenda-skip-function 'bh/skip-non-archivable-tasks) (org-tags-match-list-sublevels nil)))) | ((org-agenda-tag-filter-preset '(+SEAS)))   |
+| O | Office Project List | ((tags-todo -CANCELLED/! ((org-agenda-overriding-header Office Project List                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |                                             |
+-----
+Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -HOLD-CANCELLED/! ((org-agenda-overriding-header Projects) (org-agenda-skip-function 'bh/skip-non-projects) (org-tags-match-list-sublevels t) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -CANCELLED/!NEXT ((org-agenda-overriding-header (concat Project Next Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function 'bh/skip-projects-and-habits-and-single-tasks) (org-tags-match-list-sublevels t) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(todo-state-down effort-up category-keep)))) (tags-todo -REFILE-CANCELLED-WAITING-HOLD/! ((org-agenda-overriding-header (my/agenda-subtasks-header)) (org-agenda-skip-function 'my/skip-non-project-tasks-unless-locked) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -REFILE-CANCELLED-WAITING-HOLD/! ((org-agenda-overriding-header (my/agenda-standalone-header)) (org-agenda-skip-function 'my/skip-project-tasks-unless-unlocked) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -CANCELLED+WAITING|HOLD/! ((org-agenda-overriding-header (concat Waiting and Postponed Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function 'bh/skip-non-tasks) (org-tags-match-list-sublevels nil) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks))) (tags -REFILE/ ((org-agenda-overriding-header Tasks to Archive) (org-agenda-skip-function 'bh/skip-non-archivable-tasks) (org-tags-match-list-sublevels nil)))) |((org-agenda-tag-filter-preset '(+SEAS))) |
+|   | Agenda         | ((agenda  nil) (tags REFILE ((org-agenda-overriding-header Tasks to Refile) (org-tags-match-list-sublevels nil))) (tags-todo -CANCELLED/! ((org-agenda-overriding-header Stuck Projects) (org-agenda-skip-function 'bh/skip-non-stuck-projects) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -HOLD-CANCELLED/! ((org-agenda-overriding-header Projects) (org-agenda-skip-function 'bh/skip-non-projects) (org-tags-match-list-sublevels t) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -CANCELLED/!NEXT ((org-agenda-overriding-header (concat Project Next Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function 'bh/skip-projects-and-habits-and-single-tasks) (org-tags-match-list-sublevels t) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(todo-state-down effort-up category-keep)))) (tags-todo -REFILE-CANCELLED-WAITING-HOLD/! ((org-agenda-overriding-header (my/agenda-standalone-header)) (org-agenda-skip-function 'my/skip-project-tasks-unless-unlocked) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -REFILE-CANCELLED-WAITING-HOLD/! ((org-agenda-overriding-header (concat Standalone Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function 'bh/skip-project-tasks) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy '(category-keep)))) (tags-todo -CANCELLED+WAITING | HOLD/! ((org-agenda-overriding-header (concat Waiting and Postponed Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function 'bh/skip-non-tasks) (org-tags-match-list-sublevels nil) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks))) (tags -REFILE/ ((org-agenda-overriding-header Tasks to Archive) (org-agenda-skip-function 'bh/skip-non-archivable-tasks) (org-tags-match-list-sublevels nil)))) | nil |
+| W | Show dashboard | (lambda (&rest _) (call-interactively #'my/show-dashboard))                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |     |
+
 
 * ORG Export
 ** SEAS HTML Export
@@ -3803,9 +4109,6 @@ For now just hitting agenda-milestones but color them to stand out
     (message "SEAS CSS reloaded."))
 
 #+end_src
-
-#+RESULTS:
-: my/reload-css
 
 * CALFW
 :PROPERTIES:
@@ -3926,9 +4229,6 @@ For now just hitting agenda-milestones but color them to stand out
   (message "calfw loaded")
 #+END_SRC
 
-#+RESULTS:
-: calfw loaded
-
 ** Calfw Single View
 :PROPERTIES:
 :ID:       8bb050d2-d2a2-4f6b-9b30-633fd433adf8
@@ -3939,9 +4239,6 @@ For now just hitting agenda-milestones but color them to stand out
       (calfw-open-calendar-buffer
        :contents-sources (my/calfw-sources)))
 #+END_SRC
-
-#+RESULTS:
-: my/open-calendar
 
 ** Calfw Quarterly View
 :PROPERTIES:
@@ -4100,9 +4397,6 @@ For now just hitting agenda-milestones but color them to stand out
   (message "calfw-quarterly-refresh loaded")
 #+END_SRC
 
-#+RESULTS:
-: calfw-quarterly-refresh loaded
-
 * Finance (Ledger)
 ** Ledger-Mode
 :PROPERTIES:
@@ -4146,9 +4440,6 @@ For now just hitting agenda-milestones but color them to stand out
 
 
 #+END_SRC
-
-#+RESULTS:
-: my/ledger-journal
 ** Capture templates
 :PROPERTIES:
 :ID:       e77d7492-be27-4473-9af5-71dc1aec857e
@@ -4374,9 +4665,6 @@ For now just hitting agenda-milestones but color them to stand out
         (message "Cancelled, nothing written."))))
 
 #+END_SRC
-
-#+RESULTS:
-: my/ledger-add
 :PROPERTIES:
 :CATEGORY: Task
 :END:
@@ -4522,9 +4810,6 @@ For now just hitting agenda-milestones but color them to stand out
 
 #+END_SRC
 
-#+RESULTS:
-: my/tramp-cleanup-all-connections
-
 * IDE Setup
 
 ** Project.el
@@ -4559,9 +4844,6 @@ For now just hitting agenda-milestones but color them to stand out
       (vterm)))
 #+END_SRC
 
-#+RESULTS:
-: my/project-vterm
-
 ** Magit
 :PROPERTIES:
 :ID:       4becc3d1-48ee-4d51-83e1-80cf546efed1
@@ -4580,9 +4862,6 @@ For now just hitting agenda-milestones but color them to stand out
 
 #+end_src
 
-#+RESULTS:
-: ~/Projects/
-
 ** Git Gutter
 :PROPERTIES:
 :ID:       3d59ec80-9623-4101-9ec2-7a71a4a84204
@@ -4599,9 +4878,6 @@ For now just hitting agenda-milestones but color them to stand out
     (define-fringe-bitmap 'git-gutter-fr:deleted [128 192 224 240] nil nil 'bottom))
 
 #+END_SRC
-
-#+RESULTS:
-: t
 
 ** Forge
 :PROPERTIES:
@@ -4663,9 +4939,6 @@ For now just hitting agenda-milestones but color them to stand out
 
 #+end_src
 
-#+RESULTS:
-| rainbow-delimiters-mode |
-
 ** Electric Pair mode
 :PROPERTIES:
 :ID:       eaf71d0b-8499-4f14-a68e-2db979d1b803
@@ -4677,10 +4950,6 @@ For now just hitting agenda-milestones but color them to stand out
 
 
 #+END_SRC
-
-#+RESULTS:
-| electric-indent-mode | electric-pair-mode | my-display-numbers-hook  | rainbow-delimiters-mode |
-|                      |                    |                                                  |
 ** Paredit
 :PROPERTIES:
 :ID:       0717566a-30a5-4bda-944d-f5e02c7909f9
@@ -4719,8 +4988,6 @@ For now just hitting agenda-milestones but color them to stand out
 
 
 #+end_src
-
-#+RESULTS:
 ** subword mode
 :PROPERTIES:
 :ID:       1ec8be4e-2e68-457d-9e6e-dcd148dba301
@@ -4729,9 +4996,6 @@ For now just hitting agenda-milestones but color them to stand out
   ;;removed for symbol searching
   ;; (add-hook 'prog-mode-hook 'subword-mode)
 #+END_SRC
-
-#+RESULTS:
-| subword-mode | my-display-numbers-hook | electric-indent-mode | electric-pair-mode | rainbow-delimiters-mode | git-gutter-mode |
 
 ** Commenting
 :PROPERTIES:
@@ -4753,9 +5017,6 @@ For now just hitting agenda-milestones but color them to stand out
 
   (global-set-key (kbd "C-c s m")  'minimap-mode)
 #+END_SRC
-
-#+RESULTS:
-: minimap-mode
 
 ** Languages
 *** HTML & CSS
@@ -4794,9 +5055,6 @@ http://xahlee.info/emacs/emacs/xah-css-mode.html
   (setq web-mode-enable-engine-detection t)
 
 #+END_SRC
-
-#+RESULTS:
-: t
 **** emmet-mode
 :PROPERTIES:
 :ID:       a2f9cdf2-4e11-4b8d-b3c0-bc39834658d2
@@ -4827,9 +5085,6 @@ http://xahlee.info/emacs/emacs/xah-css-mode.html
 
 
 #+END_SRC
-
-#+RESULTS:
-| lambda | nil | (let ((web-mode-cur-language (web-mode-language-at-pos))) (if (string= web-mode-cur-language php) (yas-activate-extra-mode 'php-mode) (yas-deactivate-extra-mode 'php-mode)) (if (string= web-mode-cur-language css) (setq emmet-use-css-transform t) (setq emmet-use-css-transform nil))) |
 **** css-mode
 :PROPERTIES:
 :ID:       d5afb792-1a3f-48c1-970c-39b73a1d947a
@@ -4890,9 +5145,6 @@ http://xahlee.info/emacs/emacs/xah-css-mode.html
 
 
 #+end_src
-
-#+RESULTS:
-: close
 *** TypeScript
 :PROPERTIES:
 :ID:       faa395e4-1208-4514-b629-9e5662caff8b
@@ -4989,8 +5241,6 @@ Following setup from here: https://www.chadstovern.com/javascript-in-emacs-revis
 
 #+END_SRC
 
-#+RESULTS:
-
 *** Ligatures
 :PROPERTIES:
 :ID:       cc4f329c-d456-4869-90dd-ef49ef1a4a21
@@ -5025,9 +5275,6 @@ Following setup from here: https://www.chadstovern.com/javascript-in-emacs-revis
     (global-ligature-mode t))
 #+END_SRC
 
-#+RESULTS:
-: t
-
 *** Haxe
 :PROPERTIES:
 :ID:       cf8c4af6-d044-429d-8c50-2d583063be07
@@ -5053,8 +5300,6 @@ Following setup from here: https://www.chadstovern.com/javascript-in-emacs-revis
     (battle-haxe-immediate-completion nil "Toggle this if you want to immediately trigger completion when typing '.' and other relevant prefixes."))
 #+END_SRC
 
-#+RESULTS:
-
 *** elisp
 :PROPERTIES:
 :ID:       dd6871d4-0db6-4cd2-bbfd-c72f1094a580
@@ -5078,9 +5323,6 @@ Following setup from here: https://www.chadstovern.com/javascript-in-emacs-revis
 
   (bind-key "s-<return>" 'my/sexp-newline)
 #+END_SRC
-
-#+RESULTS:
-: my/sexp-newline
 
 ** Better Completions
 :PROPERTIES:
@@ -5110,9 +5352,6 @@ Following setup from here: https://www.chadstovern.com/javascript-in-emacs-revis
   (add-hook 'web-mode-hook 'my-web-mode-hook)
 
 #+end_src
-
-#+RESULTS:
-| my-web-mode-hook | emmet-mode |
 
 ** Debugging
 Dap mode here: https://www.youtube.com/watch?v=0bilcQVSlbM
@@ -5152,9 +5391,6 @@ A section for my personal macors functions and keybinds
 
   (global-set-key (kbd "C-M-=") 'dabbrev-completion)
 #+END_SRC
-
-#+RESULTS:
-: dabbrev-completion
 ** Emdash
 :PROPERTIES:
 :ID:       7581efc3-ee0b-4d7a-9637-f74d7daa4167
@@ -5167,9 +5403,6 @@ A section for my personal macors functions and keybinds
 
   (global-set-key (kbd "H--") #'my/insert-em-dash)
 #+END_SRC
-
-#+RESULTS:
-: my/insert-em-dash
 
 ** next-tag - "C-x t" - Move inside the next tag set in web-mode
 :PROPERTIES:
@@ -5197,11 +5430,7 @@ A section for my personal macors functions and keybinds
 
 #+END_SRC
 
-#+RESULTS:
-: undo
 
-#+RESULTS::
-: next-tag
 ** Window Movement
 Managing Windows, buffers etc
 *** Window Movement Keymap
@@ -5278,15 +5507,11 @@ Managing Windows, buffers etc
 
 #+END_SRC
 
-#+RESULTS:
-: clone-indirect-buffer-other-window
 
 
 
 
 
-#+RESULTS:
-: bookmark-jump
 *** Homebrew Harpoon
 :PROPERTIES:
 :ID:       bb9c239f-818d-4409-ad8f-16b9397bde82
@@ -5408,12 +5633,8 @@ Managing Windows, buffers etc
 
 #+END_SRC
 
-#+RESULTS:
-: harpoon-status
 
 
-#+RESULTS:
-: set-harpoon-f
 *** Posframe repositioning
 This code augments the mini-buffer position which uses pos-frame. It does two core things. On my normal/default wide screen setup we move the minibuffer to the left so that we can keep embark commands showing in a right-side buffer and read them.
 
@@ -5553,9 +5774,6 @@ Move the cursor
 
 #+END_SRC
 
-#+RESULTS:
-: wrap-sexp-backward-with-parenthesis
-
 : wrap-sexp-backward-with-parenthesis
 *** Key binding
 :PROPERTIES:
@@ -5588,9 +5806,6 @@ Move the cursor
 
 
 #+End_SRC
-
-#+RESULTS:
-: back-to-indentation
 
 ** Editing Text
 *** Function Definitions
@@ -5644,9 +5859,6 @@ Move the cursor
 
 
 #+END_SRC
-
-#+RESULTS:
-: kill-line-at-point
 *** Keybinds
 :PROPERTIES:
 :ID:       60945c6b-bacd-40f2-aebd-0b78fd9e1c2e
@@ -5662,8 +5874,6 @@ Move the cursor
   (global-set-key (kbd "<f10>") 'ispell)
 
 #+END_SRC
-
-#+RESULTS:
 
 ** Jump to Scratch
 :PROPERTIES:
@@ -5691,9 +5901,6 @@ Move the cursor
 
   (global-set-key (kbd "H-;") #'my/jump-to-scratch)
 #+END_SRC
-
-#+RESULTS:
-: my/jump-to-scratch
 
 ** Load config workspace
 :PROPERTIES:
@@ -5731,9 +5938,6 @@ Move the cursor
   (global-set-key (kbd "M-s-c") #'my/open-config-workspace)
 
 #+END_SRC
-
-#+RESULTS:
-: my/open-config-workspace
 
 ** Keymap backup & restore
 :PROPERTIES:
@@ -5787,9 +5991,6 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 
 
 #+END_SRC
-
-#+RESULTS:
-: narrow-to-page
 
 ** Org Agenda
 *** my/org-agenda-lock
@@ -5874,9 +6075,6 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 
 
 #+END_SRC
-
-#+RESULTS:
-: hydra-insert-rating/body
 ** Section Loaded Message
 :PROPERTIES:
 :ID:       908f9de9-69d0-4d33-8567-990bb00fcd28
@@ -5925,8 +6123,6 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 
 
 #+END_SRC
-#+RESULTS:
-: t
 ** SIngle Dired Buffer
 :PROPERTIES:
 :ID:       b83bb515-fefa-4492-a6f8-991e6d94c399
@@ -5934,8 +6130,6 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 #+BEGIN_SRC emacs-lisp
   ;;  (use-package dired-single)
 #+END_SRC
-
-#+RESULTS:
 
 ** Icons
 :PROPERTIES:
@@ -5966,9 +6160,6 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
   (use-package all-the-icons-dired
     :hook (dired-mode . all-the-icons-dired-mode))
 #+END_SRC
-
-#+RESULTS:
-| my/remote-buffer-setup | all-the-icons-dired-mode |
 
 ** dired-buffer-to-tree
 :PROPERTIES:
@@ -6031,9 +6222,6 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
   ;;  (add-hook 'dired-mode-hook #'my-dired-mode-hook)
 
 #+END_SRC
-
-#+RESULTS:
-: dired-hide-dotfiles-mode
 ** Section Loaded Message
 :PROPERTIES:
 :ID:       0077b2c4-5197-4016-b3a8-77ed64a2acfd
@@ -6072,9 +6260,6 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
   (setq consult-dir-project-list-function #'consult-dir-projectile-dirs)
 
 #+END_SRC
-
-#+RESULTS:
-: consult-dir-projectile-dirs
 ** Zone (screensaver)
 :PROPERTIES:
 :ID:       38a06a4b-d396-4bc7-8da5-ad6fcd506314
@@ -6083,9 +6268,6 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 (require 'zone)
 (zone-when-idle 3000) ;; seconds of idle time before it kicks in
 #+END_SRC
-
-#+RESULTS:
-: [nil 0 3000 0 t zone nil idle 0 nil]
 
 ** Elisp font lock hooks
 :PROPERTIES:
@@ -6099,9 +6281,6 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
   (add-hook 'emacs-lisp-mode-hook #'my/elisp-font-lock-additions)
 #+END_SRC
 
-#+RESULTS:
-| my/elisp-font-lock-additions | paredit-mode |
-
 ** Org Bookmark Heading
 :PROPERTIES:
 :ID:       4db82b34-8b18-4d74-9a73-2b1282c7ddc8
@@ -6111,9 +6290,6 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
   (global-set-key (kbd "C-x r b") 'consult-bookmark)
 
 #+END_SRC
-
-#+RESULTS:
-: consult-bookmark
 
 ** Org-Drill Fix
 :PROPERTIES:
@@ -6127,9 +6303,6 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
      time))
 #+END_SRC
 
-#+RESULTS:
-: org-drill-time-to-inactive-org-timestamp
-
 ** Adding to path for empv
 :PROPERTIES:
 :ID:       de9cceed-47a7-4fb5-b851-3ecc12ea1ba2
@@ -6138,9 +6311,6 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
   (setenv "PATH" (concat "/home/tyler/miniconda3/bin:" (getenv "PATH")))
   (add-to-list 'exec-path "/home/tyler/miniconda3/bin")
 #+END_SRC
-
-#+RESULTS:
-| /home/tyler/miniconda3/bin | /home/tyler/.local/bin | /usr/local/sbin | /usr/local/bin | /usr/sbin | /usr/bin | /sbin | /bin | /usr/games | /usr/local/games | /snap/bin | /snap/bin | /snap/emacs/3690/usr/bin | /snap/emacs/current/usr/libexec/emacs/30.2/x86_64-pc-linux-gnu |
 
 ** Dictionary
 :PROPERTIES:
@@ -6154,9 +6324,6 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 
   (global-set-key (kbd "C-c d") #'dictionary-lookup-definition)
 #+END_SRC
-
-#+RESULTS:
-: dictionary-lookup-definition
 
 ** Directory Tree Stamper
 :PROPERTIES:
@@ -6208,8 +6375,6 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 
 #+END_SRC
 
-#+RESULTS:
-
 ** Mixed Pitch Mode toggler
 :PROPERTIES:
 :ID:       0f64e0bd-c5ac-4130-b034-c5821c3d98aa
@@ -6235,8 +6400,6 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
     :after org-clock)
 
 #+END_SRC
-
-#+RESULTS:
 
 ** Section Loaded Message
 :PROPERTIES:
@@ -6348,9 +6511,6 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
       (message "Enqueued: %s" (elfeed-entry-title elfeed-show-entry)))))
 
 #+END_SRC
-
-#+RESULTS:
-: #[nil ((let* ((video-id (elfeed-tube--entry-video-id elfeed-show-entry)) (url (concat "https://youtube.com/watch?v=" video-id))) (mpv--enqueue `("loadfile" ,url "append") #'ignore) (message "Enqueued: %s" (elfeed-entry-title elfeed-show-entry)))) nil nil nil nil]
 
 * Load Music
 :PROPERTIES:
@@ -6497,9 +6657,6 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 
 #+END_SRC
 
-#+RESULTS:
-: music section loaded
-
 * Xah Lee Implementations
 Tried out Xah-fly-keys and didn't love his command mode but he has some really good helper rowing those below
 ** Function definitions
@@ -6552,9 +6709,6 @@ Tried out Xah-fly-keys and didn't love his command mode but he has some really g
         (end-of-line))))
 #+END_SRC
 
-#+RESULTS:
-: xah-end-of-line-or-block
-
 ** Bindings
 :PROPERTIES:
 :ID:       6339b7d2-fcb4-4f54-aede-0b8c041fe43d
@@ -6563,9 +6717,6 @@ Tried out Xah-fly-keys and didn't love his command mode but he has some really g
   (define-key global-map (kbd "M-p") 'xah-beginning-of-line-or-block)
   (define-key global-map (kbd "M-n") 'xah-end-of-line-or-block)
 #+END_SRC
-
-#+RESULTS:
-: xah-end-of-line-or-block
 
 ** Section Loaded Message
 :PROPERTIES:
@@ -6741,9 +6892,6 @@ org-agenda-files, and project.el — all of which need to be initialized first.
 
 #+END_SRC
 
-#+RESULTS:
-: #[nil ((get-buffer-create "*dashboard*")) nil]
-
 * Setup final org settings
 :PROPERTIES:
 :ID:       b5c6dac1-e9af-42a0-b392-24cab22097c9
@@ -6770,9 +6918,6 @@ org-agenda-files, and project.el — all of which need to be initialized first.
 
 
 #+END_SRC
-
-#+RESULTS:
-: my/org-agenda-set-category-task
 ** default frame settings
 :PROPERTIES:
 :ID:       aaef7e05-2e3d-4f3b-8165-5f7ff558689b
@@ -6786,18 +6931,12 @@ org-agenda-files, and project.el — all of which need to be initialized first.
                               (fullscreen . maximized)))
 #+END_SRC
 
-#+RESULTS:
-: ((vertical-scroll-bars) (left-fringe . 10) (right-fringe . 10) (fullscreen . maximized))
-
 #+BEGIN_SRC plantuml :filphoe test.png
   @startuml
   :user: -right-> (Right)
   :user: -up-> (Up)
   @enduml
 #+END_SRC
-
-#+RESULTS:
-[[file:test.png]]
 ** Load Hyper
 :PROPERTIES:
 :ID:       9f05f700-407e-41c4-b2ba-f35e9234c774
@@ -6818,8 +6957,6 @@ org-agenda-files, and project.el — all of which need to be initialized first.
     (global-set-key (kbd "s-<f10>") 'my/enable-hyper-key)
 
 #+END_SRC
-#+RESULTS:
-: my/enable-hyper-key
 ** Load keymap
 :PROPERTIES:
 :ID:       a8938bc9-b5f7-4024-8790-2a7db66782fb
@@ -6827,9 +6964,6 @@ org-agenda-files, and project.el — all of which need to be initialized first.
 #+BEGIN_SRC emacs-lisp
   (my/backup-global-keymap)
 #+END_SRC
-
-#+RESULTS:
-: Global keymap backed up.
 
 ** Section Loaded Message
 :PROPERTIES:
