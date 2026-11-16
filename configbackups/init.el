@@ -2950,6 +2950,11 @@ KIND is \"show\", \"run\" or \"other\"."
                                         ;      (todo "TODO")
                                         ;      (tags "GAMEDESIGN")))
 
+
+(with-eval-after-load 'org-ql-view
+(advice-add 'org-ql-view--link-store :before-while
+            (lambda (&rest _) (local-variable-p 'org-ql-view-query))))
+
 (message "org-ql loaded")
 
 ;;;; Show dashboard (org-ql + super-agenda)
