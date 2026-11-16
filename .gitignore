@@ -2,3 +2,4 @@
 /configbackups/lisp/marginalia.org
 /configbackups/*.html
 *.exe
+*.org_archive
