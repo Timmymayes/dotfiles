@@ -1248,6 +1248,29 @@
 
 (global-set-key (kbd "C-c i g") #'my/goals-insert-link)
 
+;; Asset tracking: complete property names and values
+
+;; NOTE: Renaming an ASSET_TYPE value
+;; Old headings keep the old string, and the report treats each string as
+;; its own type. To rename everywhere:
+;;   1. C-x d ~/Orgfiles/ RET
+;;   2. % m  \.org\(_archive\)?$  RET     ; mark .org and .org_archive files
+;;   3. Q  :ASSET_TYPE: +old-name$  RET  :ASSET_TYPE: new-name  RET
+;;      y = replace, n = skip, ! = replace all in this file
+;;   4. C-x s  then  !                   ; save all modified buffers
+;;   5. Update ASSET_TYPE_ALL below, then restart Emacs
+;;      (add-to-list won't overwrite an existing key on re-eval)
+;; Archives are included on purpose: ty/clock-by-asset-type reads them too.
+
+
+(with-eval-after-load 'org
+  (add-to-list 'org-default-properties "ASSET_TYPE")
+  (add-to-list 'org-default-properties "CLIENT_REVISIONS")
+  (add-to-list 'org-global-properties
+               '("ASSET_TYPE_ALL" . "opening-video lower-thirds title-slide logo background transition walk-in countdown look swipe save-the-date signage-board edited-video :ETC"))
+  (add-to-list 'org-global-properties
+               '("CLIENT_REVISIONS_ALL" . "0 1 2 3 4 5 6 7 8 9")))
+
 ;; Jumping Macro Definitions
 
 (fset 'my/org-agenda-jump-to-stuck-projects
@@ -2351,330 +2374,192 @@ Replaces the norang month-string check with a context-aware, day-based rule."
 (with-eval-after-load 'org
   (my/context-registry-load))
 
-;;;; Context capture: register a new context in seas-contexts.org
-;; Prompts: group (existing or new), tag, NAME, STATUS. Files the context as
-;; the last H2 under its group, then saves the registry file (which reloads
-;; `my/context-registry' via the save hook).
+;;;; New context / show / run command
+;; M-x my/new-context: one entry point for registering a context and, for
+;; shows and runs, creating its card in SEAS.org under * Tasks.
+;;   show  -> registry entry + level-2 show card (:GROUP:TAG:) with skeleton
+;;   run   -> registry entry + run card under the client heading (:TAG:)
+;;   other -> registry entry only (IT/CORP projects etc.)
 
-(defvar my/context-capture-key "tc"
-  "Key for the new-context capture template.")
+(defvar my/new-context-cards-file "~/Orgfiles/SEAS.org"
+  "File holding show and run cards.")
 
-(defvar my/context--capture-group nil
-  "Group chosen during the current context capture.")
+(defvar my/new-context-cards-heading "Tasks"
+  "Level-1 heading in `my/new-context-cards-file' that holds show cards.")
 
-(defun my/context--group-names ()
+(defun my/new-context--groups ()
   "Registered group (H1) tags, sorted."
   (let (groups)
     (maphash (lambda (tag plist)
-               (when (eq (plist-get plist :kind) 'group)
-                 (push tag groups)))
+               (when (eq (plist-get plist :kind) 'group) (push tag groups)))
              my/context-registry)
     (sort groups #'string<)))
 
-(defun my/context--read-tag (group-type)
-  "Read and validate a new context tag. GROUP-TYPE is \"client\" or \"area\"."
-  (let (tag done)
-    (while (not done)
-      (setq tag (upcase (string-trim (read-string "Context tag (e.g. PXTA27): " tag))))
-      (cond
-       ((not (string-match-p "\\`[A-Z0-9_]+\\'" tag))
-        (message "Use only letters, digits and _ (no hyphens or spaces)") (sit-for 1.5))
-       ((gethash tag my/context-registry)
-        (message "%s is already registered" tag) (sit-for 1.5))
-       ((and (equal group-type "client")
-             (not (string-match-p "[0-9][0-9]\\'" tag))
-             (not (y-or-n-p (format "%s has no 2-digit year suffix (shows usually do, e.g. PXTA27). Keep it? " tag)))))
-       ((and (string-match-p "[0-9][0-9]\\'" tag)
-             (string-match-p "[0-9]_?[0-9][0-9]\\'" tag)
-             (not (string-match-p "_[0-9][0-9]\\'" tag))
-             (not (y-or-n-p (format "%s: code ends in a digit before the year; convention is CODE_YY (e.g. R810_27). Keep it? " tag)))))
-       (t (setq done t))))
-    tag))
+(defun my/new-context--read-tag (kind group-type initial)
+  "Read a context tag for KIND. Returns (TAG . EXISTING-PLIST-OR-NIL).
+Shows may reuse an already registered context (card only)."
+  (let (tag result)
+    (while (not result)
+      (setq tag (upcase (string-trim (read-string "Tag (e.g. PXTA27): " (or tag initial)))))
+      (let ((existing (gethash tag my/context-registry)))
+        (cond
+         ((not (string-match-p "\\`[A-Z0-9_]+\\'" tag))
+          (message "Use only letters, digits and _ (no hyphens or spaces)") (sit-for 1.5))
+         ((and existing (eq (plist-get existing :kind) 'group))
+          (message "%s is a group, not a context" tag) (sit-for 1.5))
+         ((and existing (not (equal kind "show")))
+          (message "%s is already registered" tag) (sit-for 1.5))
+         ((and existing
+               (y-or-n-p (format "%s is already registered. Create its show card only? " tag)))
+          (setq result (cons tag existing)))
+         (existing nil)
+         ((and (equal group-type "client")
+               (not (string-match-p "[0-9][0-9]\\'" tag))
+               (not (y-or-n-p (format "%s has no 2-digit year suffix (e.g. PXTA27). Keep it? " tag)))))
+         ((and (string-match-p "[0-9][0-9][0-9]\\'" tag)
+               (not (y-or-n-p (format "%s: code ends in a digit before the year; convention is CODE_YY (e.g. R810_27). Keep it? " tag)))))
+         (t (setq result (cons tag nil))))))
+    result))
 
-(defun my/context-capture-template ()
-  "Prompt for the new context and return its capture template."
+(defun my/new-context--tidy-after ()
+  "Collapse the whitespace after point to a single blank line (none at end of buffer)."
+  (let ((p (point)))
+    (skip-chars-forward " \t\n")
+    (delete-region p (point))
+    (unless (eobp) (insert "\n"))))
+
+(defun my/new-context--register (group group-type group-name tag name status)
+  "Add TAG under GROUP in the registry file (creating GROUP if needed), then save."
+  (with-current-buffer (find-file-noselect (expand-file-name (car my/context-registry-files)))
+    (let ((had-columns (bound-and-true-p org-columns-overlays)))
+      (when had-columns (org-columns-remove-overlays))
+      (org-with-wide-buffer
+       (goto-char (point-min))
+       (if (re-search-forward (format "^\\* %s[ \t]*$" (regexp-quote group)) nil t)
+           (progn (org-end-of-subtree t t)
+                  (skip-chars-backward " \t\n")
+                  (end-of-line)
+                  (insert "\n"))
+         (goto-char (point-max))
+         (skip-chars-backward " \t\n")
+         (delete-region (point) (point-max))
+         (insert (format "\n\n* %s\n:PROPERTIES:\n:TYPE:     %s\n:NAME:     %s\n:END:\n"
+                         group group-type (or group-name ""))))
+       (insert (format "** %s\n:PROPERTIES:\n:NAME:     %s\n:STATUS:   %s\n:END:\n"
+                       tag name status))
+       (my/new-context--tidy-after))
+      (save-buffer)
+      (when had-columns (save-excursion (org-columns t))))))
+
+(defun my/new-context--cards-end ()
+  "Move to the end of the cards heading subtree in the current buffer."
+  (goto-char (point-min))
+  (unless (re-search-forward (format "^\\* %s\\b" (regexp-quote my/new-context-cards-heading)) nil t)
+    (user-error "No \"* %s\" heading in %s" my/new-context-cards-heading my/new-context-cards-file))
+  (org-end-of-subtree t t)
+  (skip-chars-backward " \t\n")
+  (end-of-line)
+  (insert "\n\n"))
+
+(defun my/new-context--insert-show-card (group tag name venue dates)
+  "Insert a show card at the end of the cards heading; return its position."
+  (my/new-context--cards-end)
+  (let ((start (point)))
+    (insert "** " name "\n")
+    (when (or venue dates)
+      (insert ":PROPERTIES:\n")
+      (when venue (insert ":VENUE:      " venue "\n"))
+      (when dates (insert ":SHOW_DATES: " dates "\n"))
+      (insert ":END:\n"))
+    (insert "*** Overview\n*** Stakeholders\n*** Protocols & Lessons\n"
+            "*** Milestones and Projects\n"
+            "**** TODO " name " Content\n:PROPERTIES:\n:CATEGORY: Proj\n:END:\n"
+            (format-time-string (org-time-stamp-format t t)) "\n")
+    (my/new-context--tidy-after)
+    (goto-char start)
+    (org-set-tags (list group tag))
+    start))
+
+(defun my/new-context--insert-run-card (group tag name)
+  "Insert a run card as the last child of GROUP's client heading under the
+cards heading (creating the client heading if needed); return its position."
+  (goto-char (point-min))
+  (re-search-forward (format "^\\* %s\\b" (regexp-quote my/new-context-cards-heading)))
+  (let ((tasks-end (save-excursion (org-end-of-subtree t t)))
+        client)
+    (while (and (not client)
+                (re-search-forward "^\\*\\* " tasks-end t))
+      (when (and (null (org-get-todo-state))
+                 (member group (org-get-tags nil t)))
+        (setq client (line-beginning-position))))
+    (if client
+        (progn (goto-char client)
+               (org-end-of-subtree t t)
+               (skip-chars-backward " \t\n")
+               (end-of-line)
+               (insert "\n"))
+      (my/new-context--cards-end)
+      (let ((pos (point)))
+        (insert "** " group "\n")
+        (goto-char pos) (org-set-tags (list group))
+        (end-of-line) (insert "\n")))
+    (let ((start (point)))
+      (insert "*** " name "\n**** Kickoff & Planning\n**** Run Retro\n")
+      (my/new-context--tidy-after)
+      (goto-char start)
+      (org-set-tags (list tag))
+      start)))
+
+(defun my/new-context (kind)
+  "Register a new context and, for shows and runs, create its card.
+KIND is \"show\", \"run\" or \"other\"."
+  (interactive
+   (list (completing-read "New: " '("show" "run" "other") nil t nil nil "show")))
   (let* ((group (upcase (string-trim
-                         (completing-read "Group (client/area, or a new one): "
-                                          (my/context--group-names)))))
-         (existing (gethash group my/context-registry))
-         (group-type (or (plist-get existing :type)
+                         (completing-read "Client/area group (or a new one): "
+                                          (my/new-context--groups)))))
+         (_ (unless (string-match-p "\\`[A-Z0-9_]+\\'" group)
+              (user-error "Group tag %s: use only letters, digits and _" group)))
+         (gplist (gethash group my/context-registry))
+         (group-type (or (plist-get gplist :type)
                          (completing-read (format "New group %s type: " group)
                                           '("client" "area") nil t)))
-         (group-name (unless existing
-                       (read-string (format "Full name for %s: " group))))
-         (tag (my/context--read-tag group-type))
-         (name (read-string (format "NAME for %s: " tag)))
-         (status (completing-read "STATUS: " my/context-valid-statuses nil t nil nil "active")))
-    (unless (string-match-p "\\`[A-Z0-9_]+\\'" group)
-      (user-error "Group tag %s: use only letters, digits and _" group))
-    (setq my/context--capture-group (list group group-type group-name))
-    (format "* %s\n:PROPERTIES:\n:NAME:     %s\n:STATUS:   %s\n:END:\n" tag name status)))
-
-(defvar my/context--capture-had-columns nil
-  "Non-nil when column view was on in the registry buffer before capture.")
-
-(defun my/context-capture-target ()
-  "Move point to the chosen group's H1, creating the group if needed.
-Column view overlays make the buffer read-only, so turn them off first
-\(`my/context-capture-save' turns them back on)."
-  (setq my/context--capture-had-columns (bound-and-true-p org-columns-overlays))
-  (when my/context--capture-had-columns
-    (org-columns-remove-overlays))
-  (pcase-let ((`(,group ,type ,name) my/context--capture-group))
-    (goto-char (point-min))
-    (unless (re-search-forward (format "^\\* %s[ \t]*$" (regexp-quote group)) nil t)
-      (goto-char (point-max))
-      (skip-chars-backward " \t\n")
-      (delete-region (point) (point-max))
-      (insert (format "\n\n* %s\n:PROPERTIES:\n:TYPE:     %s\n:NAME:     %s\n:END:\n"
-                      group type (or name ""))))
-    (goto-char (point-min))
-    (re-search-forward (format "^\\* %s[ \t]*$" (regexp-quote group)))
-    (beginning-of-line)))
-
-(defun my/context-capture-save ()
-  "Save the registry file after a context capture (triggers registry reload).
-Restores column view if it was on before the capture."
-  (let ((buf (find-buffer-visiting (expand-file-name (car my/context-registry-files)))))
-    (when buf
-      (with-current-buffer buf
-        (when (buffer-modified-p) (save-buffer))
-        (when my/context--capture-had-columns
-          (setq my/context--capture-had-columns nil)
-          (save-excursion (org-columns t)))))))
-
-(with-eval-after-load 'org-capture
-  (setq org-capture-templates
-        (cl-remove my/context-capture-key org-capture-templates
-                   :key #'car :test #'equal))
-  (add-to-list 'org-capture-templates
-               `(,my/context-capture-key "New context (registry)" entry
-					 (file+function ,(car my/context-registry-files) my/context-capture-target)
-					 (function my/context-capture-template)
-					 :immediate-finish t
-					 :empty-lines-after 1
-					 :after-finalize my/context-capture-save)
-               t))
-
-(remove-hook 'org-agenda-finalize-hook #'my/agenda-align-tags-right)
-
-(defvar my/agenda-tags-right-margin 2
-  "Columns of breathing room between the tags and the window's right edge.")
-
-(defun my/agenda-align-tags-right ()
-  "Right-align agenda tags using their real rendered pixel width, so
-org-modern tag boxes, icons and mixed fonts line up exactly. Recomputed
-on every redisplay, so it follows window splits and resizes."
-  (save-excursion
-    (goto-char (point-min))
-    (let ((inhibit-read-only t)
-          (margin (* my/agenda-tags-right-margin (frame-char-width))))
-      (while (re-search-forward
-              "\\([ \t]+\\)\\(:[[:alnum:]_@#%:]+:\\)[ \t]*$" nil t)
-        (let* ((gap-beg (match-beginning 1))
-               (gap-end (match-end 1))
-               (tags (buffer-substring (match-beginning 2) (line-end-position)))
-               (px (+ (string-pixel-width tags) margin)))
-          (put-text-property gap-beg gap-end
-                             'display `(space :align-to (- right (,px)))))))))
-
-;; depth 90: run after org-modern has styled the tags, so we measure the boxes
-(add-hook 'org-agenda-finalize-hook #'my/agenda-align-tags-right 90)
-
-(defvar my/agenda-milestone-whole-line nil
-  "When non-nil, extend the milestone text face to end of line (tags included).")
-
-(defvar my/agenda-milestone-prefix-face `(:foreground ,nord-green :weight bold)
-  "Face for the icon and category label of Milestone agenda lines.")
-
-(defvar my/agenda-milestone-face `(:foreground ,nord-orange :weight bold)
-  "Face for the rest of Milestone agenda lines (heading text onward).")
-
-(defun my/agenda-color-milestones ()
-  "Color Milestone agenda lines: prefix (icon, category) and the rest separately."
-  (save-excursion
-    (goto-char (point-min))
-    (let ((inhibit-read-only t))
-      (while (not (eobp))
-        (when (equal (get-text-property (point) 'org-category) "Milestone")
-          (let* ((bol (line-beginning-position))
-                 (eol (line-end-position))
-                 (marker (org-get-at-bol 'org-hd-marker))
-                 (text (and marker
-                            (org-with-point-at marker
-                              (substring-no-properties (org-get-heading t t t t))))))
-            (if (and text (search-forward text eol t))
-                (progn
-                  (add-face-text-property bol (match-beginning 0) my/agenda-milestone-prefix-face)
-                  (add-face-text-property (match-beginning 0)
-                                          (if my/agenda-milestone-whole-line eol (match-end 0))
-                                          my/agenda-milestone-face))
-              (add-face-text-property bol eol my/agenda-milestone-face))))
-        (forward-line 1)))))
-
-(add-hook 'org-agenda-finalize-hook #'my/agenda-color-milestones)
-
-(set-fontset-font t '(#x25A0 . #x25FF) "Segoe UI Symbol")
-
-(use-package org-modern
-  :hook (org-mode . org-modern-mode)
-  :config
-  (global-org-modern-mode)
-  (setq org-modern-star 'replace
-  	org-modern-cycle-stars nil  ;; level 6+ all reuse the last pair below, not cycle back to pair 1
-	org-modern-replace-stars
-	'(
-	  "◈"    ;; level 1 — white diamond containing black small diamond
-	  "◇"    ;; level 2 — white diamond
-	  "■"    ;; level 3 — black square
-	  "□"    ;; level 4 — white square
-	  "▪"    ;; level 5 — black small square
-	  "◌")  ;; level 6+ — dotted circle (reused for all deeper levels)
-
-	
-	org-modern-table nil    
-	org-modern-list '((?- . "•") (?+ . "◦") (?* . "▸"))
-	org-modern-checkbox nil ;; keep default checkboxes unless you want to style them
-	org-modern-tag t
-	org-modern-priority t
-	org-modern-todo t
-	org-modern-timestamp t)
-  (setq org-modern-todo-faces
-	'(("TODO"      . (:background "#BF616A" :foreground "white"))
-    	  ("NEXT"      . (:background "#81A1C1" :foreground "white"))
-    	  ("DONE"      . (:background "#A3BE8C" :foreground "white"))
-    	  ("WAITING"   . (:background "#D08770" :foreground "white"))
-    	  ("HOLD"      . (:background "#B48EAD" :foreground "white"))
-    	  ("CANCELLED" . (:background "#A3BE8C" :foreground "white"))
-    	  ("MEETING"   . (:background "#A3BE8C" :foreground "white"))
-    	  ("PHONE"     . (:background "#A3BE8C" :foreground "white"))))
-  )
-
-
-;; still need to suppress line numbers in org
-(dolist (mode '(org-mode-hook))
-  (add-hook mode (lambda () (display-line-numbers-mode 0))))
-
-;; This is needed as of Org 9.2
-                                        ;  (require 'org-tempo)
-                                        ;  (with-eval-after-load 'org-tempo
-
-
-
-;; C-C C-, to use a structure template
-(add-to-list 'org-structure-template-alist '("sh" . "src shell"))
-(add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp")) 
-(add-to-list 'org-structure-template-alist '("py" . "src python"))
-(add-to-list 'org-structure-template-alist '("jsx" . "src jsx"))
-
-(load "org-agenda-category-icons")
-(org-agenda-category-icons!
-
- :material
- (repeat Recurring)
- (group Meeting)
- (cake Birthday)
- (cake Anniversary)
- (event Event)
- (web Website)
- (people Meeting)
-
-
- :octicon
- (tools Habit)
- (milestone Milestone)
-
- :faicon
- (cogs Config)
- (book Lexicon)
- (check-circle Task)
- (code Odin)
- (list-ul Project)
- (list-ul Proj)
- (phone Phone)
- (car Vehicle)
- (plus-square Health)
- (pencil-square-o Note)
- (exclamation-circle Reminder)
- (flag Holiday)
- (info Note)
- (star Goals)
- (star Goal)
- (gift Reward)
- (folder-open Refile)
- (map-marker Review)
- (archive Archive))
-
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((emacs-lisp .t )
-   (js .t)
-   (shell . t)
-   (dot . t)
-   (gnuplot . t)
-   (plantuml . t)
-   (python .t)))
-
-;;auto tangle my emacs config file
-(defun my/mirror-tangled-files-to-dotfiles (&rest _)
-  "Copy the tangled early-init.el/init.el into the dotfiles repo's
- configbackups folder, since ~/.emacs.d isn't itself git-tracked.
- Fires after ANY org-babel-tangle call, not just save-triggered ones."
-  (dolist (fname '("init.el" "early-init.el"))
-    (let ((src (expand-file-name fname "~/.emacs.d")))
-      (when (file-exists-p src)
-        (copy-file src
-                   (expand-file-name (concat "configbackups/" fname) "~/dotfiles")
-                   t)))))
-(advice-add 'org-babel-tangle :after #'my/mirror-tangled-files-to-dotfiles)
-
-(defun my/org-babel-tangle-config()
-  (when (string-equal (buffer-file-name)
-                      (expand-file-name "~/dotfiles/configbackups/main-config.org"))
-    ;; dynamic scoping
-    (let ((org-confirm-babel-evaluate nil))
-      (org-babel-tangle))))
-(add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'my/org-babel-tangle-config)))
-(message "Tangling enabled")
-
-;; ;;auto tangle my emacs config file
-;; (defun my/mirror-tangled-files-to-dotfiles ()
-;;   "Copy the tangled early-init.el/init.el into the dotfiles repo's
-;; configbackups folder, since ~/.emacs.d isn't itself git-tracked.
-;; Historically a manual copy; now happens automatically on every tangle."
-;;   (dolist (fname '("init.el" "early-init.el"))
-;;     (let ((src (expand-file-name fname "~/.emacs.d")))
-;;       (when (file-exists-p src)
-;;         (copy-file src
-;;                    (expand-file-name (concat "configbackups/" fname) "~/dotfiles")
-;;                    t))))) ;; t = overwrite without confirmation
-
-;; (defun my/org-babel-tangle-config()
-;;   (when (string-equal (buffer-file-name)
-;;                       (expand-file-name "~/dotfiles/configbackups/main-config.org"))
-;;     ;; dynamic scoping
-;;     (let ((org-confirm-babel-evaluate nil))
-;;       (org-babel-tangle)
-;;       (my/mirror-tangled-files-to-dotfiles))))
-;; (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'my/org-babel-tangle-config)))
-;; (message "Tangling enabled")
-
-;; (defun org-mode-visual-fill()
-;;   (setq visual-fill-column-width 110 visual-fill-column-center-text t)
-;;   (visual-fill-column-mode 1))
-
-
-;; (use-package visual-fill-column
-;;   :hook (org-mode . org-mode-visual-fill))
-
-
-(use-package olivetti
-  :hook ((org-mode . olivetti-mode)
-	 (elfeed-show-mode . olivetti-mode))
-  :custom
-  (olivetti-body-width 140))
-
-(setq org-clock-sound "~/Orgfiles/Kids_cheering.wav")
+         (group-name (unless gplist (read-string (format "Full name for %s: " group))))
+         (tag+old (my/new-context--read-tag kind group-type (and (equal kind "run") group)))
+         (tag (car tag+old))
+         (old (cdr tag+old))
+         (name (or (and old (plist-get old :name))
+                   (read-string (format "NAME for %s: " tag)
+                                (when (and (equal kind "run")
+                                           (string-match "\\([0-9][0-9]\\)\\'" tag))
+                                  (format "%s 20%s Run" group (match-string 1 tag))))))
+         (status (unless old
+                   (completing-read "STATUS: " my/context-valid-statuses nil t nil nil "active")))
+         (venue (when (equal kind "show")
+                  (let ((v (string-trim (read-string "VENUE (blank to skip): "))))
+                    (unless (string-empty-p v) v))))
+         (dates (when (equal kind "show")
+                  (let ((d (string-trim (read-string "SHOW_DATES (blank to skip): "))))
+                    (unless (string-empty-p d) d)))))
+    (unless old
+      (my/new-context--register group group-type group-name tag name status))
+    (if (equal kind "other")
+        (message "Registered %s under %s" tag group)
+      (let ((buf (find-file-noselect (expand-file-name my/new-context-cards-file)))
+            pos)
+        (with-current-buffer buf
+          (org-with-wide-buffer
+           (setq pos (if (equal kind "show")
+                         (my/new-context--insert-show-card group tag name venue dates)
+                       (my/new-context--insert-run-card group tag name))))
+          (save-buffer))
+        (pop-to-buffer-same-window buf)
+        (widen)
+        (goto-char pos)
+        (org-fold-show-context)
+        (org-fold-show-subtree)
+        (recenter 2)
+        (message "%s card created for %s" (capitalize kind) tag)))))
 
 (defun my/agenda-add-note-heading ()
   "Add a child NOTE heading to the org entry at point in the agenda."
@@ -3068,17 +2953,27 @@ on every redisplay, so it follows window splits and resizes."
 (message "org-ql loaded")
 
 ;;;; Show dashboard (org-ql + super-agenda)
-;; One command for any registered context: milestones, meetings, projects
-;; and the show card, grouped. Prompts with registry completion (active and
-;; planning first); defaults to the context at point in an Org buffer.
+;; C-c a D (or M-x my/show-dashboard): pick a registered context and open a
+;; grouped overview. Open scope by default; with C-u, full scope including a
+;; Done section. Defaults to the context at point in an Org buffer.
+
+(defvar my/show-dashboard-card-properties '("VENUE" "SHOW_DATES")
+  "Show card properties displayed on the card line, in order, when set.")
+
+(defvar my/show-dashboard-newest-first '("Meetings" "Done")
+  "Dashboard sections whose dated lines sort newest first (others soonest first).")
+
+(defun my/agenda--entry-marker (item)
+  (or (get-text-property 0 'org-hd-marker item)
+      (get-text-property 0 'org-marker item)))
 
 (defun my/agenda-prepend-active-ts (item)
-  "Prefix agenda ITEM string with the first active timestamp in its entry."
-  (let* ((marker (or (get-text-property 0 'org-hd-marker item)
-                     (get-text-property 0 'org-marker item)))
+  "Prefix agenda ITEM with the first timestamp in its entry (active or inactive).
+CLOSED and other planning lines count, so Done items show their close date."
+  (let* ((marker (my/agenda--entry-marker item))
          (date (and marker
                     (org-with-point-at marker
-                      (when (re-search-forward org-ts-regexp (org-entry-end-position) t)
+                      (when (re-search-forward org-ts-regexp-both (org-entry-end-position) t)
                         (format-time-string "%Y-%m-%d %a"
                                             (org-time-string-to-time (match-string 0))))))))
     (if date
@@ -3088,12 +2983,64 @@ on every redisplay, so it follows window splits and resizes."
           (concat prefix (string-trim-left item)))
       item)))
 
+(defun my/dashboard-card-info (item)
+  "Add `my/show-dashboard-card-properties' values to the show card line, before its tags."
+  (let* ((marker (my/agenda--entry-marker item))
+         (info (and marker
+                    (org-with-point-at marker
+                      (delq nil (mapcar (lambda (p) (org-entry-get nil p))
+                                        my/show-dashboard-card-properties))))))
+    (if (not info)
+        item
+      (let ((extra (propertize (concat "   " (string-join info "  |  ") " ")
+                               'face 'font-lock-comment-face))
+            (pos (if (string-match "[ \t]+:[[:alnum:]_@#%:]+:[ \t]*\\'" item)
+                     (match-beginning 0)
+                   (length item))))
+        (concat (substring item 0 pos) extra (substring item pos))))))
+
+(defun my/dashboard--undated-heading-p (item)
+  "Non-nil when ITEM's entry has no TODO keyword and no active timestamp (the show card)."
+  (let ((marker (my/agenda--entry-marker item)))
+    (and marker
+         (org-with-point-at marker
+           (and (null (org-get-todo-state))
+                (not (re-search-forward org-ts-regexp (org-entry-end-position) t)))))))
+
+(defun my/dashboard-sort-dated-lines ()
+  "In org-ql views, sort each run of lines that start with an ISO date.
+Sections named in `my/show-dashboard-newest-first' sort newest first."
+  (when (bound-and-true-p org-ql-view-query)
+    (save-excursion
+      (goto-char (point-min))
+      (let ((inhibit-read-only t)
+            (re "^ *[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\} "))
+        (while (re-search-forward re nil t)
+          (let* ((beg (line-beginning-position))
+                 (section (save-excursion
+                            (when (re-search-backward "^ \\(\\S-.*\\)$" nil t)
+                              (string-trim (match-string-no-properties 1))))))
+            (while (and (zerop (forward-line 1)) (looking-at re)))
+            (sort-lines (member section my/show-dashboard-newest-first) beg (point))))))))
+
+;; run early so later finalize hooks (coloring, tag alignment) see the final order
+(add-hook 'org-agenda-finalize-hook #'my/dashboard-sort-dated-lines -50)
+
 (defvar my/show-dashboard-groups
-  '((:name "Milestones" :tag "MILESTONE" :transformer my/agenda-prepend-active-ts)
-    (:name "Meetings" :todo "MEETING" :transformer my/agenda-prepend-active-ts)
-    (:name "Projects & Tasks" :todo t)
-    (:name "Show card" :anything t))
-  "org-super-agenda groups for `my/show-dashboard'. First match wins.")
+  '((:name "Milestones" :tag "MILESTONE"
+           :transformer my/agenda-prepend-active-ts :order 2)
+    (:name "Meetings" :todo ("MEETING" "PHONE")
+           :transformer my/agenda-prepend-active-ts :order 3)
+    (:name "Done" :todo ("DONE" "CANCELLED")
+           :transformer my/agenda-prepend-active-ts :order 9)
+    (:name "Next actions" :todo "NEXT" :order 4)
+    (:name "Projects & Tasks" :todo t :order 5)
+    (:name "Show card" :pred my/dashboard--undated-heading-p
+           :transformer my/dashboard-card-info :order 0)
+    (:name "Upcoming" :anything t
+           :transformer my/agenda-prepend-active-ts :order 1))
+  "org-super-agenda groups for `my/show-dashboard'.
+An item lands in the FIRST group it matches (list order); :order sets display order.")
 
 (defun my/context--dashboard-candidates ()
   "Registered contexts, active/planning first, then wrapped; alphabetical within."
@@ -3116,8 +3063,9 @@ on every redisplay, so it follows window splits and resizes."
             (or (plist-get plist :status) "")
             (or (plist-get plist :name) ""))))
 
-(defun my/show-dashboard (tag)
-  "Open the grouped org-ql dashboard for context TAG."
+(defun my/show-dashboard (tag &optional full)
+  "Open the grouped dashboard for context TAG.
+Open items only by default; with prefix arg FULL, include DONE/CANCELLED in a Done section."
   (interactive
    (let* ((here (and (derived-mode-p 'org-mode)
                      (ignore-errors (plist-get (my/context-at-point) :tag))))
@@ -3125,15 +3073,22 @@ on every redisplay, so it follows window splits and resizes."
            '(:annotation-function my/context--dashboard-annotate)))
      (list (completing-read (if here (format "Show (default %s): " here) "Show: ")
                             (my/context--dashboard-candidates)
-                            nil t nil nil here))))
+                            nil t nil nil here)
+           current-prefix-arg)))
   (org-ql-search (org-agenda-files)
-    `(and (tags ,tag) (or (todo) (ts-active) (tags-local ,tag)))
-    :sort '(date)
-    :title (format "%s: %s" tag
-                   (or (plist-get (gethash tag my/context-registry) :name) ""))
+    (if full
+        `(and (tags ,tag)
+              (or (todo) (done) (ts-active) (tags-local ,tag)))
+      `(and (tags ,tag)
+            (or (todo) (todo "MEETING" "PHONE") (ts-active) (tags-local ,tag))
+            (not (todo "DONE" "CANCELLED"))))
+    :sort '(priority date)
+    :title (format "%s: %s%s" tag
+                   (or (plist-get (gethash tag my/context-registry) :name) "")
+                   (if full " (all)" ""))
     :super-groups my/show-dashboard-groups))
 
-;; Reach it from the agenda dispatcher: C-c a w
+;; Reach it from the agenda dispatcher: C-c a D (C-u C-c a D for full scope)
 (with-eval-after-load 'org-agenda
   (add-to-list 'org-agenda-custom-commands
                '("D" "Show dashboard"
