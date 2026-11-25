@@ -165,7 +165,7 @@
   ;; org-block's fixed-pitch face is an org 9.0+ addition; mixed-pitch's
   ;; own default list may not include it depending on version, and it's
   ;; a face you're explicitly styling already — include it to be safe.
-  (add-to-list 'mixed-pitch-fixed-faces 'org-block))
+  (add-to-list 'mixed-pitch-fixed-pitch-faces 'org-block))t
 
 (use-package nano-theme
   :defer t)
@@ -2560,6 +2560,224 @@ KIND is \"show\", \"run\" or \"other\"."
         (org-fold-show-subtree)
         (recenter 2)
         (message "%s card created for %s" (capitalize kind) tag)))))
+
+(remove-hook 'org-agenda-finalize-hook #'my/agenda-align-tags-right)
+
+(defvar my/agenda-tags-right-margin 2
+  "Columns of breathing room between the tags and the window's right edge.")
+
+(defun my/agenda-align-tags-right ()
+  "Right-align agenda tags using their real rendered pixel width, so
+org-modern tag boxes, icons and mixed fonts line up exactly. Recomputed
+on every redisplay, so it follows window splits and resizes."
+  (save-excursion
+    (goto-char (point-min))
+    (let ((inhibit-read-only t)
+          (margin (* my/agenda-tags-right-margin (frame-char-width))))
+      (while (re-search-forward
+              "\\([ \t]+\\)\\(:[[:alnum:]_@#%:]+:\\)[ \t]*$" nil t)
+        (let* ((gap-beg (match-beginning 1))
+               (gap-end (match-end 1))
+               (tags (buffer-substring (match-beginning 2) (line-end-position)))
+               (px (+ (string-pixel-width tags) margin)))
+          (put-text-property gap-beg gap-end
+                             'display `(space :align-to (- right (,px)))))))))
+
+;; depth 90: run after org-modern has styled the tags, so we measure the boxes
+(add-hook 'org-agenda-finalize-hook #'my/agenda-align-tags-right 90)
+
+(defvar my/agenda-milestone-whole-line nil
+  "When non-nil, extend the milestone text face to end of line (tags included).")
+
+(defvar my/agenda-milestone-prefix-face `(:foreground ,nord-green :weight bold)
+  "Face for the icon and category label of Milestone agenda lines.")
+
+(defvar my/agenda-milestone-face `(:foreground ,nord-orange :weight bold)
+  "Face for the rest of Milestone agenda lines (heading text onward).")
+
+(defun my/agenda-color-milestones ()
+  "Color Milestone agenda lines: prefix (icon, category) and the rest separately."
+  (save-excursion
+    (goto-char (point-min))
+    (let ((inhibit-read-only t))
+      (while (not (eobp))
+        (when (equal (get-text-property (point) 'org-category) "Milestone")
+          (let* ((bol (line-beginning-position))
+                 (eol (line-end-position))
+                 (marker (org-get-at-bol 'org-hd-marker))
+                 (text (and marker
+                            (org-with-point-at marker
+                              (substring-no-properties (org-get-heading t t t t))))))
+            (if (and text (search-forward text eol t))
+                (progn
+                  (add-face-text-property bol (match-beginning 0) my/agenda-milestone-prefix-face)
+                  (add-face-text-property (match-beginning 0)
+                                          (if my/agenda-milestone-whole-line eol (match-end 0))
+                                          my/agenda-milestone-face))
+              (add-face-text-property bol eol my/agenda-milestone-face))))
+        (forward-line 1)))))
+
+(add-hook 'org-agenda-finalize-hook #'my/agenda-color-milestones)
+
+(set-fontset-font t '(#x25A0 . #x25FF) "Segoe UI Symbol")
+
+(use-package org-modern
+  :hook (org-mode . org-modern-mode)
+  :config
+  (global-org-modern-mode)
+  (setq org-modern-star 'replace
+  	org-modern-cycle-stars nil  ;; level 6+ all reuse the last pair below, not cycle back to pair 1
+	org-modern-replace-stars
+	'(
+	  "◈"    ;; level 1 — white diamond containing black small diamond
+	  "◇"    ;; level 2 — white diamond
+	  "■"    ;; level 3 — black square
+	  "□"    ;; level 4 — white square
+	  "▪"    ;; level 5 — black small square
+	  "◌")  ;; level 6+ — dotted circle (reused for all deeper levels)
+
+	
+	org-modern-table nil    
+	org-modern-list '((?- . "•") (?+ . "◦") (?* . "▸"))
+	org-modern-checkbox nil ;; keep default checkboxes unless you want to style them
+	org-modern-tag t
+	org-modern-priority t
+	org-modern-todo t
+	org-modern-timestamp t)
+  (setq org-modern-todo-faces
+	'(("TODO"      . (:background "#BF616A" :foreground "white"))
+    	  ("NEXT"      . (:background "#81A1C1" :foreground "white"))
+    	  ("DONE"      . (:background "#A3BE8C" :foreground "white"))
+    	  ("WAITING"   . (:background "#D08770" :foreground "white"))
+    	  ("HOLD"      . (:background "#B48EAD" :foreground "white"))
+    	  ("CANCELLED" . (:background "#A3BE8C" :foreground "white"))
+    	  ("MEETING"   . (:background "#A3BE8C" :foreground "white"))
+    	  ("PHONE"     . (:background "#A3BE8C" :foreground "white"))))
+  )
+
+
+;; still need to suppress line numbers in org
+(dolist (mode '(org-mode-hook))
+  (add-hook mode (lambda () (display-line-numbers-mode 0))))
+
+;; This is needed as of Org 9.2
+                                        ;  (require 'org-tempo)
+                                        ;  (with-eval-after-load 'org-tempo
+
+
+
+;; C-C C-, to use a structure template
+(add-to-list 'org-structure-template-alist '("sh" . "src shell"))
+(add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp")) 
+(add-to-list 'org-structure-template-alist '("py" . "src python"))
+(add-to-list 'org-structure-template-alist '("jsx" . "src jsx"))
+
+(load "org-agenda-category-icons")
+(org-agenda-category-icons!
+
+ :material
+ (repeat Recurring)
+ (group Meeting)
+ (cake Birthday)
+ (cake Anniversary)
+ (event Event)
+ (web Website)
+ (people Meeting)
+
+
+ :octicon
+ (tools Habit)
+ (milestone Milestone)
+
+ :faicon
+ (cogs Config)
+ (book Lexicon)
+ (check-circle Task)
+ (code Odin)
+ (list-ul Project)
+ (list-ul Proj)
+ (phone Phone)
+ (car Vehicle)
+ (plus-square Health)
+ (pencil-square-o Note)
+ (exclamation-circle Reminder)
+ (flag Holiday)
+ (info Note)
+ (star Goals)
+ (star Goal)
+ (gift Reward)
+ (folder-open Refile)
+ (map-marker Review)
+ (archive Archive))
+
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((emacs-lisp .t )
+   (js .t)
+   (shell . t)
+   (dot . t)
+   (gnuplot . t)
+   (plantuml . t)
+   (python .t)))
+
+;;auto tangle my emacs config file
+(defun my/mirror-tangled-files-to-dotfiles (&rest _)
+  "Copy the tangled early-init.el/init.el into the dotfiles repo's
+ configbackups folder, since ~/.emacs.d isn't itself git-tracked.
+ Fires after ANY org-babel-tangle call, not just save-triggered ones."
+  (dolist (fname '("init.el" "early-init.el"))
+    (let ((src (expand-file-name fname "~/.emacs.d")))
+      (when (file-exists-p src)
+        (copy-file src
+                   (expand-file-name (concat "configbackups/" fname) "~/dotfiles")
+                   t)))))
+(advice-add 'org-babel-tangle :after #'my/mirror-tangled-files-to-dotfiles)
+
+(defun my/org-babel-tangle-config()
+  (when (string-equal (buffer-file-name)
+                      (expand-file-name "~/dotfiles/configbackups/main-config.org"))
+    ;; dynamic scoping
+    (let ((org-confirm-babel-evaluate nil))
+      (org-babel-tangle))))
+(add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'my/org-babel-tangle-config)))
+(message "Tangling enabled")
+
+;; ;;auto tangle my emacs config file
+;; (defun my/mirror-tangled-files-to-dotfiles ()
+;;   "Copy the tangled early-init.el/init.el into the dotfiles repo's
+;; configbackups folder, since ~/.emacs.d isn't itself git-tracked.
+;; Historically a manual copy; now happens automatically on every tangle."
+;;   (dolist (fname '("init.el" "early-init.el"))
+;;     (let ((src (expand-file-name fname "~/.emacs.d")))
+;;       (when (file-exists-p src)
+;;         (copy-file src
+;;                    (expand-file-name (concat "configbackups/" fname) "~/dotfiles")
+;;                    t))))) ;; t = overwrite without confirmation
+
+;; (defun my/org-babel-tangle-config()
+;;   (when (string-equal (buffer-file-name)
+;;                       (expand-file-name "~/dotfiles/configbackups/main-config.org"))
+;;     ;; dynamic scoping
+;;     (let ((org-confirm-babel-evaluate nil))
+;;       (org-babel-tangle)
+;;       (my/mirror-tangled-files-to-dotfiles))))
+;; (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'my/org-babel-tangle-config)))
+;; (message "Tangling enabled")
+
+;; (defun org-mode-visual-fill()
+;;   (setq visual-fill-column-width 110 visual-fill-column-center-text t)
+;;   (visual-fill-column-mode 1))
+
+
+;; (use-package visual-fill-column
+;;   :hook (org-mode . org-mode-visual-fill))
+
+
+(use-package olivetti
+  :hook ((org-mode . olivetti-mode)
+	 (elfeed-show-mode . olivetti-mode))
+  :custom
+  (olivetti-body-width 140))
 
 (defun my/agenda-add-note-heading ()
   "Add a child NOTE heading to the org entry at point in the agenda."
