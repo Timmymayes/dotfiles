@@ -168,13 +168,24 @@
   ;; a face you're explicitly styling already — include it to be safe.
   (add-to-list 'mixed-pitch-fixed-pitch-faces 'org-block))t
 
+(use-package highlight-function-calls
+  :hook (emacs-lisp-mode . highlight-function-calls-mode))
+
+(use-package highlight-quoted
+  :hook (emacs-lisp-mode . highlight-quoted-mode))
+
+
+
 (use-package nano-theme
   :defer t)
 
 (defun my/apply-theme-and-faces (&optional frame)
   "Apply theme, Nord face attributes, and transparency.
-      Safe to call from frame-creation hooks."
+        Safe to call from frame-creation hooks."
   (when frame (select-frame frame))
+  (require 'org)
+  (require 'highlight-function-calls nil t)
+  (require 'highlight-quoted nil t)
   (load-theme 'nano-dark t)
   (set-face-attribute 'default nil :family "Roboto Mono" :weight 'regular :height 140)
   (set-face-attribute 'default nil :font "Roboto Mono" :height 140)
@@ -4363,13 +4374,6 @@ Spaces in the answer become hyphens, since Ledger tags can't contain them."
   :custom
   (battle-haxe-yasnippet-completion-expansion t "Keep this if you want yasnippet to expand completions when it's available.")
   (battle-haxe-immediate-completion nil "Toggle this if you want to immediately trigger completion when typing '.' and other relevant prefixes."))
-
-(use-package highlight-function-calls
-  :hook (emacs-lisp-mode . highlight-function-calls-mode))
-
-(use-package highlight-quoted
-  :hook (emacs-lisp-mode . highlight-quoted-mode))
-
 
 (defun my/sexp-newline ()
   "Move to end of current sexp and insert newline."
