@@ -52,8 +52,9 @@ On the rare occasion utf-8 encoding is lost this is a note for myself on how to 
 :ID:       219db535-e7b1-44ed-b45f-4283ae5c1663
 :END:
 #+BEGIN_SRC emacs-lisp
-(defconst my/windows-p (eq system-type 'windows-nt))
-(defconst my/linux-p (eq system-type 'gnu/linux))
+  (defconst my/windows-p (eq system-type 'windows-nt))
+  (defconst my/linux-p (eq system-type 'gnu/linux))
+  (defconst my/exwm-p (string= (system-name) "tyler-exwm"))
 #+END_SRC
 
 ** Linux Tools on Windows
@@ -6791,6 +6792,15 @@ org-agenda-files, and project.el — all of which need to be initialized first.
 
 #+END_SRC
 
+* exwm load
+Loads exwm on my laptops that want it. 
+#+BEGIN_SRC emacs-lisp
+(when my/exwm-p
+  (use-package exwm
+    :config
+    (setq exwm-workspace-number 4)
+    (exwm-wm-mode)))
+#+END_SRC
 * Setup final org settings
 :PROPERTIES:
 :ID:       b5c6dac1-e9af-42a0-b392-24cab22097c9

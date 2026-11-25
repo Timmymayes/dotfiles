@@ -7,6 +7,7 @@
 
 (defconst my/windows-p (eq system-type 'windows-nt))
 (defconst my/linux-p (eq system-type 'gnu/linux))
+(defconst my/exwm-p (string= (system-name) "tyler-exwm"))
 
 (when my/windows-p
   ;; define grep to be rg (download via scoop on first install)
@@ -5546,6 +5547,12 @@ Version: 2018-06-04 2021-03-16 2022-03-05"
       (my/build-dashboard) ;; scan recentf/bookmarks/agenda now, before any client connects
       (add-hook 'server-after-make-frame-hook #'my/show-dashboard-on-new-frame))
   (my/show-dashboard-on-new-frame))
+
+(when my/exwm-p
+  (use-package exwm
+    :config
+    (setq exwm-workspace-number 4)
+    (exwm-wm-mode)))
 
 ;;Make org links open in same window
 (setq org-link-frame-setup
