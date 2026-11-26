@@ -5558,6 +5558,58 @@ Version: 2018-06-04 2021-03-16 2022-03-05"
     (setq exwm-workspace-number 4)
     (exwm-wm-mode)))
 
+(defvar my/input-leap-servers
+  '(("home" . "100.65.14.107")
+    ("work" . "100.116.110.77"))
+  "Alist of Input Leap server names to Tailscale addresses.")
+
+(defvar my/input-leap-process nil
+  "Process handle for the running Input Leap client.")
+
+(defvar my/input-leap-current nil
+  "Name of the server the client was last started against.")
+
+(defun my/input-leap-running-p ()
+  "Return non-nil if the client process is alive."
+  (and my/input-leap-process
+       (process-live-p my/input-leap-process)))
+
+(defun my/input-leap-stop ()
+  "Stop the Input Leap client."
+  (interactive)
+  (when (my/input-leap-running-p)
+    (kill-process my/input-leap-process))
+  (setq my/input-leap-process nil
+        my/input-leap-current nil)
+  (message "Input Leap client stopped"))
+
+(defun my/input-leap-start (server)
+  "Start the Input Leap client against SERVER, replacing any running one."
+  (interactive
+   (list (completing-read "Input Leap server: "
+                          (mapcar #'car my/input-leap-servers) nil t)))
+  (let ((addr (cdr (assoc server my/input-leap-servers))))
+    (when (my/input-leap-running-p)
+      (kill-process my/input-leap-process)
+      (sleep-for 0.3))
+    (setq my/input-leap-process
+          (start-process "input-leapc" "*input-leap*"
+                         "input-leapc" "-f" "--no-tray"
+                         "--name" "tyler-exwm" addr)
+          my/input-leap-current server)
+    (set-process-query-on-exit-flag my/input-leap-process nil)
+    (message "Input Leap client started against %s (%s)" server addr)))
+
+(defun my/input-leap-status ()
+  "Message which server the Input Leap client is running against."
+  (interactive)
+  (message
+   (if (my/input-leap-running-p)
+       (format "Input Leap: running against %s (%s)"
+               my/input-leap-current
+               (cdr (assoc my/input-leap-current my/input-leap-servers)))
+     "Input Leap: not running")))
+
 ;;Make org links open in same window
 (setq org-link-frame-setup
       '(
