@@ -7,14 +7,13 @@ This config is my personal config and is evolving over time. You can find the up
 
 *Trying to push this update to git*
 
-This is my first run through configuring emacs so there is probably a lot of inefficiency in the layout and possibly some redundancy that needs cleaning up. That being said, this is a living document that will probably be evolving for some time before it gets a pure reboot. 
+This is my first run through configuring emacs so there is probably a lot of inefficiency in the layout and ssibly some redundancy that needs cleaning up. That being said, this is a living document that will probably be evolving for some time before it gets a pure reboot. 
 
 ** Make this natiavly installable
 
 *** Issue list
 Having issues with magit buffer losing focus
 Seems to go to dashboard
-
 
 * Initialization
 :PROPERTIES:
@@ -341,13 +340,15 @@ Fixes tables/code rendering fixed-pitch inside variable-pitch org
 prose. Supersedes the plain :inherit 'fixed-pitch approach, which
 loses to any explicit :family the theme already set on that face.
 #+begin_src emacs-lisp
+  ;; machine: any (replace the whole use-package mixed-pitch block under "Mixed Pitch")
   (use-package mixed-pitch
     :after org
     :config
-    ;; org-block's fixed-pitch face is an org 9.0+ addition; mixed-pitch's
-    ;; own default list may not include it depending on version, and it's
-    ;; a face you're explicitly styling already — include it to be safe.
-    (add-to-list 'mixed-pitch-fixed-pitch-faces 'org-block))t
+    (with-eval-after-load 'mixed-pitch
+      (add-to-list 'mixed-pitch-fixed-pitch-faces 'org-block)))
+
+
+
 #+end_src
 
 ** Themes
@@ -1223,7 +1224,6 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
 #+end_src
 
 
-
 #+begin_src emacs-lisp
   (use-package org
     :hook (org-mode . org-mode-setup)
@@ -1245,7 +1245,12 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
            ("C-c M-a" . org-attach-screenshot)
            ("C-M-i" . org-indent-block)
            ("C-t". org-toggle-checkbox))
+    :custom
+    (org-list-allow-alphabetical t)
+
     :config
+
+
 
     ;; use ids for linking
     (setq org-id-link-to-org-use-id t)
@@ -1293,11 +1298,10 @@ Great article on Avy - https://karthinks.com/software/avy-can-do-anything/
       (set-face-attribute 'org-habit-overdue-future-face nil :background "#8C3A40"))
 
     ;; setup deadlines to match nano theme
-    (with-eval-after-load 'org
       (set-face-attribute 'org-upcoming-distant-deadline nil :foreground "#C4A000" :weight 'normal)
       (set-face-attribute 'org-upcoming-deadline nil :foreground "#F5C518" :weight 'bold)
       (set-face-attribute 'org-imminent-deadline nil :foreground "#E0A800" :weight 'bold)
-      (set-face-attribute 'org-warning nil :foreground "#BF616A" :weight 'bold) )
+      (set-face-attribute 'org-warning nil :foreground "#BF616A" :weight 'bold) 
 
     (setq org-image-actual-width nil)
     (setq org-agenda-start-with-log-mode t)
@@ -3786,21 +3790,24 @@ For now just hitting agenda-milestones but color them to stand out
 :ID:       e3609623-8b92-4762-bb34-0f7ae237cea9
 :END:
 #+BEGIN_SRC emacs-lisp
+  (use-package org-ql)
+  (use-package org-super-agenda)
+
   (setq org-directory "~/Orgfiles")
   (global-set-key (kbd "C-H-M-f") 'org-ql-find)
   (global-set-key (kbd "C-H-M-s") 'org-ql-search)
   (global-set-key (kbd "C-H-M-v") 'org-ql-view)
 
   ;; example of an org-ql-search
-                                          ;  (org-ql-search (org-agenda-files)
-                                          ;    '(and
-                                          ;      (todo "TODO")
-                                          ;      (tags "GAMEDESIGN")))
+  					;  (org-ql-search (org-agenda-files)
+  					;    '(and
+  					;      (todo "TODO")
+  					;      (tags "GAMEDESIGN")))
 
 
   (with-eval-after-load 'org-ql-view
-  (advice-add 'org-ql-view--link-store :before-while
-              (lambda (&rest _) (local-variable-p 'org-ql-view-query))))
+    (advice-add 'org-ql-view--link-store :before-while
+                (lambda (&rest _) (local-variable-p 'org-ql-view-query))))
 
   (message "org-ql loaded")
 #+END_SRC
@@ -4031,13 +4038,15 @@ Open items only by default; with prefix arg FULL, include DONE/CANCELLED in a Do
   (defalias 'loop 'cl-loop)
   (defalias 'return 'cl-return)
 
+  ;; machine: any (replaces the bare requires at the top of the CALFW block, after the cl-lib aliases)
+  (use-package calfw
+    :config
+    (setq calfw-render-line-breaker 'calfw-render-line-breaker-none))
 
-  (require 'calfw)
-  (setq calfw-render-line-breaker 'calfw-render-line-breaker-none)
-  (with-eval-after-load 'calfw
-    (require 'calfw-org)
-    (require 'calfw-cal)
-    (require 'calfw-gcal))
+  (use-package calfw-org :after calfw)
+  (use-package calfw-cal :after calfw)
+  (use-package calfw-gcal :after calfw)
+
 
   ;; Remove holidays for calfw
 
@@ -4081,7 +4090,7 @@ Open items only by default; with prefix arg FULL, include DONE/CANCELLED in a Do
 
       ;; Weekend headers
       (set-face-attribute 'calfw-sunday-face nil
-    			:foreground nord-orange :background nord0 :weight 'bold)
+      			:foreground nord-orange :background nord0 :weight 'bold)
       
       (set-face-attribute 'calfw-saturday-face nil
                           :foreground nord-orange :background nord0 :weight 'bold)
@@ -5125,6 +5134,9 @@ Following setup from here: https://www.chadstovern.com/javascript-in-emacs-revis
           lsp-ui-doc-enable nil))
 
 
+  ;; machine: any (replaces (require 'js-comint) in the Javascript block)
+  (use-package js-comint)
+
   (defun my-js-comint-keys ()
     "My Keys for sending to the js-comint repl"
     (interactive)
@@ -5321,15 +5333,11 @@ A section for my personal macors functions and keybinds
     (web-mode-element-next)
     (web-mode-tag-end))
 
+  
 
 
   (global-set-key  (kbd "C-x t") 'next-tag)
 
-  ;; timer controls
-  (global-set-key (kbd "H-t t") 'org-timer-set-timer)
-  (global-set-key (kbd "H-t s") 'org-timer-start)
-  (global-set-key (kbd "H-t x") 'org-timer-stop)
-  (global-set-key (kbd "H-t z") 'org-timer-pause-or-continue)
 
 
   ;; set ctrl z to undo
@@ -5337,7 +5345,18 @@ A section for my personal macors functions and keybinds
 
 #+END_SRC
 
-
+** Clocks and Timers
+#+BEGIN_SRC emacs-lisp
+;; machine: any (main-config.org, Clocks and Timers section)
+(use-package clock-dock
+  :ensure nil                      ; local file in configbackups/lisp
+  :commands (clock-dock-toggle clock-dock-open clock-dock-close clock-dock-set-timer)
+  :bind (("H-c c" . clock-dock-toggle)
+         ("H-t t" . clock-dock-set-timer)
+         ("H-t s" . org-timer-start)
+         ("H-t x" . org-timer-stop)
+         ("H-t z" . org-timer-pause-or-continue)))[]
+#+END_SRC
 ** Window Movement
 Managing Windows, buffers etc
 *** Window Movement Keymap
@@ -6193,7 +6212,7 @@ Narrowing is a powerful feature for focus and restricting macros, searching, rep
 :ID:       4db82b34-8b18-4d74-9a73-2b1282c7ddc8
 :END:
 #+BEGIN_SRC emacs-lisp sdfs   
-  (require 'org-bookmark-heading)
+  (use-package org-bookmark-heading)
   (global-set-key (kbd "C-x r b") 'consult-bookmark)
 
 #+END_SRC
@@ -6802,11 +6821,15 @@ org-agenda-files, and project.el — all of which need to be initialized first.
 * exwm load
 Loads exwm on my laptops that want it. 
 #+BEGIN_SRC emacs-lisp
-(when my/exwm-p
-  (use-package exwm
-    :config
-    (setq exwm-workspace-number 4)
-    (exwm-wm-mode)))
+  (when my/exwm-p
+    (use-package exwm
+      :config
+      (setq exwm-workspace-number 4)
+      (exwm-wm-mode))
+    
+    (display-battery-mode 1)
+    
+    )
 #+END_SRC
 
 * Input Leap

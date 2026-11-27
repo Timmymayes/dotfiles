@@ -160,13 +160,12 @@
 ;;(when (eq system-type 'windows-nt)
   ;;(set-face-attribute 'dictionary-word-definition-face nil :family "Consolas"))
 
+;; machine: any (replace the whole use-package mixed-pitch block under "Mixed Pitch")
 (use-package mixed-pitch
   :after org
   :config
-  ;; org-block's fixed-pitch face is an org 9.0+ addition; mixed-pitch's
-  ;; own default list may not include it depending on version, and it's
-  ;; a face you're explicitly styling already — include it to be safe.
-  (add-to-list 'mixed-pitch-fixed-pitch-faces 'org-block))t
+  (with-eval-after-load 'mixed-pitch
+    (add-to-list 'mixed-pitch-fixed-pitch-faces 'org-block)))
 
 (use-package highlight-function-calls
   :hook (emacs-lisp-mode . highlight-function-calls-mode))
@@ -883,7 +882,12 @@
          ("C-c M-a" . org-attach-screenshot)
          ("C-M-i" . org-indent-block)
          ("C-t". org-toggle-checkbox))
+  :custom
+  (org-list-allow-alphabetical t)
+
   :config
+
+
 
   ;; use ids for linking
   (setq org-id-link-to-org-use-id t)
@@ -931,11 +935,10 @@
     (set-face-attribute 'org-habit-overdue-future-face nil :background "#8C3A40"))
 
   ;; setup deadlines to match nano theme
-  (with-eval-after-load 'org
     (set-face-attribute 'org-upcoming-distant-deadline nil :foreground "#C4A000" :weight 'normal)
     (set-face-attribute 'org-upcoming-deadline nil :foreground "#F5C518" :weight 'bold)
     (set-face-attribute 'org-imminent-deadline nil :foreground "#E0A800" :weight 'bold)
-    (set-face-attribute 'org-warning nil :foreground "#BF616A" :weight 'bold) )
+    (set-face-attribute 'org-warning nil :foreground "#BF616A" :weight 'bold) 
 
   (setq org-image-actual-width nil)
   (setq org-agenda-start-with-log-mode t)
@@ -3169,21 +3172,24 @@ on every redisplay, so it follows window splits and resizes."
 
 (message "Org-present Loaded")
 
+(use-package org-ql)
+(use-package org-super-agenda)
+
 (setq org-directory "~/Orgfiles")
 (global-set-key (kbd "C-H-M-f") 'org-ql-find)
 (global-set-key (kbd "C-H-M-s") 'org-ql-search)
 (global-set-key (kbd "C-H-M-v") 'org-ql-view)
 
 ;; example of an org-ql-search
-                                        ;  (org-ql-search (org-agenda-files)
-                                        ;    '(and
-                                        ;      (todo "TODO")
-                                        ;      (tags "GAMEDESIGN")))
+					;  (org-ql-search (org-agenda-files)
+					;    '(and
+					;      (todo "TODO")
+					;      (tags "GAMEDESIGN")))
 
 
 (with-eval-after-load 'org-ql-view
-(advice-add 'org-ql-view--link-store :before-while
-            (lambda (&rest _) (local-variable-p 'org-ql-view-query))))
+  (advice-add 'org-ql-view--link-store :before-while
+              (lambda (&rest _) (local-variable-p 'org-ql-view-query))))
 
 (message "org-ql loaded")
 
@@ -3391,13 +3397,15 @@ document.addEventListener('DOMContentLoaded', function() {
 (defalias 'loop 'cl-loop)
 (defalias 'return 'cl-return)
 
+;; machine: any (replaces the bare requires at the top of the CALFW block, after the cl-lib aliases)
+(use-package calfw
+  :config
+  (setq calfw-render-line-breaker 'calfw-render-line-breaker-none))
 
-(require 'calfw)
-(setq calfw-render-line-breaker 'calfw-render-line-breaker-none)
-(with-eval-after-load 'calfw
-  (require 'calfw-org)
-  (require 'calfw-cal)
-  (require 'calfw-gcal))
+(use-package calfw-org :after calfw)
+(use-package calfw-cal :after calfw)
+(use-package calfw-gcal :after calfw)
+
 
 ;; Remove holidays for calfw
 
@@ -3441,7 +3449,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     ;; Weekend headers
     (set-face-attribute 'calfw-sunday-face nil
-  			:foreground nord-orange :background nord0 :weight 'bold)
+    			:foreground nord-orange :background nord0 :weight 'bold)
     
     (set-face-attribute 'calfw-saturday-face nil
                         :foreground nord-orange :background nord0 :weight 'bold)
@@ -4307,6 +4315,9 @@ Spaces in the answer become hyphens, since Ledger tags can't contain them."
         lsp-ui-doc-enable nil))
 
 
+;; machine: any (replaces (require 'js-comint) in the Javascript block)
+(use-package js-comint)
+
 (defun my-js-comint-keys ()
   "My Keys for sending to the js-comint repl"
   (interactive)
@@ -4437,17 +4448,23 @@ Spaces in the answer become hyphens, since Ledger tags can't contain them."
 
 
 
+
 (global-set-key  (kbd "C-x t") 'next-tag)
 
-;; timer controls
-(global-set-key (kbd "H-t t") 'org-timer-set-timer)
-(global-set-key (kbd "H-t s") 'org-timer-start)
-(global-set-key (kbd "H-t x") 'org-timer-stop)
-(global-set-key (kbd "H-t z") 'org-timer-pause-or-continue)
 
 
 ;; set ctrl z to undo
 (global-set-key (kbd "C-z") 'undo)
+
+;; machine: any (main-config.org, Clocks and Timers section)
+(use-package clock-dock
+  :ensure nil                      ; local file in configbackups/lisp
+  :commands (clock-dock-toggle clock-dock-open clock-dock-close clock-dock-set-timer)
+  :bind (("H-c c" . clock-dock-toggle)
+         ("H-t t" . clock-dock-set-timer)
+         ("H-t s" . org-timer-start)
+         ("H-t x" . org-timer-stop)
+         ("H-t z" . org-timer-pause-or-continue)))[]
 
 ;; Macros & commands
                                         ;(fset 'buffer-quick-switch
@@ -5044,7 +5061,7 @@ Right bottom : *Messages* and *Warnings* side by side
 
 (add-hook 'emacs-lisp-mode-hook #'my/elisp-font-lock-additions)
 
-(require 'org-bookmark-heading)
+(use-package org-bookmark-heading)
 (global-set-key (kbd "C-x r b") 'consult-bookmark)
 
 (defun org-drill-time-to-inactive-org-timestamp (time)
@@ -5556,7 +5573,11 @@ Version: 2018-06-04 2021-03-16 2022-03-05"
   (use-package exwm
     :config
     (setq exwm-workspace-number 4)
-    (exwm-wm-mode)))
+    (exwm-wm-mode))
+  
+  (display-battery-mode 1)
+  
+  )
 
 (defvar my/input-leap-servers
   '(("home" . "100.65.14.107")
